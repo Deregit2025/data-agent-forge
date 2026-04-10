@@ -43,12 +43,12 @@ def patch_data_agent():
 
     def patched_init(self, *args, **kwargs):
         deployment_name = kwargs.get("deployment_name", "")
-        if not deployment_name and len(args) >= 1:
-            # deployment_name is passed as keyword in DataAgent
-            pass
-
-        deployment_name = kwargs.get("deployment_name", "")
         if "claude" in str(deployment_name).lower():
+            os.environ.setdefault("OPENAI_API_KEY", "dummy-key-replaced-by-claude")
+            try:
+                original_init(self, *args, **kwargs)
+            except Exception:
+                pass
             _manual_init(self, *args, **kwargs)
         else:
             original_init(self, *args, **kwargs)
