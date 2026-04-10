@@ -1,51 +1,40 @@
 import time
 import duckdb
 from typing import Any
-from mcp.duckdb_config import get_db_path, DUCKDB_TOOLS
+from mcp.db_config import DUCKDB_TOOLS
 
 
 def execute_query(tool_name: str, sql: str) -> dict[str, Any]:
     """
-    Execute a SQL query against the DuckDB file mapped to tool_name.
+    Execute a read-only SQL query against the DuckDB file
+    mapped to tool_name.
 
-    Returns a dict with the same structure as Google MCP Toolbox
-    so the agent treats both servers identically:
-    {
-        "result":         list of row dicts,
-        "query_used":     the SQL that was executed,
-        "db_type":        "duckdb",
-        "tool_name":      name of the tool called,
-        "row_count":      number of rows returned,
-        "execution_time": seconds taken,
-        "error":          null on success, error message on failure
-    }
+    Returns the same structured response as all other tool files.
     """
     tool = DUCKDB_TOOLS.get(tool_name)
     if tool is None:
         return _error_response(tool_name, sql, f"Unknown tool: '{tool_name}'")
 
-    db_key = tool["db_key"]
-
-    try:
-        db_path = get_db_path(db_key)
-    except (ValueError, FileNotFoundError) as e:
-        return _error_response(tool_name, sql, str(e))
-
-    # enforce read-only — never allow writes to benchmark data
-    sql_upper = sql.strip().upper()
-    if not _is_read_only(sql_upper):
+    if not _is_read_only(sql):
         return _error_response(
             tool_name, sql,
             "Write operations are not permitted. Only SELECT queries are allowed."
         )
 
+    db_path = tool["path"]
+    if not db_path.exists():
+        return _error_response(
+            tool_name, sql,
+            f"DuckDB file not found at {db_path}. "
+            "Check DAB_PATH is set correctly."
+        )
+
     start = time.perf_counter()
     try:
-        # read_only=True prevents any accidental modification
-        conn = duckdb.connect(str(db_path), read_only=True)
+        conn     = duckdb.connect(str(db_path), read_only=True)
         relation = conn.execute(sql)
-        cols = [d[0] for d in relation.description]
-        rows = relation.fetchall()
+        cols     = [d[0] for d in relation.description]
+        rows     = relation.fetchall()
         conn.close()
 
         elapsed = round(time.perf_counter() - start, 4)
@@ -56,6 +45,7 @@ def execute_query(tool_name: str, sql: str) -> dict[str, Any]:
             "query_used":     sql,
             "db_type":        "duckdb",
             "tool_name":      tool_name,
+            "db_path":        str(db_path),
             "row_count":      len(result),
             "execution_time": elapsed,
             "error":          None,
@@ -68,6 +58,7 @@ def execute_query(tool_name: str, sql: str) -> dict[str, Any]:
             "query_used":     sql,
             "db_type":        "duckdb",
             "tool_name":      tool_name,
+            "db_path":        str(db_path),
             "row_count":      0,
             "execution_time": elapsed,
             "error":          str(e),
@@ -77,18 +68,18 @@ def execute_query(tool_name: str, sql: str) -> dict[str, Any]:
 def get_schema(tool_name: str) -> dict[str, Any]:
     """
     Return the full schema of the DuckDB database mapped to tool_name.
-    Used by the schema introspector to populate AGENT.md and KB domain files.
+    Used by utils/schema_introspector.py to populate AGENT.md and KB files.
     """
     tool = DUCKDB_TOOLS.get(tool_name)
     if tool is None:
         return _error_response(tool_name, "", f"Unknown tool: '{tool_name}'")
 
-    db_key = tool["db_key"]
-
-    try:
-        db_path = get_db_path(db_key)
-    except (ValueError, FileNotFoundError) as e:
-        return _error_response(tool_name, "", str(e))
+    db_path = tool["path"]
+    if not db_path.exists():
+        return _error_response(
+            tool_name, "",
+            f"DuckDB file not found at {db_path}."
+        )
 
     try:
         conn   = duckdb.connect(str(db_path), read_only=True)
@@ -113,7 +104,7 @@ def get_schema(tool_name: str) -> dict[str, Any]:
         conn.close()
         return {
             "tool_name": tool_name,
-            "db_key":    db_key,
+            "db_type":   "duckdb",
             "db_path":   str(db_path),
             "schema":    schema,
             "error":     None,
@@ -125,15 +116,15 @@ def get_schema(tool_name: str) -> dict[str, Any]:
 
 def list_tools() -> list[dict[str, Any]]:
     """
-    Return all available DuckDB tools with their descriptions.
-    Called by the /v1/tools endpoint so the agent can discover tools.
-    Matches the response format of Google MCP Toolbox v0.20.0.
+    Return all DuckDB tools with their descriptions.
+    Called by mcp_server.py to build the combined tool list.
     """
     return [
         {
             "name":        name,
             "description": meta["description"],
             "db_type":     "duckdb",
+            "db_path":     str(meta["path"]),
             "parameters":  [
                 {
                     "name":        "sql",
@@ -149,13 +140,12 @@ def list_tools() -> list[dict[str, Any]]:
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
-def _is_read_only(sql_upper: str) -> bool:
+def _is_read_only(sql: str) -> bool:
     """Block any non-SELECT statement."""
-    blocked = ("INSERT", "UPDATE", "DELETE", "DROP", "CREATE",
-               "ALTER", "TRUNCATE", "REPLACE", "MERGE")
-    return sql_upper.startswith("SELECT") and not any(
-        kw in sql_upper for kw in blocked
-    )
+    s = sql.strip().upper()
+    blocked = ("INSERT", "UPDATE", "DELETE", "DROP",
+               "CREATE", "ALTER", "TRUNCATE", "REPLACE", "MERGE")
+    return s.startswith("SELECT") and not any(kw in s for kw in blocked)
 
 
 def _error_response(tool_name: str, sql: str, msg: str) -> dict[str, Any]:
@@ -164,7 +154,8 @@ def _error_response(tool_name: str, sql: str, msg: str) -> dict[str, Any]:
         "query_used":     sql,
         "db_type":        "duckdb",
         "tool_name":      tool_name,
+        "db_path":        "",
         "row_count":      0,
         "execution_time": 0,
-        "error":          msg,
+        "error":          None,
     }
