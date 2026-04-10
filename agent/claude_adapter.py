@@ -47,16 +47,11 @@ def patch_data_agent():
             # deployment_name is passed as keyword in DataAgent
             pass
 
-        try:
+        deployment_name = kwargs.get("deployment_name", "")
+        if "claude" in str(deployment_name).lower():
+            _manual_init(self, *args, **kwargs)
+        else:
             original_init(self, *args, **kwargs)
-        except ValueError as e:
-            if "claude" in str(kwargs.get("deployment_name", "")).lower() or \
-               any("claude" in str(a).lower() for a in args):
-                # original init failed because Claude is not registered
-                # initialise manually with OpenRouter client
-                _manual_init(self, *args, **kwargs)
-            else:
-                raise e
 
     def _manual_init(self, *args, **kwargs):
         """Initialise DataAgent manually with OpenRouter client for Claude."""
