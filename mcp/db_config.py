@@ -9,6 +9,7 @@ DAB_PATH = os.getenv(
 )
 
 # ── PostgreSQL ────────────────────────────────────────────────────────────────
+# DB names match DAB db_config.yaml exactly
 
 PG_CONFIG = {
     "host":     os.getenv("PG_HOST",     "127.0.0.1"),
@@ -17,17 +18,9 @@ PG_CONFIG = {
     "password": os.getenv("PG_PASSWORD", "postgres123"),
 }
 
-PG_DATABASES = {
-    "bookreview":  "bookreview",
-    "crmarenapro": "crmarenapro",
-    "googlelocal": "googlelocal",
-    "pancancer":   "pancancer",
-    "patents":     "patents",
-}
-
 PG_TOOLS = {
     "query_postgres_bookreview": {
-        "db":          "bookreview",
+        "db":          "bookreview_db",
         "description": (
             "Query the bookreview PostgreSQL database. "
             "Contains books_info table with book details "
@@ -35,15 +28,15 @@ PG_TOOLS = {
         ),
     },
     "query_postgres_crmarenapro": {
-        "db":          "crmarenapro",
+        "db":          "crm_support",
         "description": (
-            "Query the crmarenapro PostgreSQL database. "
+            "Query the crmarenapro support PostgreSQL database. "
             "Contains Case, casehistory__c, emailmessage, issue__c, "
             "knowledge__kav, livechattranscript tables."
         ),
     },
     "query_postgres_googlelocal": {
-        "db":          "googlelocal",
+        "db":          "googlelocal_db",
         "description": (
             "Query the googlelocal PostgreSQL database. "
             "Contains business_description table with "
@@ -51,17 +44,17 @@ PG_TOOLS = {
         ),
     },
     "query_postgres_pancancer": {
-        "db":          "pancancer",
+        "db":          "pancancer_clinical",
         "description": (
-            "Query the pancancer PostgreSQL database. "
+            "Query the pancancer clinical PostgreSQL database. "
             "Contains clinical_info table with "
             "cancer patient clinical data."
         ),
     },
     "query_postgres_patents": {
-        "db":          "patents",
+        "db":          "patent_CPCDefinition",
         "description": (
-            "Query the patents PostgreSQL database. "
+            "Query the patents CPC definition PostgreSQL database. "
             "Contains cpc_definition table with "
             "patent classification definitions."
         ),
@@ -69,6 +62,9 @@ PG_TOOLS = {
 }
 
 # ── MongoDB ───────────────────────────────────────────────────────────────────
+# DB names match DAB db_config.yaml exactly:
+# articles_db → agnews dataset
+# yelp_db     → yelp dataset
 
 MONGO_CONFIG = {
     "uri": os.getenv("MONGO_URI", "mongodb://127.0.0.1:27017/"),
@@ -76,27 +72,27 @@ MONGO_CONFIG = {
 
 MONGO_TOOLS = {
     "query_mongo_yelp_business": {
-        "database":    "yelp_business",
+        "database":    "yelp_db",
         "collection":  "business",
         "description": (
-            "Query the yelp_business MongoDB database business collection. "
+            "Query the yelp_db MongoDB database business collection. "
             "Contains business details including name, stars, "
             "categories, location and attributes."
         ),
     },
     "query_mongo_yelp_checkin": {
-        "database":    "yelp_business",
+        "database":    "yelp_db",
         "collection":  "checkin",
         "description": (
-            "Query the yelp_business MongoDB database checkin collection. "
+            "Query the yelp_db MongoDB database checkin collection. "
             "Contains business checkin timestamps and frequency counts."
         ),
     },
     "query_mongo_agnews": {
-        "database":    "agnews_articles",
+        "database":    "articles_db",
         "collection":  "articles",
         "description": (
-            "Query the agnews_articles MongoDB database articles collection. "
+            "Query the articles_db MongoDB database articles collection. "
             "Contains news articles with title, description, "
             "category and source fields."
         ),
@@ -104,6 +100,7 @@ MONGO_TOOLS = {
 }
 
 # ── SQLite ────────────────────────────────────────────────────────────────────
+# All paths confirmed against DAB db_config.yaml and file header check
 
 SQLITE_TOOLS = {
     "query_sqlite_agnews_metadata": {
@@ -201,6 +198,8 @@ SQLITE_TOOLS = {
 }
 
 # ── DuckDB ────────────────────────────────────────────────────────────────────
+# All paths confirmed against DAB db_config.yaml and file header check
+# Note: some files use .db extension but are confirmed DuckDB format
 
 DUCKDB_TOOLS = {
     "query_duckdb_crmarenapro_activities": {
@@ -279,7 +278,6 @@ DUCKDB_TOOLS = {
 }
 
 # ── combined tool registry ────────────────────────────────────────────────────
-# single lookup the server uses to route any tool call to the right handler
 
 ALL_TOOLS = {
     **{k: {**v, "db_type": "postgres"} for k, v in PG_TOOLS.items()},
@@ -295,6 +293,6 @@ def get_tool(tool_name: str) -> dict:
     if tool is None:
         raise ValueError(
             f"Unknown tool: '{tool_name}'. "
-            f"Available tools: {list(ALL_TOOLS.keys())}"
+            f"Available: {list(ALL_TOOLS.keys())}"
         )
     return tool
