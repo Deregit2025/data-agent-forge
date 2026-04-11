@@ -161,5 +161,7 @@ If `row_count` is 0 the query succeeded but returned no results — check filter
   Ratings are ONLY in DuckDB `review` table as `rating` field (1-5).
   To get business ratings: (1) query MongoDB for business_ids by location,
   (2) query DuckDB review table using business_ref = replace('businessid_', 'businessref_', business_id)
-- **yelp location** — city and state are ONLY in MongoDB business `description` field as free text.
-  Use regex: {"$regex": "Indianapolis, Indiana", "$options": "i"}
+- **yelp location** — city and state are in MongoDB business `description` field.
+  State is stored as TWO-LETTER abbreviation not full name.
+  Use: {"$regex": "Indianapolis, IN", "$options": "i"}
+  NOT: {"$regex": "Indianapolis, Indiana"}
