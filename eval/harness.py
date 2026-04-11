@@ -28,6 +28,11 @@ import os
 import sys
 import re
 import json
+
+
+class RateLimitError(RuntimeError):
+    """Raised when the LLM API weekly key limit is exceeded. Aborts the benchmark."""
+    pass
 import time
 import logging
 import argparse
@@ -159,6 +164,13 @@ def run_trial(
         logger.error(f"    Agent error: {error}")
 
     elapsed = round(time.perf_counter() - start, 2)
+
+    # detect hard API rate limit — abort entire benchmark immediately
+    if "Key limit exceeded" in (answer or "") or "Key limit exceeded" in (error or ""):
+        raise RateLimitError(
+            "OpenRouter weekly key limit exceeded. "
+            "Renew at https://openrouter.ai/settings/keys then re-run."
+        )
 
     # score the answer
     score_result = score(answer, query_dir)
@@ -308,7 +320,14 @@ def run_benchmark(
     all_dataset_results = []
 
     for ds_folder in datasets:
-        ds_result, qrs = run_dataset(ds_folder, query_ids, n_trials, use_hints)
+        try:
+            ds_result, qrs = run_dataset(ds_folder, query_ids, n_trials, use_hints)
+        except RateLimitError as e:
+            logger.error(f"\n{'='*60}")
+            logger.error(f"RATE LIMIT HIT — stopping benchmark early.")
+            logger.error(str(e))
+            logger.error(f"{'='*60}\n")
+            break
         all_dataset_results.append(ds_result)
         all_query_results.extend(qrs)
 
