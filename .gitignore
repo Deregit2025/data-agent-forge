@@ -89,3 +89,4 @@ htmlcov/
 *.orig
 tmp/
 temp/
+docs/
