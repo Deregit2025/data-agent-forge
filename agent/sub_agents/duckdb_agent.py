@@ -11,6 +11,7 @@ import requests
 from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
+from agent.self_correction.recovery_router import recover
 
 load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
@@ -53,7 +54,15 @@ def run(
             return result
 
         if attempt < max_retries:
-            sql = _correct_query(tool_name, sql, result["error"], context, schema)
+            fix = recover(
+                failed_query=sql,
+                error=result["error"],
+                db_type="duckdb",   
+                tool_name=tool_name,
+                schema=schema,
+                context=context,
+            )
+            sql = fix.get("fixed_query", "")
             if not sql:
                 break
 
@@ -128,50 +137,6 @@ SCHEMA:
         return sql.strip()
     except Exception:
         return ""
-
-
-def _correct_query(
-    tool_name: str,
-    sql:       str,
-    error:     str,
-    context:   str,
-    schema:    dict,
-) -> str:
-    messages = [
-        {
-            "role": "system",
-            "content": f"""You are a DuckDB SQL debugger.
-
-SCHEMA:
-{json.dumps(schema, indent=2)}
-
-{context}
-
-Return only the corrected SQL query. No markdown, no explanation."""
-        },
-        {
-            "role": "user",
-            "content": f"Failed query:\n{sql}\n\nError:\n{error}\n\nFixed query:"
-        }
-    ]
-
-    try:
-        client   = get_client()
-        response = client.chat.completions.create(
-            model=CLAUDE_MODEL,
-            messages=messages,
-            max_tokens=600,
-            temperature=0.0,
-        )
-        sql = response.choices[0].message.content.strip()
-        if sql.startswith("```"):
-            sql = sql.split("```")[1]
-            if sql.startswith("sql"):
-                sql = sql[3:]
-        return sql.strip()
-    except Exception:
-        return ""
-
 
 def _execute(tool_name: str, sql: str) -> dict:
     try:

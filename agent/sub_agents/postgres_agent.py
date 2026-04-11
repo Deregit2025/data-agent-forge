@@ -17,7 +17,9 @@ MCP_URL        = os.getenv("MCP_URL", "http://127.0.0.1:5000")
 OPENROUTER_KEY = os.getenv("OPENROUTER_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
 CLAUDE_MODEL   = "anthropic/claude-sonnet-4.6"
 
+from agent.self_correction.recovery_router import recover
 from openai import OpenAI
+from agent.self_correction.recovery_router import recover
 
 
 def get_client() -> OpenAI:
@@ -71,9 +73,17 @@ def run(
             return result
 
         if attempt < max_retries:
-            sql = _correct_query(tool_name, sql, result["error"], context, schema)
+            fix = recover(
+                failed_query=sql,
+                error=result["error"],
+                db_type="postgres",   # change to mongodb, sqlite, or duckdb per file
+                tool_name=tool_name,
+                schema=schema,
+                context=context,
+             )
+            sql = fix.get("fixed_query", "")
             if not sql:
-                break
+                 break
 
     result["task"] = task
     return result
@@ -140,50 +150,6 @@ SCHEMA:
         return sql.strip()
     except Exception as e:
         return ""
-
-
-def _correct_query(
-    tool_name: str,
-    sql: str,
-    error: str,
-    context: str,
-    schema: dict,
-) -> str:
-    messages = [
-        {
-            "role": "system",
-            "content": f"""You are a PostgreSQL debugger. Fix the SQL query based on the error.
-
-SCHEMA:
-{json.dumps(schema, indent=2)}
-
-{context}
-
-Return only the corrected SQL query. No explanation, no markdown."""
-        },
-        {
-            "role": "user",
-            "content": f"Failed query:\n{sql}\n\nError:\n{error}\n\nFixed query:"
-        }
-    ]
-
-    try:
-        client   = get_client()
-        response = client.chat.completions.create(
-            model=CLAUDE_MODEL,
-            messages=messages,
-            max_tokens=500,
-            temperature=0.0,
-        )
-        sql = response.choices[0].message.content.strip()
-        if sql.startswith("```"):
-            sql = sql.split("```")[1]
-            if sql.startswith("sql"):
-                sql = sql[3:]
-        return sql.strip()
-    except Exception:
-        return ""
-
 
 def _execute(tool_name: str, sql: str) -> dict:
     try:

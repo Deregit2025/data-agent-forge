@@ -10,6 +10,7 @@ import requests
 from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
+from agent.self_correction.recovery_router import recover
 
 load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
@@ -62,9 +63,18 @@ def run(
             return result
 
         if attempt < max_retries:
-            pipeline = _correct_pipeline(tool_name, pipeline, result["error"], context, schema)
-            if not pipeline:
+            fix = recover(
+                failed_query=sql,
+                error=result["error"],
+                db_type="postgres",   # change to mongodb, sqlite, or duckdb per file
+                tool_name=tool_name,
+                schema=schema,
+                context=context,
+            )
+            sql = fix.get("fixed_query", "")
+            if not sql:
                 break
+
 
     result["task"] = task
     return result
@@ -135,51 +145,6 @@ SCHEMA (inferred from samples):
         json.loads(pipeline)
         return pipeline
     except Exception as e:
-        return ""
-
-
-def _correct_pipeline(
-    tool_name: str,
-    pipeline:  str,
-    error:     str,
-    context:   str,
-    schema:    dict,
-) -> str:
-    messages = [
-        {
-            "role": "system",
-            "content": f"""You are a MongoDB pipeline debugger.
-
-SCHEMA:
-{json.dumps(schema, indent=2)}
-
-{context}
-
-Return only the corrected pipeline as a JSON array. No markdown, no explanation."""
-        },
-        {
-            "role": "user",
-            "content": f"Failed pipeline:\n{pipeline}\n\nError:\n{error}\n\nFixed pipeline:"
-        }
-    ]
-
-    try:
-        client   = get_client()
-        response = client.chat.completions.create(
-            model=CLAUDE_MODEL,
-            messages=messages,
-            max_tokens=600,
-            temperature=0.0,
-        )
-        pipeline = response.choices[0].message.content.strip()
-        if pipeline.startswith("```"):
-            pipeline = pipeline.split("```")[1]
-            if pipeline.startswith("json"):
-                pipeline = pipeline[4:]
-        pipeline = pipeline.strip()
-        json.loads(pipeline)
-        return pipeline
-    except Exception:
         return ""
 
 
