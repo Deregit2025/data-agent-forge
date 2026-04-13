@@ -75,7 +75,7 @@ We defined four failure classes before writing any recovery logic:
 
 Before any retry, the agent classifies the failure. The recovery action is determined by the class. This means the retry is targeted rather than speculative.
 
-**Where I think the risk is:** The failure taxonomy assumes that failures are diagnosable from the error message and query context alone. Across four database types with inconsistent error message formats, that might be harder than it looks. PostgreSQL errors are verbose and structured. MongoDB errors are sometimes cryptic. A failure that looks like a syntax error might actually be a key mismatch that produced a result set that *looks* valid but is wrong — and that won't surface as an error at all.
+**Where we think the risk is:** The failure taxonomy assumes that failures are diagnosable from the error message and query context alone. Across four database types with inconsistent error message formats, that might be harder than it looks. PostgreSQL errors are verbose and structured. MongoDB errors are sometimes cryptic. A failure that looks like a syntax error might actually be a key mismatch that produced a result set that *looks* valid but is wrong — and that won't surface as an error at all.
 
 The silent wrong answer is harder to catch than the loud failure.
 
@@ -99,7 +99,7 @@ Construction phase starts today. Interim deadline is April 14. Final benchmark s
 
 ---
 
-### What I'll post next
+### What we'll post next
 
 When the first queries start running. What the actual failure distribution looks like against the benchmark. Whether the corrections log helps or adds noise. Whether the failure taxonomy holds up or collapses on contact with real error messages.
 
