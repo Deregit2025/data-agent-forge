@@ -454,24 +454,27 @@ def _precompute_joins(tool_results: list[dict]) -> dict:
         return {}
 
     # join: businessid_## ↔ businessref_##
+    # join: businessid_## ↔ businessref_##
     state_reviews = {}
-    state_ratings = {}
+    state_rating_sum = {}
+    state_rating_count = {}
     for bid, state in business_state.items():
         ref = bid.replace("businessid_", "businessref_")
         if ref in ref_stats:
             stats = ref_stats[ref]
-            state_reviews[state] = state_reviews.get(state, 0) + stats["review_count"]
-            if state not in state_ratings:
-                state_ratings[state] = []
-            state_ratings[state].append(stats["avg_rating"])
+            cnt = stats["review_count"]
+            avg = stats["avg_rating"]
+            state_reviews[state] = state_reviews.get(state, 0) + cnt
+            state_rating_sum[state] = state_rating_sum.get(state, 0) + (avg * cnt)
+            state_rating_count[state] = state_rating_count.get(state, 0) + cnt
 
     if not state_reviews:
         return {}
 
     # find top state by review count
     top_state = max(state_reviews, key=lambda s: state_reviews[s])
-    ratings = state_ratings.get(top_state, [])
-    avg_rating = round(sum(ratings) / len(ratings), 4) if ratings else 0
+    total_cnt = state_rating_count.get(top_state, 0)
+    avg_rating = round(state_rating_sum[top_state] / total_cnt, 4) if total_cnt else 0
 
     return {
         "top_state_by_reviews": top_state,
