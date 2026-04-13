@@ -1,0 +1,46 @@
+{
+  "run_id": "20260411_145248",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 1,
+      "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+      "ground_truth": "3.547008547008547",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+          "answer": "The query could not be completed because the database server (MCP server at 127.0.0.1:5000) was unreachable \u2014 both the MongoDB and DuckDB connections failed with \"Connection refused\" errors. No data was retrieved, so the average rating for businesses in Indianapolis, Indiana cannot be determined.",
+          "is_valid": false,
+          "reason": "No matching number (\u2248 3.55) found in LLM output.",
+          "ground_truth": "3.547008547008547",
+          "elapsed_s": 31.31,
+          "root_name": "trial_1_20260411_145248",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

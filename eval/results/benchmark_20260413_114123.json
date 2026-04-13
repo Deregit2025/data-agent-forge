@@ -1,0 +1,208 @@
+{
+  "run_id": "20260413_114123",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 7,
+  "pass_count": 4,
+  "pass_rate": 0.5714,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 7,
+      "pass_count": 4,
+      "any_pass_count": 4,
+      "pass_rate": 0.5714
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 1,
+      "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+      "ground_truth": "3.547008547008547",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+          "answer": "3.547008547008547",
+          "is_valid": true,
+          "reason": "Found matching number: 3.547008547008547 \u2248 3.55",
+          "ground_truth": "3.547008547008547",
+          "elapsed_s": 17.61,
+          "root_name": "trial_1_20260413_114123",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 2,
+      "question": "Which U.S. state has the highest number of reviews, and what is the average rating of businesses in that state?",
+      "ground_truth": "PA,3.699395770392749",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which U.S. state has the highest number of reviews, and what is the average rating of businesses in that state?",
+          "answer": "PA, 3.7634",
+          "is_valid": false,
+          "reason": "Number near 'PA' does not match \u22483.699395770392749",
+          "ground_truth": "PA,3.699395770392749",
+          "elapsed_s": 13.9,
+          "root_name": "trial_1_20260413_114140",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 3,
+      "question": "During 2018, how many businesses that received reviews offered either business parking or bike parking?",
+      "ground_truth": "35",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "During 2018, how many businesses that received reviews offered either business parking or bike parking?",
+          "answer": "35",
+          "is_valid": true,
+          "reason": "Found number: 35",
+          "ground_truth": "35",
+          "elapsed_s": 16.14,
+          "root_name": "trial_1_20260413_114154",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 4,
+      "question": "Which business category has the largest number of businesses that accept credit card payments, and what is its average rating?",
+      "ground_truth": "Restaurant,3.633676092544987",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "Which business category has the largest number of businesses that accept credit card payments, and what is its average rating?",
+          "answer": "I need to find which business category has the largest number of businesses that accept credit cards, then compute the average rating for that category.",
+          "is_valid": false,
+          "reason": "Category 'Restaurant' not found in LLM output.",
+          "ground_truth": "Restaurant,3.633676092544987",
+          "elapsed_s": 19.46,
+          "root_name": "trial_1_20260413_114210",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 5,
+      "question": "Which U.S. state has the highest number of businesses that offer WiFi, and what is the average rating for those businesses?",
+      "ground_truth": "PA,3.48",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 5,
+          "trial_num": 1,
+          "question": "Which U.S. state has the highest number of businesses that offer WiFi, and what is the average rating for those businesses?",
+          "answer": "PA, 3.484",
+          "is_valid": true,
+          "reason": "Found: name='PA', value\u22483.48",
+          "ground_truth": "PA,3.48",
+          "elapsed_s": 28.33,
+          "root_name": "trial_1_20260413_114230",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 6,
+      "question": "Which business received the highest average rating between January 1, 2016 and June 30, 2016, and what category does it belong to? Consider only businesses with at least 5 reviews.",
+      "ground_truth": "Coffee House Too Cafe, Restaurants, Breakfast & Brunch, American (New), Cafes",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 6,
+          "trial_num": 1,
+          "question": "Which business received the highest average rating between January 1, 2016 and June 30, 2016, and what category does it belong to? Consider only businesses with at least 5 reviews.",
+          "answer": "Coffee House Too Cafe, Restaurants, Breakfast & Brunch, American (New), Cafes",
+          "is_valid": true,
+          "reason": "Name and all categories are present.",
+          "ground_truth": "Coffee House Too Cafe, Restaurants, Breakfast & Brunch, American (New), Cafes",
+          "elapsed_s": 15.55,
+          "root_name": "trial_1_20260413_114258",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 7,
+      "question": "Among users who registered on Yelp in 2016, which 5 business categories have received the most total reviews from those users since 2016?",
+      "ground_truth": "Restaurants\nFood\nAmerican (New)\nShopping\nBreakfast & Brunch",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 7,
+          "trial_num": 1,
+          "question": "Among users who registered on Yelp in 2016, which 5 business categories have received the most total reviews from those users since 2016?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing category: restaurants",
+          "ground_truth": "Restaurants\nFood\nAmerican (New)\nShopping\nBreakfast & Brunch",
+          "elapsed_s": 29.81,
+          "root_name": "trial_1_20260413_114314",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

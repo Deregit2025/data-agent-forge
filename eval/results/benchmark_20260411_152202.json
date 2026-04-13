@@ -1,0 +1,10 @@
+{
+  "run_id": "20260411_152202",
+  "n_trials": 5,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 0,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [],
+  "per_query": []
+}

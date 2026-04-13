@@ -1,0 +1,100 @@
+{
+  "run_id": "20260413_085910",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 3,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 3,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 1,
+      "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+      "ground_truth": "3.547008547008547",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No number found in LLM output.",
+          "ground_truth": "3.547008547008547",
+          "elapsed_s": 18.54,
+          "root_name": "trial_1_20260413_085910",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 2,
+      "question": "Which U.S. state has the highest number of reviews, and what is the average rating of businesses in that state?",
+      "ground_truth": "PA,3.699395770392749",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which U.S. state has the highest number of reviews, and what is the average rating of businesses in that state?",
+          "answer": "I need to find the state with the highest number of reviews (not businesses). PA has the most businesses (26), but I need review counts.",
+          "is_valid": false,
+          "reason": "No number found near name: PA",
+          "ground_truth": "PA,3.699395770392749",
+          "elapsed_s": 27.18,
+          "root_name": "trial_1_20260413_085929",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "yelp",
+      "query_id": 3,
+      "question": "During 2018, how many businesses that received reviews offered either business parking or bike parking?",
+      "ground_truth": "35",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "During 2018, how many businesses that received reviews offered either business parking or bike parking?",
+          "answer": "50",
+          "is_valid": false,
+          "reason": "Number 35 not found in LLM output.",
+          "ground_truth": "35",
+          "elapsed_s": 32.98,
+          "root_name": "trial_1_20260413_085956",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,3 +1,11 @@
+
+## 2026-04-13 13:28
+
+Schema introspector run — DAB-description-first approach.
+
+- `dab_agnews.md` — regenerated from DAB descriptions + MCP schemas + 4 queries
+- `dab_bookreview.md` — regenerated from DAB descriptions + MCP schemas + 3 queries
+- `dab_googlelocal.md` — regenerated from DAB descriptions + MCP schemas + 4 queries
 # KB Domain Changelog
 
 ## 2026-04-11

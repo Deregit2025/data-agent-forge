@@ -1,0 +1,114 @@
+{
+  "run_id": "20260413_123752",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 3,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "bookreview",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    },
+    {
+      "dataset": "agnews",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    },
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "bookreview",
+      "query_id": 1,
+      "question": "Which decade of publication (e.g., 1980s) has the highest average rating among decades with at least 10 distinct books that have been rated? Return the decade with the highest average rating.",
+      "ground_truth": "2020",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "bookreview",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Which decade of publication (e.g., 1980s) has the highest average rating among decades with at least 10 distinct books that have been rated? Return the decade with the highest average rating.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Ground truth '2020' not found in LLM output.",
+          "ground_truth": "2020",
+          "elapsed_s": 25.32,
+          "root_name": "trial_1_20260413_123752",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "agnews",
+      "query_id": 1,
+      "question": "What is the title of the sports article whose description has the greatest number of characters?",
+      "ground_truth": "The Rundown",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "agnews",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the title of the sports article whose description has the greatest number of characters?",
+          "answer": "'Trustworthiness' still a goal for Microsoft",
+          "is_valid": false,
+          "reason": "Ground truth 'The Rundown' not found in LLM output: 'Trustworthiness' still a goal for Microsoft",
+          "ground_truth": "The Rundown",
+          "elapsed_s": 17.5,
+          "root_name": "trial_1_20260413_123817",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 1,
+      "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+      "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+          "answer": "City Textile, Widows Peak Salon, Nobel Textile Co, San Soo Dang, Nova Fabrics",
+          "is_valid": false,
+          "reason": "Name out of order: City Textile",
+          "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+          "elapsed_s": 12.03,
+          "root_name": "trial_1_20260413_123835",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "run_id": "20260411_145553",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 1,
+      "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+      "ground_truth": "3.547008547008547",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+          "answer": "Based on the 5 Indianapolis businesses with reviews, the average rating across all their reviews is approximately **3.87 stars** (weighted by review count: [(5.0\u00d74) + (4.167\u00d76) + (3.833\u00d718) + (3.556\u00d79) + (3.333\u00d76)] / 43 total reviews \u2248 3.87 out of 5).",
+          "is_valid": false,
+          "reason": "No matching number (\u2248 3.55) found in LLM output.",
+          "ground_truth": "3.547008547008547",
+          "elapsed_s": 14.41,
+          "root_name": "trial_1_20260411_145553",
+          "error": null
+        }
+      ]
+    }
+  ]
+}
