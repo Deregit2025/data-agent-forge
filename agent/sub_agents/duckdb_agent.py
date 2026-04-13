@@ -17,7 +17,7 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 MCP_URL        = os.getenv("MCP_URL", "http://127.0.0.1:5000")
 OPENROUTER_KEY = os.getenv("OPENROUTER_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
-CLAUDE_MODEL   = "anthropic/claude-haiku-4-5-20251001"  # Haiku: fast SQL generation
+CLAUDE_MODEL   = "anthropic/claude-3-5-haiku"  # Haiku: fast SQL generation
 
 
 def get_client() -> OpenAI:
