@@ -328,30 +328,37 @@ def synthesize_node(state: AgentState) -> AgentState:
             "tool":    r.get("tool_name"),
             "purpose": r.get("step_purpose", ""),
             "rows":    r.get("row_count", 0),
-            "data":    r.get("result", [])[:10],  # first 10 rows
+            "data":    r.get("result", [])[:50],  # increased from 10 to 50 rows
             "error":   r.get("error"),
         })
 
     messages = [
         {
             "role": "system",
-            "content": f"""You are a data extraction agent. Output ONLY the bare answer value — nothing else.
+            "content": """You are a data extraction machine. Your ONLY job is to output the bare answer value.
 
-{state['context']}
+ABSOLUTE RULES — any violation means failure:
+- Output ONE line only. Nothing else.
+- NO sentences. NO reasoning. NO explanation. NO markdown. NO code blocks.
+- NO "Based on...", NO "The answer is...", NO "Looking at...", NO "I need to..."
+- NO asterisks, NO bullet points, NO headers.
+- Just the raw value on a single line.
 
-CRITICAL OUTPUT RULES:
-- Output ONLY the bare value: a number, a name, a date, or a short list
-- NO sentences. NO explanation. NO units unless part of the value.
-- Numbers: output just the number (e.g. "3.55" or "42")
-- Counts: output just the integer (e.g. "1337")
-- Names/categories: output just the name (e.g. "Restaurants")
-- Lists: comma-separated (e.g. "Alice, Bob, Charlie")
-- NEVER write "The answer is..." or "Based on the data..." — just the value
-- If data is empty or errored: output "N/A"
+Output format by question type:
+- Single number → 3.55
+- Count → 49
+- State name → PA
+- Business name → Orangetheory Fitness
+- Category → Restaurants
+- Two values → PA, 3.55
+- Top N list → Restaurants, Beauty & Spas, Food, Shopping, Health & Medical
+- Cannot determine → N/A
 
-AVERAGING RULE — when computing an average across multiple businesses:
-- Use a single FLAT AVG over ALL review rows for ALL matched businesses combined
-- Do NOT average per-business averages — compute AVG(rating) over the full joined set"""
+AVERAGING RULE:
+- Compute AVG(rating) as a single FLAT average over ALL review rows combined
+- Do NOT average per-business averages
+
+ONE LINE. BARE VALUE. NOTHING ELSE."""
         },
         {
             "role": "user",
@@ -360,13 +367,15 @@ AVERAGING RULE — when computing an average across multiple businesses:
 Query results:
 {json.dumps(results_summary, indent=2)}
 
-Output the bare answer value only."""
+Output the bare answer value only. One line. No explanation."""
         }
     ]
 
     try:
-        answer = llm_call(messages, max_tokens=500)
-        state["answer"] = answer.strip()
+        answer = llm_call(messages, max_tokens=100)  # reduced from 500 — forces brevity
+        # post-process: take only the first non-empty line
+        lines = [l.strip() for l in answer.strip().splitlines() if l.strip()]
+        state["answer"] = lines[0] if lines else "N/A"
     except Exception as e:
         state["answer"] = f"Synthesis failed: {e}"
 
