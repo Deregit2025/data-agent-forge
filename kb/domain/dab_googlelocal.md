@@ -109,3 +109,28 @@ Full description: Contains review information from Google Maps collected up to S
 ### Year Filtering (Query 4)
 - `time` in the review table is TEXT. Determine format by sampling: if values look like 13-digit numbers (Unix ms), convert with `datetime(CAST(time AS INTEGER)/1000, 'unixepoch')` and extract year. If values are formatted strings, use `time LIKE '2019%'`.
 - For 2019 filtering in SQLite: `strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch')) = '
+
+## 6. Query Patterns
+
+### Query 1: Top 5 businesses in Los Angeles by average rating (descending)
+
+**Step 1 — PostgreSQL** (`query_postgres_googlelocal`):
+```sql
+SELECT gmap_id, name FROM business_description 
+WHERE description ILIKE '%Los Angeles%' 
+OR description ILIKE '%Los Angeles, CA%'
+LIMIT 1000
+```
+Returns ~7 businesses. This is the complete LA dataset — do not expect more.
+
+**Step 2 — SQLite** (`query_sqlite_googlelocal_review`):
+```sql
+SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as review_count 
+FROM review 
+GROUP BY gmap_id
+```
+**NEVER add a subquery or IN clause here — get ALL businesses, join in synthesize.**
+
+**Synthesize:** Join on gmap_id, keep only the ~7 LA businesses, sort by avg_rating DESC, return top 5 names comma-separated in descending order.
+
+**Answer format:** `Business1, Business2, Business3, Business4, Business5`
