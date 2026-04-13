@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# Virtual environments
+venv/
+env/
+.env
+.venv
+ENV/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*
+!.env.example
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+
+# Logs
+*.log
+logs/
+*.jsonl
+!eval/score_log.jsonl
+!kb/corrections/corrections_log.md
+
+# DAB run outputs
+query_*/query*/logs/
+results/dab_results.json
+results/leaderboard_screenshot.png
+results/baseline_run.json
+
+# Node / React
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+ui/build/
+ui/dist/
+.npm
+
+# MCP Toolbox binary
+mcp/toolbox
+
+# Docker
+.docker/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Temp files
+*.tmp
+*.bak
+*.orig
+tmp/
+temp/
+docs/

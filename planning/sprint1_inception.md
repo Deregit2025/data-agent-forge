@@ -1,0 +1,107 @@
+AI-DLC INCEPTION DOCUMENT
+Project: Oracle Forge Data Agent
+Sprint: Week 8–9 — Oracle Forge
+Role: Driver
+Current Phase: Infrastructure Setup (Early Inception)
+
+1. Press Release 
+The Oracle Forge team is building a multi-database AI Data Agent capable of answering natural language questions across heterogeneous enterprise datasets. In this sprint, the team establishes the foundational infrastructure required for reliable agent development, including shared server setup, database environments, MCP tooling, and execution sandbox preparation. This infrastructure enables future construction of an intelligent data agent that can reason across multiple database systems while maintaining traceability, validation, and evaluation readiness.
+
+2. Current Project State (Important Adjustment)
+What exists today
+•	Repository structure created
+•	Project folders organized
+•	Dependencies installed
+•	Initial infrastructure setup started
+•	Team server environment being prepared
+What is being built next
+•	Database infrastructure configuration
+•	MCP Toolbox connection layer
+•	Sandbox execution environment
+•	Dataset loading (DataAgentBench)
+What does NOT exist yet
+•	Running agent
+•	Query reasoning system
+•	Benchmark results
+•	Context engineering layers
+
+3. Honest FAQ — User View
+❓ What are we building?
+An AI agent that lets users query complex enterprise databases using natural language.
+❓ Can users use it now?
+No. The team is currently building infrastructure required before agent development begins.
+❓ Why start with infrastructure?
+Reliable data agents depend more on correct environment setup than model prompting. Infrastructure mistakes later become system failures.
+
+4. Honest FAQ — Technical View
+❓ What is the hardest part right now?
+Establishing a stable multi-database environment accessible through a unified tool interface.
+❓ What risks exist at this stage?
+•	Database connectivity issues
+•	Tool configuration mismatch
+•	Environment inconsistency across team members
+❓ Why not start coding the agent immediately?
+AI-DLC requires validated infrastructure before construction to prevent building on unstable foundations.
+
+5. Key Decisions (Infrastructure Stage)
+1.	Infrastructure-First Strategy
+→ Build databases, tooling, and sandbox before agent logic.
+2.	Shared Team Server
+→ Centralized environment ensures reproducibility and collaborative mob sessions.
+3.	MCP Toolbox Integration
+→ Standard interface for all databases instead of custom drivers.
+
+6. Definition of Done — Infrastructure Phase
+The Inception → Construction gate is approved when:
+1.	Shared server accessible by all team members
+2.	Repository structure finalized
+3.	Project dependencies installed successfully
+4.	DataAgentBench repository cloned
+5.	At least one database successfully loaded
+6.	MCP Toolbox running locally
+7.	Sandbox execution environment configured
+8.	Team approves readiness for agent construction
+
+7. Scope of This Sprint Stage
+Included Now
+•	Infrastructure setup
+•	Database configuration
+•	Tool installation
+•	Environment validation
+Later Phases
+•	Agent reasoning system
+•	Context engineering
+•	Evaluation harness
+•	Adversarial testing
+
+8. Success Metrics (Current Stage)
+Metric	Target
+Environment Setup	Fully reproducible
+Database Connectivity	≥ 1 DB operational
+Team Access	All members connected
+Tool Availability	MCP Toolbox running
+
+9. Driver Responsibilities (Your Actual Work Now)
+As Driver you:
+•	Lead infrastructure execution during mob sessions
+•	Configure environment with team decisions
+•	Validate installations live with team
+•	Ensure no AI-DLC phase skipping
+•	Prepare system for Construction phase
+Your job right now is not building intelligence — it is making intelligence possible.
+
+10. Risks & Mitigation
+Risk	Mitigation
+Broken environment later	Infrastructure-first approach
+Hidden dependency issues	Live mob validation
+Tool incompatibility	MCP standardization
+
+11. Approval Gate
+Team confirms:
+✅ Infrastructure direction understood
+✅ Definition of Done agreed
+✅ Ready to proceed toward Construction phase
+Decision:
+☐ Approved → Continue Infrastructure Setup
+☐ Needs Revision
+

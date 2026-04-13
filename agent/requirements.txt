@@ -1,0 +1,38 @@
+# Oracle Forge — Python Dependencies
+# Install with: pip install -r agent/requirements.txt
+
+# ── LLM / API ─────────────────────────────────────────────────────────────────
+openai>=1.30.0              # OpenAI-compatible client (used with OpenRouter)
+anthropic>=0.28.0           # Anthropic SDK (optional direct usage)
+
+# ── Agent orchestration ───────────────────────────────────────────────────────
+langgraph>=0.1.0            # LangGraph for conductor state machine
+langchain-core>=0.2.0       # LangChain core primitives
+
+# ── Database drivers ──────────────────────────────────────────────────────────
+psycopg2-binary>=2.9.9      # PostgreSQL
+pymongo>=4.7.2              # MongoDB
+duckdb>=0.10.3              # DuckDB analytical engine
+# SQLite is built into Python stdlib — no extra package needed
+
+# ── MCP server ────────────────────────────────────────────────────────────────
+fastapi>=0.111.0            # MCP server framework
+uvicorn[standard]>=0.30.0   # ASGI server for FastAPI
+httpx>=0.27.0               # Async HTTP (FastAPI testing)
+requests>=2.31.0            # Sync HTTP for sub-agent MCP calls
+
+# ── Config / env ──────────────────────────────────────────────────────────────
+python-dotenv>=1.0.1        # Load .env files
+pyyaml>=6.0.1               # YAML config parsing
+
+# ── Data handling ─────────────────────────────────────────────────────────────
+pandas>=2.2.0               # DataFrame ops for result comparison
+numpy>=1.26.0               # Numeric operations
+
+# ── Evaluation / testing ──────────────────────────────────────────────────────
+pytest>=8.2.0               # Test runner
+pytest-mock>=3.14.0         # Mocking utilities
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+tqdm>=4.66.0                # Progress bars for benchmark runs
+colorlog>=6.8.2             # Colored logging output
