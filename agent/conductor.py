@@ -441,39 +441,37 @@ def _precompute_joins(tool_results: list[dict]) -> dict:
         return {}
 
     # build businessref → {review_count, avg_rating} from DuckDB
+    # build businessref → {review_count, rating_sum} from DuckDB
     ref_stats = {}
     for dr in duckdb_results:
         for row in dr.get("result", []):
             ref = row.get("business_ref", "")
             cnt = row.get("review_count", 0)
-            avg = row.get("avg_rating", 0)
+            # use rating_sum if available, else fall back to avg_rating * count
+            if "rating_sum" in row:
+                rsum = row.get("rating_sum", 0)
+            else:
+                rsum = row.get("avg_rating", 0) * cnt
             if ref:
-                ref_stats[ref] = {"review_count": cnt, "avg_rating": avg}
+                ref_stats[ref] = {"review_count": cnt, "rating_sum": rsum}
 
-    if not ref_stats:
-        return {}
-
-    # join: businessid_## ↔ businessref_##
     # join: businessid_## ↔ businessref_##
     state_reviews = {}
     state_rating_sum = {}
-    state_rating_count = {}
     for bid, state in business_state.items():
         ref = bid.replace("businessid_", "businessref_")
         if ref in ref_stats:
             stats = ref_stats[ref]
             cnt = stats["review_count"]
-            avg = stats["avg_rating"]
+            rsum = stats["rating_sum"]
             state_reviews[state] = state_reviews.get(state, 0) + cnt
-            state_rating_sum[state] = state_rating_sum.get(state, 0) + (avg * cnt)
-            state_rating_count[state] = state_rating_count.get(state, 0) + cnt
+            state_rating_sum[state] = state_rating_sum.get(state, 0) + rsum
 
     if not state_reviews:
         return {}
 
-    # find top state by review count
     top_state = max(state_reviews, key=lambda s: state_reviews[s])
-    total_cnt = state_rating_count.get(top_state, 0)
+    total_cnt = state_reviews.get(top_state, 0)
     avg_rating = round(state_rating_sum[top_state] / total_cnt, 4) if total_cnt else 0
 
     return {
