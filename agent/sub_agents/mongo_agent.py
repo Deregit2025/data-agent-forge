@@ -98,9 +98,33 @@ def _generate_pipeline(
 ) -> str:
     prior_text = ""
     if prior_results:
-        prior_text = "\n\nPRIOR RESULTS FROM OTHER DATABASES:\n"
+        prior_text = "\n\nPRIOR RESULTS FROM OTHER DATABASES (use for cross-database joins):\n"
         for pr in prior_results:
-            prior_text += f"- {pr.get('tool_name', '')}: {json.dumps(pr.get('result', [])[:5], indent=2)}\n"
+            tool    = pr.get("tool_name", "")
+            rows    = pr.get("result", [])
+            n_total = pr.get("row_count", len(rows))
+
+            # extract all ID/ref values — never truncate
+            id_fields = ["business_ref", "business_id", "user_id", "book_id",
+                         "gmap_id", "_id", "repo_id", "package_name", "patent_id"]
+            extracted = {}
+            for field in id_fields:
+                vals = [r[field] for r in rows if field in r]
+                if vals:
+                    extracted[field] = vals
+
+            if extracted:
+                prior_text += f"\n- {tool} ({n_total} rows total):\n"
+                for field, vals in extracted.items():
+                    # convert businessref_## → businessid_## for MongoDB $in
+                    if field == "business_ref":
+                        converted = [v.replace("businessref_", "businessid_") for v in vals]
+                        prior_text += f"  All business_id values for $in ({len(converted)}): {converted}\n"
+                    else:
+                        prior_text += f"  All {field} values ({len(vals)}): {vals}\n"
+                prior_text += f"  Sample rows: {json.dumps(rows[:3], indent=2)}\n"
+            else:
+                prior_text += f"\n- {tool} ({n_total} rows): {json.dumps(rows[:50], indent=2)}\n"
 
     messages = [
         {
@@ -109,11 +133,13 @@ def _generate_pipeline(
 
 RULES:
 - Return ONLY a valid JSON array of pipeline stages
-- Use $match, $group, $project, $sort, $limit, $unwind as needed
+- Use $match, $group, $project, $sort, $limit, $count, $unwind as needed
 - No markdown, no explanation, no backticks
 - The pipeline must be parseable by json.loads()
-- For location filtering: use {{"$regex": "city, state", "$options": "i"}} on the description field
+- For location filtering: use {{"$regex": "in City, ST", "$options": "i"}} on description field
+- For intersections: use {{"$match": {{"business_id": {{"$in": [...]}}}}}} with ALL IDs from prior results
 - Do NOT use $out or $merge stages
+- For counting: use [{{"$match": ...}}, {{"$count": "total"}}] — returns single row with count
 
 SCHEMA (inferred from samples):
 {json.dumps(schema, indent=2)}
@@ -132,16 +158,20 @@ SCHEMA (inferred from samples):
         response = client.chat.completions.create(
             model=CLAUDE_MODEL,
             messages=messages,
-            max_tokens=600,
+            max_tokens=800,
             temperature=0.0,
         )
         pipeline = response.choices[0].message.content.strip()
-        if pipeline.startswith("```"):
-            pipeline = pipeline.split("```")[1]
-            if pipeline.startswith("json"):
-                pipeline = pipeline[4:]
+        if "```" in pipeline:
+            parts = pipeline.split("```")
+            for part in parts:
+                part = part.strip()
+                if part.startswith("json"):
+                    part = part[4:].strip()
+                if part.startswith("["):
+                    pipeline = part
+                    break
         pipeline = pipeline.strip()
-        # validate it is parseable
         json.loads(pipeline)
         return pipeline
     except Exception as e:
