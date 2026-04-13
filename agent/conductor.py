@@ -353,80 +353,133 @@ Provide a corrected query. Respond with JSON only:
 
 
 def synthesize_node(state: AgentState) -> AgentState:
-    """
-    Synthesize all tool results into a final answer.
-    """
     results_summary = []
     for r in state["tool_results"]:
         results_summary.append({
             "tool":    r.get("tool_name"),
             "purpose": r.get("step_purpose", ""),
             "rows":    r.get("row_count", 0),
-            "data":    r.get("result", [])[:50],  # increased from 10 to 50 rows
+            "data":    r.get("result", [])[:50],
             "error":   r.get("error"),
         })
+
+    # ── Python pre-computation for cross-DB joins ─────────────────────────────
+    pre_computed = _precompute_joins(state["tool_results"])
 
     messages = [
         {
             "role": "system",
-            "content": """You are a data extraction machine. Your ONLY job is to output the bare answer value.
+            "content": """You are a data extraction machine. Output ONLY the bare answer — nothing else.
 
-ABSOLUTE RULES — any violation means failure:
-- Output ONE line only. Nothing else.
-- NO sentences. NO reasoning. NO explanation. NO markdown. NO code blocks.
-- NO "Based on...", NO "The answer is...", NO "Looking at...", NO "I need to..."
-- NO asterisks, NO bullet points, NO headers.
-- Just the raw value on a single line.
-
-Output format by question type:
-- Single number → 3.55
-- Count → 49
-- State name → PA
-- Business name → Orangetheory Fitness
-- Category → Restaurants
-- Two values → PA, 3.55
-- Top N list → Restaurants, Beauty & Spas, Food, Shopping, Health & Medical
-- Cannot determine → N/A
-
-AVERAGING RULE:
-- Compute AVG(rating) as a single FLAT average over ALL review rows combined
-- Do NOT average per-business averages
+ABSOLUTE RULES:
+- ONE line only. Just the value. No reasoning. No explanation. No markdown.
+- NO "Based on...", NO "I need to...", NO "The answer is..."
+- Numbers: just the number (e.g. 3.55)
+- State + number: e.g. PA, 3.699
+- Name: just the name
+- List: comma-separated
+- Cannot determine: N/A
 
 JOINING RULE — when you have MongoDB businesses + DuckDB reviews:
-- MongoDB has business_id in format businessid_##
-- DuckDB has business_ref in format businessref_##
 - Join by replacing prefix: businessid_49 matches businessref_49
-- Extract state from MongoDB description field using pattern "in [City], [ST],"
-- Group by state, sum review_count, find the state with MAX total reviews
-- For that state, compute weighted AVG rating across all its businesses
-- Output format: STATE_CODE, avg_rating (e.g. "PA, 3.699")
+- Extract state from MongoDB description: pattern "in [City], [ST],"
+- Group by state, sum review_count, find MAX state
+- Output: STATE, avg_rating
 
-ONE LINE. BARE VALUE. NOTHING ELSE."""
+AVERAGING RULE: use flat AVG over all review rows — never average per-business averages."""
         },
         {
             "role": "user",
             "content": f"""Question: {state['question']}
 
-Query results:
+Pre-computed joins (use these directly if available):
+{json.dumps(pre_computed, indent=2)}
+
+Raw query results:
 {json.dumps(results_summary, indent=2)}
 
-Output the bare answer value only. One line. No explanation."""
+Output the bare answer value only. One line."""
         }
     ]
 
     try:
-        answer = llm_call(messages, max_tokens=300)  # reduced from 500 — forces brevity
-        # post-process: take only the first non-empty line
+        answer = llm_call(messages, max_tokens=50)
         lines = [l.strip() for l in answer.strip().splitlines() if l.strip()]
         state["answer"] = lines[0] if lines else "N/A"
     except Exception as e:
         state["answer"] = f"Synthesis failed: {e}"
 
-    state["trace"].append({
-        "node":   "synthesize",
-        "answer": state["answer"],
-    })
+    state["trace"].append({"node": "synthesize", "answer": state["answer"]})
     return state
+
+
+def _precompute_joins(tool_results: list[dict]) -> dict:
+    """
+    Pre-compute cross-DB joins in Python so the LLM only needs to read the answer.
+    Handles MongoDB business + DuckDB review joins for state-level aggregations.
+    """
+    import re
+
+    mongo_results = [r for r in tool_results if r.get("db_type") == "mongodb"]
+    duckdb_results = [r for r in tool_results if r.get("db_type") == "duckdb"]
+
+    if not mongo_results or not duckdb_results:
+        return {}
+
+    # build business_id → state map from MongoDB descriptions
+    business_state = {}
+    for mr in mongo_results:
+        for row in mr.get("result", []):
+            bid = row.get("business_id", "")
+            desc = row.get("description", "")
+            if bid and desc:
+                m = re.search(r'\bin ([A-Za-z\s]+),\s*([A-Z]{2})[,\.]', desc)
+                if m:
+                    business_state[bid] = m.group(2)
+
+    if not business_state:
+        return {}
+
+    # build businessref → {review_count, avg_rating} from DuckDB
+    ref_stats = {}
+    for dr in duckdb_results:
+        for row in dr.get("result", []):
+            ref = row.get("business_ref", "")
+            cnt = row.get("review_count", 0)
+            avg = row.get("avg_rating", 0)
+            if ref:
+                ref_stats[ref] = {"review_count": cnt, "avg_rating": avg}
+
+    if not ref_stats:
+        return {}
+
+    # join: businessid_## ↔ businessref_##
+    state_reviews = {}
+    state_ratings = {}
+    for bid, state in business_state.items():
+        ref = bid.replace("businessid_", "businessref_")
+        if ref in ref_stats:
+            stats = ref_stats[ref]
+            state_reviews[state] = state_reviews.get(state, 0) + stats["review_count"]
+            if state not in state_ratings:
+                state_ratings[state] = []
+            state_ratings[state].append(stats["avg_rating"])
+
+    if not state_reviews:
+        return {}
+
+    # find top state by review count
+    top_state = max(state_reviews, key=lambda s: state_reviews[s])
+    ratings = state_ratings.get(top_state, [])
+    avg_rating = round(sum(ratings) / len(ratings), 4) if ratings else 0
+
+    return {
+        "top_state_by_reviews": top_state,
+        "total_reviews_in_state": state_reviews[top_state],
+        "avg_rating_in_state": avg_rating,
+        "all_states": {s: {"reviews": state_reviews[s]} for s in sorted(state_reviews, key=lambda x: state_reviews[x], reverse=True)},
+    }
+
 
 
 # ── routing ───────────────────────────────────────────────────────────────────
