@@ -1,6 +1,6 @@
 # We're Trying to Beat Gemini 3 Pro on a Public Benchmark. Here's the Architecture We're Betting On — Before We Know If It Works.
 
-*Author: Rafia Kedir & Nuhamin Alemayehu— Team Gemini / Oracle Forge*
+*Author: Rafia Kedir  & Nuhamin Alemayehu— Team Gemini / Oracle Forge*
 
 ---
 
@@ -75,7 +75,7 @@ We defined four failure classes before writing any recovery logic:
 
 Before any retry, the agent classifies the failure. The recovery action is determined by the class. This means the retry is targeted rather than speculative.
 
-**Where we think the risk is:** The failure taxonomy assumes that failures are diagnosable from the error message and query context alone. Across four database types with inconsistent error message formats, that might be harder than it looks. PostgreSQL errors are verbose and structured. MongoDB errors are sometimes cryptic. A failure that looks like a syntax error might actually be a key mismatch that produced a result set that *looks* valid but is wrong — and that won't surface as an error at all.
+**Where I think the risk is:** The failure taxonomy assumes that failures are diagnosable from the error message and query context alone. Across four database types with inconsistent error message formats, that might be harder than it looks. PostgreSQL errors are verbose and structured. MongoDB errors are sometimes cryptic. A failure that looks like a syntax error might actually be a key mismatch that produced a result set that *looks* valid but is wrong — and that won't surface as an error at all.
 
 The silent wrong answer is harder to catch than the loud failure.
 
