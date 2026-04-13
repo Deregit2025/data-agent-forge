@@ -38,8 +38,24 @@ Contains daily OHLC price records per stock index.
 ---
 
 ## 3. Join Keys
-- `index_info.Exchange` links conceptually to `index_trade.Index`, but these are **not directly joinable by value** — `Exchange` is a full name while `Index` is a short code (e.g., `"Hong Kong Stock Exchange"` ↔ `"HSI"`). A mapping table or manual lookup is required.
+- `index_info.Exchange` links conceptually to `index_trade.Index`, but these are **not directly joinable by value** — `Exchange` is a full name while `Index` is a short code. Use the mapping below for lookups.
 - `index_info.Currency` can be used alongside `index_trade.CloseUSD` to understand currency conversion context.
+
+### Exchange → Index Code Mapping
+| Exchange (full name) | Index code | Currency |
+|---|---|---|
+| `New York Stock Exchange` | `NYA` | USD |
+| `NASDAQ` | `IXIC` | USD |
+| `Tokyo Stock Exchange` | `N225` | JPY |
+| `Hong Kong Stock Exchange` | `HSI` | HKD |
+| `Shanghai Stock Exchange` | `000001.SS` | CNY |
+| `London Stock Exchange` | `FTSE` | GBP |
+| `Deutsche Börse` | `GDAXI` | EUR |
+| `Euronext Paris` | `FCHI` | EUR |
+| `Australian Securities Exchange` | `AXJO` | AUD |
+| `Bombay Stock Exchange` | `BSESN` | INR |
+
+> These are known mappings. If a query names an exchange not in this table, query `index_info` for its Currency and look for matching `index_trade.Index` values.
 
 ---
 
@@ -47,6 +63,9 @@ Contains daily OHLC price records per stock index.
 - **OHLC**: Open, High, Low, Close — standard daily price metrics
 - **Adj Close**: Adjusted for corporate actions (splits, dividends)
 - **CloseUSD**: Normalized close price in US dollars for cross-index comparison
+- **Up day**: A trading day where `Close > Open`
+- **Down day**: A trading day where `Close < Open`
+- **Intraday volatility**: `(High - Low) / Open` for a single day; average volatility = `AVG((High - Low) / Open)` over a date range
 
 ---
 

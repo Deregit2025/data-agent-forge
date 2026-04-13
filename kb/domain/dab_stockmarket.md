@@ -16,7 +16,7 @@ Contains static reference/metadata for each listed security.
 | `Symbol` | TEXT | Ticker symbol (e.g., `AAAU`, `SPY`) |
 | `Nasdaq Traded` | TEXT | `Y`/`N` — whether traded on Nasdaq |
 | `Listing Exchange` | TEXT | Exchange code: `Q`=Nasdaq, `P`=NYSE Arca, `N`=NYSE, `A`=NYSE American |
-| `Market Category` | TEXT | Nasdaq tier (e.g., `G`=Global Select) or `"Not applicable or not NASDAQ-listed"` |
+| `Market Category` | TEXT | Nasdaq tier code or `"Not applicable or not NASDAQ-listed"` — see Domain Terms for code mapping |
 | `ETF` | TEXT | `Y`/`N` — whether the security is an ETF |
 | `Round Lot Size` | REAL | Standard lot size, typically `100.0` |
 | `Test Issue` | TEXT | `Y`/`N` — test/dummy listing flag |
@@ -54,8 +54,14 @@ Each table contains daily trading data with identical schema:
 - **ETF** — Exchange-Traded Fund; `ETF = 'Y'` in stockinfo
 - **Adj Close** — Adjusted close price, corrected for corporate actions
 - **OHLCV** — Open, High, Low, Close, Volume
-- **Listing Exchange codes:** `Q`=Nasdaq, `P`=NYSE Arca, `N`=NYSE, `A`=NYSE American
-- **Market Category `G`** — Nasdaq Global Select Market
+- **Listing Exchange codes:** `Q`=Nasdaq, `P`=NYSE Arca, `N`=NYSE, `A`=NYSE American, `Z`=BATS, `V`=IEXG
+- **Market Category codes:**
+  - `G` = NASDAQ Global Market
+  - `Q` = NASDAQ Global Select Market
+  - `S` = NASDAQ Capital Market
+  - `"Not applicable or not NASDAQ-listed"` = security listed on another exchange (NYSE, BATS, etc.)
+- **Financial Status codes:** `N`=Normal; ETFs typically show NULL/blank
+- **Adj Close** — Adjusted close price, corrected for stock splits and dividends
 
 ---
 
