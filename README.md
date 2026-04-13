@@ -9,7 +9,7 @@ Oracle Forge is a production-grade AI data agent that answers natural language q
 | Name | Role |
 |---|---|
 | Dereje Derib | Driver — infrastructure, agent implementation, evaluation harness |
-| eyorata | Driver — sub-agent development, self-correction loop |
+| Eyoel Mekonnen | Driver — sub-agent development, self-correction loop |
 
 ---
 

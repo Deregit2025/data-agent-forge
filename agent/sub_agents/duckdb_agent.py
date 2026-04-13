@@ -127,8 +127,10 @@ RULES:
 - Use only SELECT statements
 - Return only the SQL query, nothing else
 - No markdown, no explanation, no backticks
-- For IN clauses with many values use: WHERE col IN (SELECT val FROM ...)
+- For IN clauses with many values: list all values as literals in a single IN (...) clause
 - For cross-database joins use prior results to build IN lists
+- AVERAGING RULE: when computing an average (e.g. AVG rating across businesses), use a SINGLE flat AVG over ALL rows — do NOT use GROUP BY. Example: SELECT AVG(rating) FROM review WHERE business_ref IN ('businessref_3', 'businessref_7', ...) — one row result only
+- PREFIX RULE for yelp: prior results have business_id values in format businessid_## — convert to businessref_## before using in IN clause. Example: 'businessid_49' becomes 'businessref_49'
 {stockmarket_note}
 SCHEMA:
 {json.dumps(schema, indent=2)}
