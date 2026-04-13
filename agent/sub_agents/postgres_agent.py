@@ -15,11 +15,10 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 MCP_URL        = os.getenv("MCP_URL", "http://127.0.0.1:5000")
 OPENROUTER_KEY = os.getenv("OPENROUTER_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
-CLAUDE_MODEL   = "anthropic/claude-sonnet-4.6"
+CLAUDE_MODEL   = "anthropic/claude-haiku-4.5-20251001"  # Haiku: fast SQL generation
 
 from agent.self_correction.recovery_router import recover
 from openai import OpenAI
-from agent.self_correction.recovery_router import recover
 
 
 def get_client() -> OpenAI:
@@ -106,9 +105,29 @@ def _generate_query(
 ) -> str:
     prior_text = ""
     if prior_results:
-        prior_text = "\n\nPRIOR RESULTS FROM OTHER DATABASES:\n"
+        prior_text = "\n\nPRIOR RESULTS FROM OTHER DATABASES (use for cross-database joins):\n"
         for pr in prior_results:
-            prior_text += f"- {pr.get('tool_name', '')}: {json.dumps(pr.get('result', [])[:5], indent=2)}\n"
+            tool    = pr.get("tool_name", "")
+            rows    = pr.get("result", [])
+            n_total = pr.get("row_count", len(rows))
+
+            # Extract every ID value so the IN clause is complete — never truncate IDs
+            id_fields = ["business_id", "user_id", "book_id", "gmap_id", "_id",
+                         "repo_id", "package_name", "patent_id", "ParticipantBarcode",
+                         "article_id", "track_id", "Id", "id"]
+            extracted = {}
+            for field in id_fields:
+                vals = [r[field] for r in rows if field in r]
+                if vals:
+                    extracted[field] = vals
+
+            if extracted:
+                prior_text += f"\n- {tool} ({n_total} rows total):\n"
+                for field, vals in extracted.items():
+                    prior_text += f"  All {field} values ({len(vals)}): {vals}\n"
+                prior_text += f"  Sample rows: {json.dumps(rows[:3], indent=2)}\n"
+            else:
+                prior_text += f"\n- {tool} ({n_total} rows): {json.dumps(rows[:50], indent=2)}\n"
 
     messages = [
         {

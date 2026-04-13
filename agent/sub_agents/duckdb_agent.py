@@ -17,7 +17,7 @@ load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 MCP_URL        = os.getenv("MCP_URL", "http://127.0.0.1:5000")
 OPENROUTER_KEY = os.getenv("OPENROUTER_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
-CLAUDE_MODEL   = "anthropic/claude-sonnet-4.6"
+CLAUDE_MODEL   = "anthropic/claude-haiku-4.5-20251001"  # Haiku: fast SQL generation
 
 
 def get_client() -> OpenAI:
@@ -72,7 +72,7 @@ def run(
 
 def _get_schema(tool_name: str) -> dict:
     try:
-        r = requests.get(f"{MCP_URL}/schema/{tool_name}", timeout=60)
+        r = requests.get(f"{MCP_URL}/schema/{tool_name}", timeout=15)
         return r.json().get("schema", {})
     except Exception:
         return {}
@@ -117,6 +117,14 @@ def _generate_query(
     if "stockmarket_trade" in tool_name:
         stockmarket_note = "\nSPECIAL: stockmarket_trade has one table per ticker symbol. Query by ticker name directly e.g. SELECT * FROM AAPL LIMIT 5\n"
 
+    # yelp-specific rules
+    yelp_note = ""
+    if "yelp" in tool_name:
+        yelp_note = """
+- AVERAGING RULE (yelp): when computing an average rating across businesses, use a SINGLE flat AVG over ALL rows — do NOT use GROUP BY per business. Example: SELECT AVG(rating) FROM review WHERE business_ref IN ('businessref_3', ...) — one row result only
+- PREFIX RULE (yelp): prior results have business_id values in format businessid_## — convert to businessref_## before using in IN clause. Example: 'businessid_49' becomes 'businessref_49'
+"""
+
     messages = [
         {
             "role": "system",
@@ -129,9 +137,7 @@ RULES:
 - No markdown, no explanation, no backticks
 - For IN clauses with many values: list all values as literals in a single IN (...) clause
 - For cross-database joins use prior results to build IN lists
-- AVERAGING RULE: when computing an average (e.g. AVG rating across businesses), use a SINGLE flat AVG over ALL rows — do NOT use GROUP BY. Example: SELECT AVG(rating) FROM review WHERE business_ref IN ('businessref_3', 'businessref_7', ...) — one row result only
-- PREFIX RULE for yelp: prior results have business_id values in format businessid_## — convert to businessref_## before using in IN clause. Example: 'businessid_49' becomes 'businessref_49'
-{stockmarket_note}
+{yelp_note}{stockmarket_note}
 SCHEMA:
 {json.dumps(schema, indent=2)}
 
