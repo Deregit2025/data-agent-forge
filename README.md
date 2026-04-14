@@ -144,13 +144,35 @@ python -m eval.regression_suite \
 
 ## Live Agent
 
-The agent is deployed on the shared team server. Team members connect via Tailscale.
+The agent is deployed on the shared team server (`ip-10-0-14-163`). All team members connect via Tailscale using the alias `trp-gemini`.
 
 ```bash
-# From any team machine (Tailscale required):
-ssh ubuntu@<server-ip>
+# Connect to the server (Tailscale required):
+ssh trp-gemini
+```
+
+A persistent tmux session named `oracle-forge` runs on the server. The MCP server (`python -m mcp.mcp_server`) runs inside this session.
+
+```bash
+# Driver — full control:
+tmux attach -t oracle-forge
+
+# Corpus / Intelligence Officers — read-only view:
+tmux attach -t oracle-forge -r
+```
+
+Run a benchmark query from inside the session:
+
+```bash
 cd /home/project/oracle-forge
+source venv/bin/activate
 python -m eval.harness --datasets yelp --query_ids 1 --n_trials 1
+```
+
+Verify the MCP server is healthy before running:
+
+```bash
+curl http://127.0.0.1:5000/health
 ```
 
 ---
