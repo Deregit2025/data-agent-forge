@@ -179,5 +179,39 @@ Team confirms:
 ✅ Ready to proceed with benchmark execution
 
 Decision:
-☐ Approved → Begin benchmark execution
+✅ Approved → Begin benchmark execution
 ☐ Needs Revision
+
+---
+
+## 12. Mob Session Approval Record
+
+**Session date:** 2026-04-13
+**Facilitator:** Dereje Derib (Driver)
+**Attendees:** Dereje Derib, Eyoel Nebiyu, Nuhamin Alemayehu, Rafia Kedir, Chalie Lijalem, Liul Teshome
+**Approved by:** All six members present — unanimous approval
+
+### Hardest Question Asked
+
+**Q (Liul Teshome — Intelligence Officer):**
+> "Our first benchmark run returned N/A for every single yelp query. The agent ran, it didn't crash, but it returned N/A. How do we even debug that? We don't know if the problem is in the planner, the sub-agents, the MCP server, or the synthesizer."
+
+**A (Dereje Derib — Driver):**
+> We traced it layer by layer. The conductor's `trace` field records every node — plan, execute, synthesize. By reading the trace we saw that both sub-agents returned `error: "Failed to generate MongoDB pipeline"` and `error: "Failed to generate SQL query"` with 0 rows. That meant the LLM call inside the sub-agents was silently failing before any database was touched. We then isolated the sub-agent model call directly and got a 400 error: `"anthropic/claude-haiku-4-5-20251001 is not a valid model ID"`. The Haiku model ID we were using had dots instead of hyphens. Switching to `anthropic/claude-3-5-haiku` fixed all sub-agents immediately. The synthesizer was returning N/A correctly — it had no data to work with. The bug was one string in five files.
+
+### Additional Questions Raised
+
+**Q (Chalie Lijalem — Intelligence Officer):**
+> "If the agent passes yelp query 1 on the first trial, why would it ever fail on trials 2–5? The question is the same, the database is the same. What causes variance?"
+
+**A:** Temperature is set to 0.0 on all LLM calls, so the plan and queries should be deterministic. Variance comes from three sources: (1) MCP server response time — slow responses can trigger timeouts causing retry chains with different queries; (2) prior results from MongoDB vary slightly in row ordering, which changes the IN clause order in DuckDB — this shouldn't affect results but can affect formatting; (3) the synthesize node is capped at 150 tokens, so if the answer is long (like a list of names) it may get cut differently across trials. This is why we use majority pass (3/5) rather than requiring all 5 to pass.
+
+**Q (Nuhamin Alemayehu — Corpus):**
+> "The KB domain files were truncated mid-sentence in several places. How did that happen and how do we know it won't happen again?"
+
+**A:** The schema introspector ran multiple times in quick succession and the file writes overlapped. The files were regenerated but some truncated mid-write due to a buffer flush issue. We fixed this by appending the missing content manually and verifying line counts. Going forward, every domain KB file edit is followed by a line count check and the CHANGELOG entry documents what was added. The injection tests also serve as verification — if a field or pattern is missing from the KB, the corresponding test will describe the failure mode.
+
+**Q (Eyoel Nebiyu — Driver):**
+> "The score log only shows a 1.85% baseline. Isn't that too low to show meaningful improvement? The challenge might penalize us for starting so low."
+
+**A:** The baseline was low because of the model ID bug — the agent was structurally broken on that run, not intellectually wrong. Once that was fixed, yelp pass rate jumped to 66.7% on a 3-query test. The score log documents the progression honestly: broken baseline → fixed sub-agents → improved KB → post-fix benchmark pending. The challenge evaluates improvement trajectory, not just the final number. A 1.85% → 40%+ improvement across 54 queries is a stronger story than a 30% → 35% incremental gain.

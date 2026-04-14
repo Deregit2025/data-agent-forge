@@ -102,6 +102,35 @@ Team confirms:
 ✅ Definition of Done agreed
 ✅ Ready to proceed toward Construction phase
 Decision:
-☐ Approved → Continue Infrastructure Setup
+✅ Approved → Continue Infrastructure Setup
 ☐ Needs Revision
+
+---
+
+## 12. Mob Session Approval Record
+
+**Session date:** 2026-04-07
+**Facilitator:** Dereje Derib (Driver)
+**Attendees:** Dereje Derib, Eyoel Nebiyu, Nuhamin Alemayehu, Rafia Kedir, Chalie Lijalem, Liul Teshome
+**Approved by:** All six members present — unanimous approval
+
+### Hardest Question Asked
+
+**Q (Chalie Lijalem — Intelligence Officer):**
+> "Why are we building a custom MCP layer at all? LangChain already has tool-calling built in. Why not use that and skip the whole MCP server?"
+
+**A (Dereje Derib — Driver):**
+> The MCP server gives us a unified HTTP interface across all four database types — PostgreSQL, MongoDB, SQLite, and DuckDB — with a consistent response format, error handling, and schema inspection endpoint (`GET /schema/{tool_name}`). LangChain's built-in tool calling would require us to trust the LLM to generate correct tool call syntax for four completely different database drivers with different query languages. By controlling the MCP layer ourselves, we control the contract: every tool takes a `sql` or `pipeline` payload and returns `{result, row_count, query_used, error}`. Sub-agents are simpler and more debuggable because query generation and execution are explicit steps we own. If the LLM generates bad SQL, we catch it, classify the failure type, and fix it — we can't do that if the tool call is opaque inside LangChain's runtime.
+
+### Additional Questions Raised
+
+**Q (Liul Teshome — Intelligence Officer):**
+> "What happens when two team members push conflicting changes to the shared server environment?"
+
+**A:** All server configuration is driven from the repository. `.env` holds credentials, `agent/requirements.txt` holds dependencies. Any team member can reproduce the server state by pulling and running `pip install -r agent/requirements.txt`. Conflicts are resolved through git, not through SSH edits.
+
+**Q (Rafia Kedir — Corpus):**
+> "How do we know the DataAgentBench ground truth is reliable enough to trust as our scoring signal?"
+
+**A:** DAB's `validate.py` per query is the authoritative scorer used by the challenge organizers themselves. We mirror it exactly in `eval/scorer.py` via dynamic import. If DAB's validate.py says pass, we pass. Our score is the same number the leaderboard will show.
 
