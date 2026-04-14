@@ -8,8 +8,33 @@ Oracle Forge is a production-grade AI data agent that answers natural language q
 
 | Name | Role |
 |---|---|
-| Dereje Derib | Driver — infrastructure, agent implementation, evaluation harness |
-| Eyoel Mekonnen | Driver — sub-agent development, self-correction loop |
+| Dereje Derib | Driver |
+| Eyoel Nebiyu | Driver |
+| Nuhamin Alemayehu | Corpus |
+| Rafia Kedir | Corpus |
+| Chalie Lijalem | Intelligence Officer |
+| Liul Teshome | Intelligence Officer |
+
+---
+
+## Datasets
+
+Oracle Forge supports all 12 DAB datasets:
+
+| Dataset | DB Types | Domain |
+|---|---|---|
+| yelp | MongoDB + DuckDB | Business reviews |
+| googlelocal | PostgreSQL + SQLite | Local business listings |
+| bookreview | PostgreSQL + SQLite | Book reviews |
+| music_brainz | SQLite + DuckDB | Music catalog and sales |
+| crmarenapro | PostgreSQL + SQLite | CRM / support cases |
+| pancancer | PostgreSQL + DuckDB | Cancer genomics |
+| patents | SQLite + PostgreSQL | Patent publications |
+| deps_dev | SQLite | Package dependency metadata |
+| github_repos | PostgreSQL + SQLite | Open-source repositories |
+| agnews | PostgreSQL | News article classification |
+| stockindex | SQLite + DuckDB | Global stock index data |
+| stockmarket | SQLite + DuckDB | Individual stock price history |
 
 ---
 
