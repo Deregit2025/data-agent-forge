@@ -16,7 +16,6 @@
 | 2026-04-11 | X (Twitter) | Thread | https://x.com/GeminiTrp1/status/2043026176432545821?s=20 | 19 impressions |
 | 2026-04-10 | X (Twitter) | Quote Retweet | https://x.com/GeminiTrp1/status/2042557438755278919?s=20 | 11 impressions |
 | 2026-04-10 | X (Twitter) | Thread | https://x.com/GeminiTrp1/status/2042522406699360407?s=20 | 80 impressions |
-| [date] | Reddit r/LocalLLaMA | Post | [url] | [update] |
 | [date] | Discord DAB | Comment | — | — |
 | [date] | Discord HF | Comment | — | — |
 | [date] | LinkedIn | Post | [url] | [update] |
