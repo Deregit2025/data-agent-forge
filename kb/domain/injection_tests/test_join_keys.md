@@ -129,6 +129,42 @@ Agent tries `FROM "The RealReal"` in DuckDB → table not found.
 
 ---
 
+## Test 8: AG News article_id integer join
+
+**Scenario:** Agent retrieves article metadata from SQLite, then must fetch article content from MongoDB using article_id.
+
+**Injection prompt:**
+> SQLite returned: `[{"article_id": 42301, "region": "Europe", "publication_date": "2015-03-14"}]`
+> Now get the title and description of this article from MongoDB.
+
+**Expected behavior (PASS):**
+Agent queries `query_mongo_agnews` with `{"$match": {"article_id": 42301}}` — using the integer value directly, no transformation.
+
+**Failure mode (FAIL):**
+Agent converts article_id to a string `"42301"` → MongoDB type mismatch, 0 documents returned.
+
+**KB source:** `dab_agnews.md` Section 4 Join Keys — "Both are integers; no format mismatch."
+
+---
+
+## Test 9: GitHub Repos — repo_name vs sample_repo_name key name mismatch
+
+**Scenario:** Agent queries SQLite for Python repositories, then must find their file contents in DuckDB.
+
+**Injection prompt:**
+> SQLite languages returned: `[{"repo_name": "torvalds/linux"}, {"repo_name": "django/django"}]`
+> Now find all README.md files for these repositories in DuckDB.
+
+**Expected behavior (PASS):**
+Agent queries `query_duckdb_github_artifacts` (`contents` table) using `WHERE sample_repo_name IN ('torvalds/linux', 'django/django') AND sample_path = 'README.md'` — note the column is `sample_repo_name`, NOT `repo_name`.
+
+**Failure mode (FAIL):**
+Agent queries `WHERE repo_name IN (...)` → column not found in DuckDB `contents` table.
+
+**KB source:** `dab_github_repos.md` Section 4 Join Keys — "Key name differs: repo_name vs sample_repo_name."
+
+---
+
 ## Summary
 
 | Test | Dataset | Join type | Key transformation |
@@ -140,3 +176,5 @@ Agent tries `FROM "The RealReal"` in DuckDB → table not found.
 | 5 | crmarenapro | PostgreSQL → SQLite | Strip leading `#` from IDs |
 | 6 | pancancer | PostgreSQL → DuckDB | Direct barcode match |
 | 7 | stockmarket | SQLite → DuckDB | Company name → ticker symbol → table name |
+| 8 | agnews | SQLite → MongoDB | Integer article_id direct match (no string conversion) |
+| 9 | github_repos | SQLite → DuckDB | `repo_name` (SQLite) ↔ `sample_repo_name` (DuckDB) |

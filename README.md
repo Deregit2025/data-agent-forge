@@ -87,8 +87,8 @@ Self-Correction Loop
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/derejederib/oracle-forge.git
-cd oracle-forge
+git clone https://github.com/Deregit2025/data-agent-forge.git
+cd data-agent-forge
 ```
 
 ### 2. Install dependencies
@@ -144,11 +144,18 @@ python -m eval.regression_suite \
 
 ## Live Agent
 
-The agent is deployed on the shared team server (`ip-10-0-14-163`). All team members connect via Tailscale using the alias `trp-gemini`.
+The agent is deployed on the shared team server accessible via Tailscale.
+
+| Detail | Value |
+|---|---|
+| Server Tailscale IP | `100.66.178.23` |
+| SSH access | `ssh dereje@100.66.178.23` |
+| MCP server | `http://100.66.178.23:5000` (accessible within Tailscale network) |
+| Project path | `/home/project/oracle-forge` |
 
 ```bash
 # Connect to the server (Tailscale required):
-ssh trp-gemini
+ssh dereje@100.66.178.23
 ```
 
 A persistent tmux session named `oracle-forge` runs on the server. The MCP server (`python -m mcp.mcp_server`) runs inside this session.
@@ -164,15 +171,14 @@ tmux attach -t oracle-forge -r
 Run a benchmark query from inside the session:
 
 ```bash
-cd /home/project/oracle-forge
-source venv/bin/activate
-python -m eval.harness --datasets yelp --query_ids 1 --n_trials 1
+cd /home/project/oracle-forge && source venv/bin/activate
+python3 -m eval.harness --datasets yelp --query_ids 1 --n_trials 1
 ```
 
-Verify the MCP server is healthy before running:
+Verify the MCP server is healthy:
 
 ```bash
-curl http://127.0.0.1:5000/health
+curl http://100.66.178.23:5000/health
 ```
 
 ---

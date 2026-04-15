@@ -1,0 +1,401 @@
+sources:
+  # ─── PostgreSQL ───────────────────────────────────────────────
+  postgres_bookreview:
+    kind: postgres
+    host: 127.0.0.1
+    port: 5432
+    database: bookreview
+    user: postgres
+    password: ${PG_PASSWORD}
+
+  postgres_crmarenapro:
+    kind: postgres
+    host: 127.0.0.1
+    port: 5432
+    database: crmarenapro
+    user: postgres
+    password: ${PG_PASSWORD}
+
+  postgres_googlelocal:
+    kind: postgres
+    host: 127.0.0.1
+    port: 5432
+    database: googlelocal
+    user: postgres
+    password: ${PG_PASSWORD}
+
+  postgres_pancancer:
+    kind: postgres
+    host: 127.0.0.1
+    port: 5432
+    database: pancancer
+    user: postgres
+    password: ${PG_PASSWORD}
+
+  postgres_patents:
+    kind: postgres
+    host: 127.0.0.1
+    port: 5432
+    database: patents
+    user: postgres
+    password: ${PG_PASSWORD}
+
+  # ─── MongoDB ──────────────────────────────────────────────────
+  mongo_yelp:
+    kind: mongodb
+    uri: ${MONGO_URI}
+
+  mongo_agnews:
+    kind: mongodb
+    uri: ${MONGO_URI}
+
+  # ─── SQLite ───────────────────────────────────────────────────
+  sqlite_agnews_metadata:
+    kind: sqlite
+    database: ${DAB_PATH}/query_agnews/query_dataset/metadata.db
+
+  sqlite_bookreview:
+    kind: sqlite
+    database: ${DAB_PATH}/query_bookreview/query_dataset/review_query.db
+
+  sqlite_crmarenapro_core:
+    kind: sqlite
+    database: ${DAB_PATH}/query_crmarenapro/query_dataset/core_crm.db
+
+  sqlite_crmarenapro_products:
+    kind: sqlite
+    database: ${DAB_PATH}/query_crmarenapro/query_dataset/products_orders.db
+
+  sqlite_crmarenapro_territory:
+    kind: sqlite
+    database: ${DAB_PATH}/query_crmarenapro/query_dataset/territory.db
+
+  sqlite_deps_dev_package:
+    kind: sqlite
+    database: ${DAB_PATH}/query_DEPS_DEV_V1/query_dataset/package_query.db
+
+  sqlite_github_metadata:
+    kind: sqlite
+    database: ${DAB_PATH}/query_GITHUB_REPOS/query_dataset/repo_metadata.db
+
+  sqlite_googlelocal_review:
+    kind: sqlite
+    database: ${DAB_PATH}/query_googlelocal/query_dataset/review_query.db
+
+  sqlite_music_brainz:
+    kind: sqlite
+    database: ${DAB_PATH}/query_music_brainz_20k/query_dataset/tracks.db
+
+  sqlite_patents:
+    kind: sqlite
+    database: ${DAB_PATH}/query_PATENTS/query_dataset/patent_publication.db
+
+  sqlite_stockindex_info:
+    kind: sqlite
+    database: ${DAB_PATH}/query_stockindex/query_dataset/indexInfo_query.db
+
+  sqlite_stockmarket_info:
+    kind: sqlite
+    database: ${DAB_PATH}/query_stockmarket/query_dataset/stockinfo_query.db
+
+  # ─── DuckDB ───────────────────────────────────────────────────
+  duckdb_crmarenapro_activities:
+    kind: duckdb
+    database: ${DAB_PATH}/query_crmarenapro/query_dataset/activities.duckdb
+
+  duckdb_crmarenapro_sales:
+    kind: duckdb
+    database: ${DAB_PATH}/query_crmarenapro/query_dataset/sales_pipeline.duckdb
+
+  duckdb_music_brainz_sales:
+    kind: duckdb
+    database: ${DAB_PATH}/query_music_brainz_20k/query_dataset/sales.duckdb
+
+  duckdb_deps_dev_project:
+    kind: duckdb
+    database: ${DAB_PATH}/query_DEPS_DEV_V1/query_dataset/project_query.db
+
+  duckdb_github_artifacts:
+    kind: duckdb
+    database: ${DAB_PATH}/query_GITHUB_REPOS/query_dataset/repo_artifacts.db
+
+  duckdb_yelp_user:
+    kind: duckdb
+    database: ${DAB_PATH}/query_yelp/query_dataset/yelp_user.db
+
+  duckdb_pancancer_molecular:
+    kind: duckdb
+    database: ${DAB_PATH}/query_PANCANCER_ATLAS/query_dataset/pancancer_molecular.db
+
+  duckdb_stockmarket_trade:
+    kind: duckdb
+    database: ${DAB_PATH}/query_stockmarket/query_dataset/stocktrade_query.db
+
+  duckdb_stockindex_trade:
+    kind: duckdb
+    database: ${DAB_PATH}/query_stockindex/query_dataset/indextrade_query.db
+
+
+tools:
+  # ─── PostgreSQL tools ─────────────────────────────────────────
+  query_postgres_bookreview:
+    kind: postgres-sql
+    source: postgres_bookreview
+    description: >
+      Query the bookreview PostgreSQL database.
+      Contains books_info table with book details including
+      title, author, genre, price and rating.
+    statement: ${ sql }
+
+  query_postgres_crmarenapro:
+    kind: postgres-sql
+    source: postgres_crmarenapro
+    description: >
+      Query the crmarenapro PostgreSQL database.
+      Contains Case, casehistory__c, emailmessage, issue__c,
+      knowledge__kav, livechattranscript tables.
+    statement: ${ sql }
+
+  query_postgres_googlelocal:
+    kind: postgres-sql
+    source: postgres_googlelocal
+    description: >
+      Query the googlelocal PostgreSQL database.
+      Contains business_description table with
+      local business information.
+    statement: ${ sql }
+
+  query_postgres_pancancer:
+    kind: postgres-sql
+    source: postgres_pancancer
+    description: >
+      Query the pancancer PostgreSQL database.
+      Contains clinical_info table with
+      cancer patient clinical data.
+    statement: ${ sql }
+
+  query_postgres_patents:
+    kind: postgres-sql
+    source: postgres_patents
+    description: >
+      Query the patents PostgreSQL database.
+      Contains cpc_definition table with
+      patent classification definitions.
+    statement: ${ sql }
+
+  # ─── MongoDB tools ────────────────────────────────────────────
+  query_mongo_yelp_business:
+    kind: mongodb-aggregate
+    source: mongo_yelp
+    description: >
+      Query the yelp_business MongoDB database business collection.
+      Contains business details including name, stars,
+      categories, location and attributes.
+    database: yelp_business
+    collection: business
+    pipelinePayload: "[]"
+    pipelineParams: []
+
+  query_mongo_yelp_checkin:
+    kind: mongodb-aggregate
+    source: mongo_yelp
+    description: >
+      Query the yelp_business MongoDB database checkin collection.
+      Contains business checkin timestamps and counts.
+    database: yelp_business
+    collection: checkin
+    pipelinePayload: "[]"
+    pipelineParams: []
+
+  query_mongo_agnews:
+    kind: mongodb-aggregate
+    source: mongo_agnews
+    description: >
+      Query the agnews_articles MongoDB database articles collection.
+      Contains news articles with title, description,
+      category and source fields.
+    database: agnews_articles
+    collection: articles
+    pipelinePayload: "[]"
+    pipelineParams: []
+
+  # ─── SQLite tools ─────────────────────────────────────────────
+  query_sqlite_agnews_metadata:
+    kind: sqlite-sql
+    source: sqlite_agnews_metadata
+    description: >
+      Query agnews metadata SQLite database.
+      Contains metadata about news article categories.
+    statement: ${ sql }
+
+  query_sqlite_bookreview:
+    kind: sqlite-sql
+    source: sqlite_bookreview
+    description: >
+      Query bookreview SQLite database.
+      Contains book review data including
+      ratings, text reviews and reviewer info.
+    statement: ${ sql }
+
+  query_sqlite_crmarenapro_core:
+    kind: sqlite-sql
+    source: sqlite_crmarenapro_core
+    description: >
+      Query crmarenapro core CRM SQLite database.
+      Contains core CRM records including
+      contacts, accounts and activities.
+    statement: ${ sql }
+
+  query_sqlite_crmarenapro_products:
+    kind: sqlite-sql
+    source: sqlite_crmarenapro_products
+    description: >
+      Query crmarenapro products and orders SQLite database.
+      Contains product catalog and order records.
+    statement: ${ sql }
+
+  query_sqlite_crmarenapro_territory:
+    kind: sqlite-sql
+    source: sqlite_crmarenapro_territory
+    description: >
+      Query crmarenapro territory SQLite database.
+      Contains sales territory and assignment data.
+    statement: ${ sql }
+
+  query_sqlite_deps_dev_package:
+    kind: sqlite-sql
+    source: sqlite_deps_dev_package
+    description: >
+      Query deps.dev package SQLite database.
+      Contains software package dependency information.
+    statement: ${ sql }
+
+  query_sqlite_github_metadata:
+    kind: sqlite-sql
+    source: sqlite_github_metadata
+    description: >
+      Query GitHub repos metadata SQLite database.
+      Contains repository metadata including stars,
+      forks, language and description.
+    statement: ${ sql }
+
+  query_sqlite_googlelocal_review:
+    kind: sqlite-sql
+    source: sqlite_googlelocal_review
+    description: >
+      Query googlelocal review SQLite database.
+      Contains user reviews for local businesses
+      including rating and review text.
+    statement: ${ sql }
+
+  query_sqlite_music_brainz:
+    kind: sqlite-sql
+    source: sqlite_music_brainz
+    description: >
+      Query music brainz tracks SQLite database.
+      Contains music track metadata including
+      artist, album, duration and release date.
+    statement: ${ sql }
+
+  query_sqlite_patents:
+    kind: sqlite-sql
+    source: sqlite_patents
+    description: >
+      Query patents publication SQLite database.
+      Contains patent publication records including
+      title, abstract, inventors and classifications.
+    statement: ${ sql }
+
+  query_sqlite_stockindex_info:
+    kind: sqlite-sql
+    source: sqlite_stockindex_info
+    description: >
+      Query stock index info SQLite database.
+      Contains stock index definitions and
+      component information.
+    statement: ${ sql }
+
+  query_sqlite_stockmarket_info:
+    kind: sqlite-sql
+    source: sqlite_stockmarket_info
+    description: >
+      Query stock market info SQLite database.
+      Contains individual stock information
+      including ticker, company name and sector.
+    statement: ${ sql }
+
+  # ─── DuckDB tools ─────────────────────────────────────────────
+  query_duckdb_crmarenapro_activities:
+    kind: duckdb-sql
+    source: duckdb_crmarenapro_activities
+    description: >
+      Query crmarenapro activities DuckDB database.
+      Contains Event, Task, VoiceCallTranscript__c tables.
+    statement: ${ sql }
+
+  query_duckdb_crmarenapro_sales:
+    kind: duckdb-sql
+    source: duckdb_crmarenapro_sales
+    description: >
+      Query crmarenapro sales pipeline DuckDB database.
+      Contains Contract, Lead, Opportunity, OpportunityLineItem,
+      Quote, QuoteLineItem tables.
+    statement: ${ sql }
+
+  query_duckdb_music_brainz_sales:
+    kind: duckdb-sql
+    source: duckdb_music_brainz_sales
+    description: >
+      Query music brainz sales DuckDB database.
+      Contains sales table with track revenue data.
+    statement: ${ sql }
+
+  query_duckdb_deps_dev_project:
+    kind: duckdb-sql
+    source: duckdb_deps_dev_project
+    description: >
+      Query deps.dev project DuckDB database.
+      Contains project_info and project_packageversion tables.
+    statement: ${ sql }
+
+  query_duckdb_github_artifacts:
+    kind: duckdb-sql
+    source: duckdb_github_artifacts
+    description: >
+      Query GitHub repos artifacts DuckDB database.
+      Contains commits, contents, and files tables.
+    statement: ${ sql }
+
+  query_duckdb_yelp_user:
+    kind: duckdb-sql
+    source: duckdb_yelp_user
+    description: >
+      Query yelp user DuckDB database.
+      Contains review, tip, and user tables.
+      This is where yelp ratings are stored (NOT MongoDB).
+    statement: ${ sql }
+
+  query_duckdb_pancancer_molecular:
+    kind: duckdb-sql
+    source: duckdb_pancancer_molecular
+    description: >
+      Query pancancer molecular DuckDB database.
+      Contains Mutation_Data and RNASeq_Expression tables.
+    statement: ${ sql }
+
+  query_duckdb_stockmarket_trade:
+    kind: duckdb-sql
+    source: duckdb_stockmarket_trade
+    description: >
+      Query stockmarket trade DuckDB database.
+      Contains 2754 tables — one per stock ticker symbol.
+      Query by ticker name directly: SELECT * FROM AAPL LIMIT 5.
+    statement: ${ sql }
+
+  query_duckdb_stockindex_trade:
+    kind: duckdb-sql
+    source: duckdb_stockindex_trade
+    description: >
+      Query stock index trade DuckDB database.
+      Contains index_trade table with historical index prices.
+    statement: ${ sql }

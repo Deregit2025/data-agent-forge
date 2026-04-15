@@ -1,0 +1,1 @@
+C:\Users\derej\Desktop\Intensive\oracle-forge\venv\Scripts\python.exe: No module named pytest
