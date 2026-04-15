@@ -74,6 +74,40 @@
 
 ---
 
+## Reddit Posts
+
+- The post below was made in the [r/MachineLearning](https://www.reddit.com/r/learnmachinelearning/s/Tj2GY36U7I) subreddit and cross-posted in the [r/PromptQL](https://www.reddit.com/r/PromptQL/s/OmcQuM5EH6) subreddit.
+
+Title: Breaking the 38% Ceiling: How we hit a 57% pass rate on UC Berkeley’s DataAgentBench (Yelp Dataset)
+
+Hi everyone! We are team Oracle Forge, and we are currently deep in the trenches of UC Berkeley’s DataAgentBench (DAB) challenge. Our mission is to build a production-grade autonomous data analyst that can navigate the "messy" reality of enterprise data environments where information is fragmented across multiple heterogeneous systems like PostgreSQL, MongoDB, DuckDB, and SQLite.
+
+### The Reality Check: Why DAB is "Hard Mode"
+Most Text-to-SQL benchmarks use clean schemas, but DAB deliberately perturbs data to mirror real-world silos. It induces challenges like ill-formatted join keys, unstructured text transformation, and domain knowledge requirements. Currently, even frontier models like Gemini-3-Pro only achieve a 38% pass@1 accuracy across the full benchmark.
+
+### Our First Breakthrough: 57% on Yelp
+We are excited to share that by implementing a three-layer context architecture (Schema, Institutional KB, and Corrections Memory), we have achieved a 57% pass rate on the Yelp dataset (4 out of 7 queries correct). While we are still reworking our approach for the remaining 11 datasets, our "Mob Construction" strategy—where Drivers pilot the code while the full team provides architectural oversight—is yielding immediate results.
+
+### The "SOPs" That Broke the Ceiling
+Based on the specific query patterns documented in our `AGENT.md` (derived from the 'Pasted text' resource), here is how we solved some of DAB’s most notorious traps:
+
+-   Pattern A — Solving Unstructured Text: DAB Property iii involves removing structured columns like state and burying them in free-text fields. We engineered our agent to perform non-trivial recovery by extracting locations from descriptions using regex patterns (e.g., {"description": {"$regex": "in Indianapolis, IN", "$options": "i"}}).
+-   Pattern B — Avoiding Statistical Drift: A common failure mode (FM2) occurs when agents compute a "mean of means". We mandated a "Flat AVG" Standard Operating Procedure (SOP): the agent retrieves matching IDs from MongoDB first, then runs a single SELECT AVG(rating) across all raw review rows in DuckDB to ensure mathematical correctness.
+-   Pattern E — BIRD-Style SQL Optimization: To handle perturbed temporal data, we adopted the BIRD benchmark’s two-stage optimization strategy. The agent first writes "clanky but accurate" SQL to handle string-based dates (e.g., WHERE date LIKE '%2016%') and then optimizes for speed by using `MAX()` instead of `ORDER BY ... LIMIT 1` to avoid unindexed table scans.
+
+### We Need Your Tips!
+Documenting these patterns as SOPs ensures our agent doesn't "rediscover" how to handle cross-DB joins in every session, providing the compounding leverage required for a high leaderboard score. However, we are still grinding to generalize these successes across all 54 queries.
+
+-   Our Question: For those who have tackled the DAB or BIRD benchmarks, how are you handling "ill-formatted" join keys (e.g., bid_123 in one DB vs bref_123 in another) when the mapping isn't explicitly in the hints?
+-   Have you found success using a semantic layer to pre-calculate these mappings, or are you letting the agent solve them at runtime using Python scripts?
+
+We’d love to hear your thoughts and any technical "traps" you've encountered!
+
+Follow our progress on GitHub: [https://github.com/Deregit2025/data-agent-forge](https://github.com/Deregit2025/data-agent-forge)
+
+#DataAgentBench #BIRD #AI #LLM #DatabaseEngineering #UCBerkeley #ClaudeCode #OracleForge
+
+---
 ## Community Intelligence
 
 *Document any technical insights from the community that changed your approach.*
