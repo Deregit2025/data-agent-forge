@@ -470,7 +470,7 @@ def _precompute_patents_ema(tool_results: list[dict]) -> dict:
         for row in dr.get("result", []):
             year = str(row.get("year", ""))
             cpc_text = row.get("cpc", "")
-            filing_count = int(row.get("filing_count", 1))
+            filing_count = 1  # each row = one patent filing
 
             if not year or not year.isdigit():
                 continue
