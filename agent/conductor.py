@@ -370,6 +370,8 @@ def synthesize_node(state: AgentState) -> AgentState:
         pre_computed = _precompute_patents_ema(state["tool_results"])
     elif dataset == "agnews":
         pre_computed = _precompute_agnews_category(state["tool_results"], state["question"])
+    elif dataset == "stockmarket":
+        pre_computed = _precompute_stockmarket_filter(state["tool_results"], state["question"])
     else:
         pre_computed = _precompute_joins(state["tool_results"])
 
@@ -549,6 +551,66 @@ def _precompute_patents_ema(tool_results: list[dict]) -> dict:
         "cpc_level5_best_year_2022": sorted(result_2022),
         "total_symbols_analyzed": len(best_year_per_symbol),
         "answer": ", ".join(sorted(result_2022)) if result_2022 else "N/A"
+    }
+
+def _precompute_stockmarket_filter(tool_results: list[dict], question: str) -> dict:
+    """
+    For stockmarket multi-ticker filter queries:
+    Gets symbols from SQLite result, runs MAX query per ticker in DuckDB,
+    filters by price threshold, returns matching company names.
+    """
+    import requests
+    import re
+
+    # Extract year from question
+    year_match = re.search(r'\b(20\d{2})\b', question)
+    year = year_match.group(1) if year_match else "2015"
+
+    # Extract price threshold from question
+    price_match = re.search(r'\$(\d+)', question)
+    threshold = float(price_match.group(1)) if price_match else 200.0
+
+    # Get symbols from the SQLite tool result
+    symbols = []
+    for r in tool_results:
+        if r.get("tool_name") == "query_sqlite_stockmarket_info":
+            for row in r.get("result", []):
+                sym = row.get("Symbol") or row.get("symbol")
+                if sym:
+                    symbols.append(sym)
+            if symbols:
+                break
+
+    if not symbols:
+        return {"error": "No symbols found in SQLite results"}
+
+    # Build UNION ALL with proper escaping — use double quotes for column name only
+    parts = []
+    for s in symbols:
+        parts.append(f"SELECT '{s}' AS symbol, MAX(\"Adj Close\") AS max_adj FROM \"{s}\" WHERE Date LIKE '{year}%'")
+    union_sql = "SELECT symbol FROM (" + " UNION ALL ".join(parts) + f") t WHERE max_adj > {threshold} ORDER BY symbol"
+
+    try:
+        r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_duckdb_stockmarket_trade",
+                           json={"sql": union_sql}, timeout=60)
+        passing_symbols = [row["symbol"] for row in r2.json().get("result", [])]
+    except Exception as e:
+        return {"error": f"DuckDB UNION ALL failed: {e}"}
+
+    if not passing_symbols:
+        return {"count": 0, "companies": []}
+
+    # Get company names
+    sym_list = "','".join(passing_symbols)
+    r3 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_stockmarket_info",
+                       json={"sql": f"SELECT \"Company Description\" FROM stockinfo WHERE Symbol IN ('{sym_list}') ORDER BY Symbol"},
+                       timeout=30)
+    companies = [row["Company Description"] for row in r3.json().get("result", [])]
+
+    return {
+        "count": len(companies),
+        "companies": companies,
+        "passing_symbols": passing_symbols
     }
 
 def _precompute_joins(tool_results: list[dict], dataset: str = "") -> dict:
