@@ -423,6 +423,16 @@ AGNEWS CLASSIFICATION RULE — when you have 111 articles from MongoDB:
 - DO NOT output reasoning or explanation — just the number
 """
 
+    elif dataset == "stockmarket":
+        joining_rule = """
+STOCKMARKET RULE — pre_computed contains the final answer directly:
+- 'companies' field = list of ETF/stock company names that match the filter
+- 'count' field = total number of matching securities
+- Output format: one company name per line, then "Total: N" on the last line
+- USE pre_computed directly — do NOT use raw query results
+- NEVER output ticker symbols — always use full company names from pre_computed
+"""
+
     messages = [
         {
             "role": "system",
@@ -562,6 +572,10 @@ def _precompute_stockmarket_filter(tool_results: list[dict], question: str) -> d
     import requests
     import re
 
+    def _short_name(desc):
+        match = re.match(r'^(.*?)\s+(?:offers|provides|is\s+an|is\s+a|aims)', desc)
+        return match.group(1).strip() if match else desc.split('.')[0].strip()
+
     # Extract year from question
     year_match = re.search(r'\b(20\d{2})\b', question)
     year = year_match.group(1) if year_match else "2015"
@@ -584,15 +598,25 @@ def _precompute_stockmarket_filter(tool_results: list[dict], question: str) -> d
     if not symbols:
         return {"error": "No symbols found in SQLite results"}
 
-    # Build UNION ALL with proper escaping — use double quotes for column name only
+    # Build UNION ALL with proper escaping
     parts = []
     for s in symbols:
-        parts.append(f"SELECT '{s}' AS symbol, MAX(\"Adj Close\") AS max_adj FROM \"{s}\" WHERE Date LIKE '{year}%'")
-    union_sql = "SELECT symbol FROM (" + " UNION ALL ".join(parts) + f") t WHERE max_adj > {threshold} ORDER BY symbol"
+        parts.append(
+            f"SELECT '{s}' AS symbol, MAX(\"Adj Close\") AS max_adj "
+            f"FROM \"{s}\" WHERE Date LIKE '{year}%'"
+        )
+    union_sql = (
+        "SELECT symbol FROM ("
+        + " UNION ALL ".join(parts)
+        + f") t WHERE max_adj > {threshold} ORDER BY symbol"
+    )
 
     try:
-        r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_duckdb_stockmarket_trade",
-                           json={"sql": union_sql}, timeout=60)
+        r2 = requests.post(
+            "http://127.0.0.1:5000/v1/tools/query_duckdb_stockmarket_trade",
+            json={"sql": union_sql},
+            timeout=60
+        )
         passing_symbols = [row["symbol"] for row in r2.json().get("result", [])]
     except Exception as e:
         return {"error": f"DuckDB UNION ALL failed: {e}"}
@@ -602,10 +626,15 @@ def _precompute_stockmarket_filter(tool_results: list[dict], question: str) -> d
 
     # Get company names
     sym_list = "','".join(passing_symbols)
-    r3 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_stockmarket_info",
-                       json={"sql": f"SELECT \"Company Description\" FROM stockinfo WHERE Symbol IN ('{sym_list}') ORDER BY Symbol"},
-                       timeout=30)
-    companies = [row["Company Description"] for row in r3.json().get("result", [])]
+    r3 = requests.post(
+        "http://127.0.0.1:5000/v1/tools/query_sqlite_stockmarket_info",
+        json={"sql": f"SELECT \"Company Description\" FROM stockinfo WHERE Symbol IN ('{sym_list}') ORDER BY Symbol"},
+        timeout=30
+    )
+    companies = [
+        _short_name(row["Company Description"])
+        for row in r3.json().get("result", [])
+    ]
 
     return {
         "count": len(companies),
