@@ -569,11 +569,9 @@ def _precompute_stockmarket_filter(tool_results: list[dict], question: str) -> d
     import re
 
     def _short_name(desc):
-        # Split on first '. ' — captures "Apex Global Brands Inc" from "Apex Global Brands Inc. specializes..."
-        idx = desc.find('. ')
-        if idx > 0:
-            return desc[:idx].rstrip(',').strip()
-        return desc.split('.')[0].strip()
+        import re
+        name = re.split(r'\s+(?:offers|provides|is\s+an?\b|specializes|harnesses|aims)', desc, maxsplit=1)[0]
+        return name.rstrip('.,').strip()
 
     # Extract year from question
     year_match = re.search(r'\b(20\d{2})\b', question)
