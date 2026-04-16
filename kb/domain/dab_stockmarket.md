@@ -100,6 +100,48 @@ Full description: 2,754 individual tables, each named after a ticker symbol, con
 - `G` = NASDAQ Global Market
 - `S` = NASDAQ Capital Market
 
+---
+
+## 6. Query Patterns — Explicit Instructions
+
+### Pattern A — Single company lookup (Query 1 type)
+**Question shape:** "What was the [metric] for [Company Name] in [year]?"
+**Steps:**
+1. The KB already maps common companies — e.g. "The RealReal, Inc." → ticker `REAL`
+2. If company not in KB: query SQLite `WHERE "Company Description" LIKE '%keyword%'` to get Symbol
+3. Query DuckDB: `SELECT MAX("Adj Close") FROM REAL WHERE Date LIKE '2020%'`
+4. Return the raw number
+
+### Pattern B — Multi-ticker filter across all ETFs/stocks (Query 2 type)
+**Question shape:** "List all [ETF/stock] securities listed on [Exchange] that reached [price condition] during [year]"
+**CRITICAL — never query DuckDB one ticker at a time. Use UNION ALL:**
+
+**Step 1 — SQLite:** Get all matching symbols
+```sql
+SELECT Symbol FROM stockinfo 
+WHERE ETF='Y' AND "Listing Exchange"='P'
+```
+(Exchange codes: NYSE Arca = 'P', NYSE = 'N', NASDAQ = 'Q')
+
+**Step 2 — DuckDB:** Single UNION ALL query across ALL symbols
+```sql
+SELECT symbol FROM (
+  SELECT 'SYM1' as symbol, MAX("Adj Close") as max_adj FROM "SYM1" WHERE Date LIKE '2015%'
+  UNION ALL
+  SELECT 'SYM2' as symbol, MAX("Adj Close") as max_adj FROM "SYM2" WHERE Date LIKE '2015%'
+  -- ... repeat for all symbols from Step 1
+) t WHERE max_adj > 200 ORDER BY symbol
+```
+
+**Step 3 — SQLite:** Get company names for the passing symbols
+```sql
+SELECT "Company Description" FROM stockinfo 
+WHERE Symbol IN ('SYM1','SYM2',...) ORDER BY Symbol
+```
+
+**Output:** List of company names (one per line) + total count
+**Note:** The conductor's `_precompute_joins` cannot handle this — the agent must build the UNION ALL query itself in the execute node.
+
 ### Additional Domain Knowledge for Queries:
 
 **Financially troubled definition:** Financial Status IN (`'D'`, `'E'`, `'H'`) covers deficient, delinquent, or both. Also includes `'G'` (deficient+bankrupt), `'J'` (delinquent+bankrupt), `'K'` (all three) if the query requires any deficiency/delinquency. For query3, "delinquent, deficient, or both" maps to Financial Status IN (`'D'`, `'E'`, `'H'`). Do NOT include `'N'` (Normal) or NULL.
