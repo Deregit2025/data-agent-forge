@@ -405,6 +405,19 @@ MUSIC_BRAINZ JOINING RULE — when you have SQLite tracks + DuckDB sales:
 - Aggregate revenue/units across all matching track_ids for the same song
 """
 
+    elif dataset == "agnews":
+        joining_rule = """
+AGNEWS CLASSIFICATION RULE — when you have 111 articles from MongoDB:
+- Classify EACH article as World, Sports, Business, or Science/Technology by reading title and description
+- Science/Technology: computers, software, internet, gadgets, space, scientific research, medical research, electronics, AI, robotics, engineering, technology companies
+- World: politics, war, international relations, government, diplomacy
+- Sports: athletes, games, tournaments, teams, scores, championships
+- Business: companies, markets, stocks, economy, finance, mergers, earnings
+- Count how many are Science/Technology, divide by total articles
+- Output ONLY the decimal or fraction — e.g. 0.1441 or 16/111
+- DO NOT output reasoning or explanation — just the number
+"""
+
     messages = [
         {
             "role": "system",
