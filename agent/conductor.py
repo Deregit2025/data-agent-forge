@@ -1271,10 +1271,14 @@ def _precompute_github_repos(tool_results, question):
         apache_set = set(r['repo_name'] for r in sq(
             "SELECT repo_name FROM licenses WHERE license = 'apache-2.0'"
         ))
-        intersected = list(shell_set & apache_set)
+        commits_repos = set(r['repo_name'] for r in dq(
+            "SELECT DISTINCT repo_name FROM commits"
+        ))
+        intersected = list(shell_set & apache_set & commits_repos)
         if not intersected:
             return {}
-        rows = chunked_dq("""
+        placeholders = ', '.join(f"'{r.replace(chr(39), chr(39)*2)}'" for r in intersected)
+        rows = dq(f"""
             SELECT COUNT(*) as cnt
             FROM commits
             WHERE repo_name IN ({placeholders})
@@ -1283,7 +1287,7 @@ def _precompute_github_repos(tool_results, question):
               AND NOT (message ILIKE 'merge%'
                     OR message ILIKE 'update%'
                     OR message ILIKE 'test%')
-        """, intersected)
+        """)
         total = sum(r['cnt'] for r in rows if r.get('cnt'))
         return {'short_circuit': True, 'answer': str(total)}
 
