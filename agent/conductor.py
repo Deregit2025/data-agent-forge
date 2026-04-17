@@ -784,9 +784,12 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
     """Handle all agnews queries by calling MCP directly."""
     import requests
 
-    def mongo(pipeline):
+    def mongo(query=None, limit=0):
+        payload = {'query': query or {}}
+        if limit:
+            payload['limit'] = limit
         r = requests.post('http://127.0.0.1:5000/v1/tools/query_mongo_agnews',
-            json={'pipeline': pipeline})
+            json=payload)
         return r.json().get('result', [])
 
     def sq(sql):
