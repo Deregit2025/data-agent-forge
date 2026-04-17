@@ -939,21 +939,22 @@ def _precompute_deps_dev(tool_results: list[dict], question: str = "") -> dict:
             return {"error": "DuckDB join returned no rows"}
 
         # Step 3 — Python: cross-filter, extract stars with multi-pattern regex, rank
-        seen = set()
-        matched = []
+        # Step 3 — Python: cross-filter, extract stars with multi-pattern regex, rank
+        # Use MAX stars per package (same package can map to multiple projects)
+        best = {}
         for row in duckdb_rows:
             key = (row["Name"], row["Version"])
-            if key in all_latest and key not in seen:
-                seen.add(key)
+            if key in all_latest:
                 stars = extract_stars(row.get("Project_Information", ""))
-                matched.append({
-                    "name": row["Name"],
-                    "version": row["Version"],
-                    "stars": stars,
-                    "project": row["ProjectName"]
-                })
+                if key not in best or stars > best[key]["stars"]:
+                    best[key] = {
+                        "name": row["Name"],
+                        "version": row["Version"],
+                        "stars": stars,
+                        "project": row["ProjectName"]
+                    }
 
-        matched.sort(key=lambda x: (-x["stars"], x["name"]))
+        matched = sorted(best.values(), key=lambda x: (-x["stars"], x["name"]))
         top5 = matched[:5]
         top5_output = "\n".join(f"{r['name']},{r['version']}" for r in top5)
 
