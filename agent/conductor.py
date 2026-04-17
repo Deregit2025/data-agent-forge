@@ -837,7 +837,7 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
 
     # ── Q1: sports article with longest description ──
     if 'sport' in q and ('greatest' in q or 'longest' in q or 'characters' in q):
-        articles = mongo([{"$project": {"article_id": 1, "title": 1, "description": 1}}])
+        articles = mongo()
         best_len = 0
         best_title = None
         for a in articles:
