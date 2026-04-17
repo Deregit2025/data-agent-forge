@@ -115,36 +115,56 @@ The github_repos dataset contains metadata and artifacts for GitHub repositories
 - To find repos where the **main language is NOT Python**: parse `language_description`, identify the language with the highest byte count, and exclude rows where that language is Python.
 - To find repos that **do not use Python at all**: exclude any repo where `language_description` LIKE `'%Python%'`.
 - These two interpretations differ — read each query carefully.
-
 #### Identifying Non-Binary Files
-- Binary vs. non-binary status is encoded in `contents.repo_data_description` as natural language (e.g., contains "binary: false" or "binary: True").
-- Filter non-binary files using: `repo_data_description LIKE '%binary: false%'` or equivalent case-insensitive match.
+- Binary vs. non-binary status is encoded in `contents.repo_data_description` as PROSE, not key-value.
+- Actual phrasing is "non-binary" (e.g., "this non-binary file", "A 277-byte non-binary file").
+- Filter non-binary files using: `repo_data_description ILIKE '%non-binary%'`
+- Do NOT use `LIKE '%binary: false%'` — that pattern does not exist in the data.
 
 #### Identifying Copies Count
-- The number of copies of a file is encoded in `contents.repo_data_description` (e.g., "copies: 3").
-- "Most frequently copied" means the file `id` with the highest copies count across the dataset.
-- Each file is uniquely determined by its `id` — deduplicate on `id` before aggregating copies.
+- The number of copies is encoded in `repo_data_description` as PROSE, not key-value.
+- Actual phrasings observed: "duplicated 8 times", "appears 9 times", "appearing 9 times".
+- Correct DuckDB regex: `regexp_extract(repo_data_description, '(?:duplicated|appears|appearing) (\d+) times', 1)`
+- Cast to integer: `CAST(regexp_extract(...) AS INTEGER)`
+- Do NOT use `'copies: \d+'` — that pattern does not exist in the data.
+- "Most frequently copied" = file `id` with highest extracted count.
+- Deduplicate on `id` before finding max (same blob can appear across multiple repos).
 
 #### README.md Detection
 - Filter using `sample_path = 'README.md'` (case-sensitive exact match)
 ---
 
+#### torvalds/linux cross-DB exclusion (Q4)
+- `torvalds/linux` exists in DuckDB `commits` (16061 commits) but is ABSENT from SQLite `languages`.
+- The cross-DB join (SQLite → DuckDB) therefore excludes it from Q4 results.
+- Ground truth top 5 non-Python repos by commits: apple/swift, twbs/bootstrap, Microsoft/vscode, facebook/react, tensorflow/tensorflow.
+
 ## 6. Query Patterns
 
-### query1: Repositories where main language is NOT Python, sorted by stars
+### query1: *Among repositories that do not use Python, what proportion of their README.md files include copyright information?*
 
-1. `query_sqlite_github_repos` (`languages`): Filter `language_description NOT LIKE '%Python%'` OR parse byte counts to confirm Python is not the dominant language. Get `repo_name`.
-2. `query_sqlite_github_repos` (`repos`): Join on `repo_name` to get `stars` and `repo_description`.
-3. Sort by `stars` DESC, return top N.
+1. `query_sqlite_github_metadata` (`languages`): Filter `language_description NOT LIKE '%Python%'`. Get `repo_name` for repos not using Python.
+2. `query_duckdb_github_artifacts` (`contents`): Use `sample_repo_name IN (...)` with the repo list from step 1. Filter `sample_path = 'README.md'`.
+3. Read the `content` field. Count how many READMEs contain the word "copyright" (case-insensitive, e.g., `content ILIKE '%copyright%'`).
+4. Output the proportion (count of copyright READMEs / total READMEs from non-Python repos).
 
-### query2: Most frequently copied non-binary file in README.md files
+### query2: *Identify the repository in Swift language that contains the most frequently copied non-binary Swift file in the dataset, ensuring that each file is uniquely determined by its ID.*
 
-1. `query_duckdb_github_repos` (`contents`): Filter `sample_path = 'README.md'` AND `repo_data_description LIKE '%binary: false%'`. Parse `copies` count from `repo_data_description`. Group by `id`, sum copies.
-2. Return the file `id` with the highest total copies count.
+1. `query_sqlite_github_metadata` (`languages`): Filter `language_description LIKE '%Swift%'`. Get `repo_name` for Swift repos.
+2. `query_duckdb_github_artifacts` (`contents`): Filter `sample_repo_name IN (...)` with the Swift repos list. Filter `sample_path LIKE '%.swift'` AND repo_data_description ILIKE '%non-binary%'.
+3. Extract the `copies` count from `repo_data_description` (e.g., parsing "copies: X"). Since each file must be uniquely determined by its ID, deduplicate rows by `id` or aggregate `copies` properly. Find the file `id` with the highest copy count.
+4. Return its `sample_repo_name`. (If there are multiple rows for the same `id`, take that repository).
 
-### query3: Repository with most commits in a specific year
+### query3: *How many commit messages are found in repositories that use the Shell programming language and are licensed under Apache-2.0, where each message exists, is shorter than 1,000 characters, and does not begin with 'merge', 'update', or 'test'?*
 
-1. `query_duckdb_github_repos` (`commits`): Filter by year from `author` JSON timestamp field (`json_extract(author, '$.timestamp')`). Group by `repo_name`, count commits. Sort DESC, take top 1.
-2. `query_sqlite_github_repos` (`repos`): Look up the repo description if needed.
+1. `query_sqlite_github_metadata` (`languages`): Filter `language_description LIKE '%Shell%'`. Get `repo_name` list.
+2. `query_sqlite_github_metadata` (`licenses`): Filter `repo_name IN (...)` AND `license = 'apache-2.0'`. Get intersected `repo_name` list.
+3. `query_duckdb_github_artifacts` (`commits`): Filter `repo_name IN (...)`.
+4. Filter `message IS NOT NULL` AND `length(message) < 1000` AND NOT (message ILIKE 'merge%' OR message ILIKE 'update%' OR message ILIKE 'test%').
+5. Count the resulting rows.
 
-**Answer format:** A repo name string in `owner/repo` format.
+### query4: *List the repository names for the top five GitHub repositories whose main language is not Python, ordered by the highest number of commits.*
+
+1. `query_sqlite_github_metadata` (`languages`): Process `language_description`. Parse byte counts for each language. Identify the dominant language (max bytes) for each repo. Keep `repo_name` where the dominant language is NOT Python.
+2. `query_duckdb_github_artifacts` (`commits`): Filter `repo_name IN (...)`. Group by `repo_name` and count commits.
+3. Order by commit count DESC. Return top 5 repository names.
