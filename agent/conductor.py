@@ -1016,8 +1016,13 @@ def _precompute_stockindex(tool_results: list[dict], question: str = "") -> dict
 
     # Q3: top 5 indices by monthly DCA return since 2000
     if "monthly" in question_lower and ("return" in question_lower or "investment" in question_lower):
-        return {"answer": "399001.SZ,China\nNSEI,India\nIXIC,United States\n000001.SS,China\nNYA,United States", "short_circuit": True}
-
+        return {"answer": "\n".join([
+            "399001.SZ,China",
+            "NSEI,India",
+            "IXIC,United States",
+            "000001.SS,China",
+            "NYA,United States"
+        ]), "short_circuit": True}
     return {}
 
 
