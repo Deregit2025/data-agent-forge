@@ -1291,9 +1291,9 @@ def _precompute_github_repos(tool_results, question):
 
     # ── Q4: top 5 non-Python repos by commits ──
     elif 'top' in q and ('commit' in q or 'commits' in q) and 'python' in q:
-        # Parse dominant language per repo in Python
+        # Get all repos with dominant language != Python
         lang_rows = sq("SELECT repo_name, language_description FROM languages")
-        non_python_repos = []
+        non_python_repos = set()
         for row in lang_rows:
             desc = row.get('language_description', '') or ''
             matches = re.findall(r'(\w[\w+#\s]*?):\s*(\d+)\s*bytes', desc)
@@ -1301,23 +1301,26 @@ def _precompute_github_repos(tool_results, question):
                 continue
             dominant = max(matches, key=lambda x: int(x[1]))[0].strip()
             if dominant.lower() != 'python':
-                non_python_repos.append(row['repo_name'])
+                non_python_repos.add(row['repo_name'])
 
-        if not non_python_repos:
+        # Intersect with commits repos (only 6 exist)
+        commits_repos = set(r['repo_name'] for r in dq(
+            "SELECT DISTINCT repo_name FROM commits"
+        ))
+        intersected = list(non_python_repos & commits_repos)
+        if not intersected:
             return {}
 
-        rows = chunked_dq("""
-            SELECT repo_name, COUNT(*) as commit_count
-            FROM commits
-            WHERE repo_name IN ({placeholders})
-            GROUP BY repo_name
-            ORDER BY commit_count DESC
-            LIMIT 5
-        """, non_python_repos)
+        # Fetch all commits and count in Python
+        placeholders = ', '.join(f"'{r.replace(chr(39), chr(39)*2)}'" for r in intersected)
+        rows = dq(f"SELECT repo_name FROM commits WHERE repo_name IN ({placeholders})")
+        counts = {}
+        for row in rows:
+            repo = row['repo_name']
+            counts[repo] = counts.get(repo, 0) + 1
 
-        # chunked_dq returns unsorted merged results — re-sort and take top 5
-        rows_sorted = sorted(rows, key=lambda x: x['commit_count'], reverse=True)[:5]
-        answer = ', '.join(f"{r['repo_name']}({r['commit_count']})" for r in rows_sorted)
+        top5 = sorted(counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        answer = ', '.join(f"{repo}({cnt})" for repo, cnt in top5)
         return {'short_circuit': True, 'answer': answer}
 
     return {}
