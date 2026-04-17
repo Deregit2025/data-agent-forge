@@ -907,10 +907,7 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
         if not rows:
             return {}
         id_region = {r['article_id']: r['region'] for r in rows}
-        articles = mongo([
-            {"$match": {"article_id": {"$in": list(id_region.keys())}}},
-            {"$project": {"article_id": 1, "title": 1, "description": 1}}
-        ])
+        articles = mongo(query={"article_id": {"$in": list(id_region.keys())}})
         region_counts = {}
         for a in articles:
             if classify(a.get('title',''), a.get('description','')) == 'world':
