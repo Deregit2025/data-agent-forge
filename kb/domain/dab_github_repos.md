@@ -124,7 +124,7 @@ The github_repos dataset contains metadata and artifacts for GitHub repositories
 #### Identifying Copies Count
 - The number of copies is encoded in `repo_data_description` as PROSE, not key-value.
 - Actual phrasings observed: "duplicated 8 times", "appears 9 times", "appearing 9 times".
-- Correct DuckDB regex: `regexp_extract(repo_data_description, '(?:duplicated|appears|appearing) (\d+) times', 1)`
+- - Correct DuckDB regex: `regexp_extract(repo_data_description, '(?:duplicated|appears|appearing|copied|repeated) (\d+) times', 1)`
 - Cast to integer: `CAST(regexp_extract(...) AS INTEGER)`
 - Do NOT use `'copies: \d+'` — that pattern does not exist in the data.
 - "Most frequently copied" = file `id` with highest extracted count.

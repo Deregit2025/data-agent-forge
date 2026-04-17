@@ -1257,13 +1257,13 @@ def _precompute_github_repos(tool_results, question):
             rows = dq(f"""
                 SELECT id, sample_repo_name,
                     CAST(regexp_extract(repo_data_description,
-                        '(?:duplicated|appears|appearing) (\\d+) times', 1) AS INTEGER) as copies
+                        '(?:duplicated|appears|appearing|copied|repeated) (\\d+) times', 1) AS INTEGER) as copies
                 FROM contents
                 WHERE sample_repo_name IN ({placeholders})
                   AND sample_path LIKE '%.swift'
                   AND repo_data_description ILIKE '%non-binary%'
                   AND regexp_extract(repo_data_description,
-                        '(?:duplicated|appears|appearing) (\\d+) times', 1) != ''
+                        '(?:duplicated|appears|appearing|copied|repeated) (\\d+) times', 1) != ''
             """)
             for row in rows:
                 if row.get('copies') and row['copies'] > best_copies:
