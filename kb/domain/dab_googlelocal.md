@@ -1,136 +1,253 @@
-# Knowledge Base: GoogleLocal Dataset (DataAgentBench)
+
+# Knowledge Base: `googlelocal` Dataset (DataAgentBench)
+
+> Part of [DataAgentBench](https://github.com/ucbepic/DataAgentBench) (UC Berkeley EPIC Lab)
+> Domain: **Local Business & Reviews** | Paper: arXiv:2603.20576
 
 ---
 
 ## 1. Dataset Overview
 
-The googlelocal dataset contains Google Maps business metadata and user reviews collected up to September 2021 in the United States, split across a PostgreSQL business database and a SQLite review database linked by `gmap_id`.
+The `googlelocal` dataset contains Google Maps business metadata and user reviews collected up to September 2021 in the United States. Data is split across two databases linked by `gmap_id`.
+
+| Property | Value |
+|---|---|
+| Domain | Local business search and reviews (US) |
+| Source dataset | Google Local Reviews (UCSD McAuley Lab, up to Sep 2021) |
+| Number of databases | 2 |
+| DBMSes | PostgreSQL, SQLite |
+| Number of tables | 2 |
+| Number of queries | 4 |
+| Queries requiring domain knowledge | 0 |
+| Example query | *"What are the top 5 businesses in Los Angeles, CA, ranked by highest average rating?"* |
 
 ---
 
-## 2. CRITICAL — MCP Tool Mapping
+## 2. MCP Tool Mapping
 
 | Tool Name | DB Type | Contains |
 |---|---|---|
-| `query_postgres_googlelocal` | PostgreSQL | `business_description` table (business name, gmap_id, description, num_of_reviews, hours, MISC, state) |
-| `query_sqlite_googlelocal_review` | SQLite | `review` table (reviewer name, time, rating, text, gmap_id) |
+| `query_postgres_googlelocal` | PostgreSQL | `business_description` table — business metadata |
+| `query_sqlite_googlelocal_review` | SQLite | `review` table — customer ratings and review text |
 
 ---
 
-## 3. Tables and Collections
+## 3. Schema
 
-### Table: `business_description` (PostgreSQL via `query_postgres_googlelocal`)
+### 3.1 `business_description` — PostgreSQL (`query_postgres_googlelocal`)
 
-Full description: Contains business metadata from Google Maps collected up to September 2021 in the United States.
+Contains business metadata from Google Maps collected up to September 2021 in the United States.
 
-| Field | Type | Meaning |
+| Column | Type | Description |
 |---|---|---|
-| `name` | text | Business name |
-| `gmap_id` | text | Google Maps business identifier (primary join key) |
-| `description` | text | Business description text (use this to identify business type/category) |
-| `num_of_reviews` | bigint | Total number of reviews for this business |
-| `hours` | text | Operating hours information (stored as text, likely serialized list/string) |
-| `MISC` | text | Additional miscellaneous business information (stored as text, likely serialized dict) |
-| `state` | text | Business operating status (e.g., `open`, `closed`, `temporarily closed`) |
+| `gmap_id` | text | Google Maps unique business identifier — **primary join key**. e.g. `0x88dae191ee505917:0x6ba3e25388d3fad4` |
+| `name` | text | Business name as listed on Google Maps |
+| `description` | text | Business description prose. **City, state, and category are embedded here** — no dedicated columns for those. Use `ILIKE '%keyword%'` to filter. |
+| `num_of_reviews` | bigint | Total review count. Use for counting only — **never for average rating**. |
+| `hours` | text | Operating hours stored as serialised text, e.g. `[['Monday', '9:00 AM – 5:00 PM'], ...]`. Parse with string functions. |
+| `MISC` | text | Miscellaneous attributes (accessibility, payment, service options) stored as serialised dict text. |
+| `state` | text | **Business operating status** (e.g. `open`, `closed`, `temporarily closed`) — **NOT a US geographic state**. |
 
-**Important value formats:**
-- `hours` is stored as text (serialized list). Parse carefully for day/time extraction. Expect formats like `[['Monday', '9:00 AM – 5:00 PM'], ...]` or similar string representations.
-- `MISC` is stored as text (serialized dict). Use string matching or casting as needed.
-- Location (city, state) is NOT a dedicated column — location information must be extracted from `description` or inferred from `name`/`MISC`. For Los Angeles queries, filter `description` using `ILIKE '%Los Angeles%'` or `ILIKE '%Los Angeles, CA%'`.
-- `state` refers to business operating status, NOT U.S. state/location.
+> ⚠️ **DAB transformation note:** The upstream dataset includes `latitude`, `longitude`, `avg_rating`, `price`, and `category` as dedicated columns. In DAB these have been **removed**. Average rating must be computed by aggregating `review.rating`. Location (city/state) and category must be **parsed from the `description` string**.
 
 ---
 
-### Table: `review` (SQLite via `query_sqlite_googlelocal_review`)
+### 3.2 `review` — SQLite (`query_sqlite_googlelocal_review`)
 
-Full description: Contains review information from Google Maps collected up to September 2021 in the United States.
+Contains review information from Google Maps collected up to September 2021 in the United States.
 
-| Field | Type | Meaning |
+| Column | Type | Description |
 |---|---|---|
-| `name` | TEXT | Name of the reviewer (NOT the business name) |
-| `time` | TEXT | Timestamp of the review (stored as text; likely Unix milliseconds or formatted string) |
-| `rating` | INTEGER | Rating given by reviewer (integer, 1–5 scale) |
-| `text` | TEXT | Review text content |
-| `gmap_id` | TEXT | Google Maps business identifier (foreign key linking to business_description) |
-
-**Important value formats:**
-- `rating` is INTEGER on a 1–5 scale (whole numbers only — no 4.5 values exist as individual ratings; "4.5 or higher" in queries means `rating >= 5` since ratings are integers 1–5, OR interpret as `rating >= 4.5` which in integer terms means `rating = 5` only — **verify by checking actual data**; most safely use `rating >= 5` for "4.5 or higher").
-- `time` is stored as TEXT. For year filtering (e.g., 2019), use string matching: `time LIKE '2019%'` or extract year via `strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch'))` if stored as Unix milliseconds in string form.
-- `name` in this table is the **reviewer's name**, not the business name.
+| `gmap_id` | TEXT | FK → `business_description.gmap_id`. Links review to business. |
+| `name` | TEXT | **Reviewer's name** — not the business name. |
+| `rating` | INTEGER | Rating given by reviewer (integer, 1–5 scale, whole numbers only). |
+| `text` | TEXT | Review body. City/state of the business may also be embedded here. |
+| `time` | TEXT | Review timestamp stored as text — Unix milliseconds as a 13-digit string. |
 
 ---
 
-## 4. Join Keys
+## 4. Join Relationship — CRITICAL
 
-- **Join field:** `gmap_id` (present in both tables)
-- **business_description.gmap_id** (PostgreSQL, text) ↔ **review.gmap_id** (SQLite, TEXT)
-- These databases cannot be joined in a single SQL query. The agent must:
-  1. Query one database to retrieve `gmap_id` values
-  2. Pass those `gmap_id` values to the other database as a filter (e.g., `WHERE gmap_id IN (...)`)
-  3. Merge/aggregate results in application logic
-
-**Verbatim from official hints:**
-> The two databases can be joined using the gmap_id field to combine review information with business metadata.
-
-**Format note:** Both sides store `gmap_id` as text/TEXT. No known prefix mismatch, but confirm values match exactly (case-sensitive).
-
----
-
-## 5. Critical Domain Knowledge
-
-**Verbatim from official DAB hints:**
-> The two databases can be joined using the gmap_id field to combine review information with business metadata.
-> You can get needed information from the "description" column in business_database
-
-**Additional domain knowledge for the specific queries:**
-
-### Location Filtering (Query 1)
-- There is no dedicated `city` or `us_state` column in `business_description`.
-- To find businesses in Los Angeles, California: filter `description ILIKE '%Los Angeles%'` in the PostgreSQL query. Also consider filtering `description ILIKE '%California%'` or `description ILIKE '%, CA%'` to narrow results.
-- The `state` column in `business_description` means **operating status** (open/closed), NOT geographic U.S. state.
-
-### Business Category Filtering (Query 2)
-- There is no dedicated `category` column. Business type (e.g., "massage therapy") must be identified via `description ILIKE '%massage%'` or `description ILIKE '%massage therapy%'` in `business_description`.
-
-### Hours Parsing (Query 3)
-- `hours` is stored as text in PostgreSQL. It likely represents a serialized Python list of `[day, time_range]` pairs.
-- To find businesses open after 6:00 PM on weekdays (Monday–Friday), parse the `hours` text for entries containing weekday names and closing times after `6:00 PM` (i.e., `7:00 PM`, `8:00 PM`, `9:00 PM`, `10:00 PM`, `11:00 PM`, or containing `PM` with hour > 6, or containing `24 hours`).
-- Use PostgreSQL string functions: `hours LIKE '%Monday%'` combined with time extraction. Look for patterns like `– 7:00 PM`, `– 8:00 PM`, etc., or `Open 24 hours`.
-- Weekdays: Monday, Tuesday, Wednesday, Thursday, Friday.
-
-### Rating Calculations (Queries 1, 2, 3)
-- Average rating must be computed from the `review` table using `AVG(rating)` grouped by `gmap_id`.
-- The `num_of_reviews` field in `business_description` is a count, not a rating — do NOT use it for average rating calculations.
-- Ratings are integers 1–5. `AVG(rating)` will return a decimal.
-
-### High-Rating Review Threshold (Query 4)
-- "Ratings of 4.5 or higher": Since `rating` is INTEGER (1–5), this means `rating >= 5` (only rating = 5 qualifies) OR `rating >= 4` depending on interpretation. **Most defensible interpretation for integer ratings: use `rating >= 5`** since 4.5 is not achievable. However, if the benchmark expects `rating >= 4`, use `rating >= 4`. Try `rating >= 5` first; if results seem off, try `rating >= 4`.
-
-### Year Filtering (Query 4)
-- `time` in the review table is TEXT. Determine format by sampling: if values look like 13-digit numbers (Unix ms), convert with `datetime(CAST(time AS INTEGER)/1000, 'unixepoch')` and extract year. If values are formatted strings, use `time LIKE '2019%'`.
-- For 2019 filtering in SQLite: `strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch')) = '
-
-## 6. Query Patterns
-
-### Query 1: Top 5 businesses in Los Angeles by average rating (descending)
-
-**Step 1 — PostgreSQL** (`query_postgres_googlelocal`):
-```sql
-SELECT gmap_id, name FROM business_description 
-WHERE description ILIKE '%Los Angeles%' 
-OR description ILIKE '%Los Angeles, CA%'
-LIMIT 1000
 ```
-Returns ~7 businesses. This is the complete LA dataset — do not expect more.
+business_description.gmap_id  ──(1:N)──  review.gmap_id
+        [PostgreSQL]                          [SQLite]
+```
 
-**Step 2 — SQLite** (`query_sqlite_googlelocal_review`):
+- **Format:** Both sides store `gmap_id` as plain text — **exact-match join, no prefix transformation needed**.
+- **Cross-DBMS constraint:** These two tables cannot be joined in a single SQL query. The agent must:
+  1. Query PostgreSQL to get matching `gmap_id` values.
+  2. Pass those values to SQLite as `WHERE gmap_id IN (...)`.
+  3. Merge and aggregate results in Python.
+
+**Official DAB hint:**
+> *"The two databases can be joined using the gmap_id field to combine review information with business metadata. You can get needed information from the 'description' column in business_database."*
+
+---
+
+## 5. DAB Transformations Applied
+
+| Transformation | Detail |
+|---|---|
+| **Removed columns** | `latitude`, `longitude`, `avg_rating`, `price`, `category` dropped from `business_description` |
+| **Text embedding** | City/state and category info re-embedded into the `description` prose field |
+| **Split across DBMSes** | `business_description` → PostgreSQL; `review` → SQLite |
+| **Join key** | Not corrupted — `gmap_id` is identical in both tables (exact-match) |
+
+DAB properties exercised: **(i) multi-database integration** + **(iii) unstructured text transformation** (data-independent: location/category extraction from prose using fixed `ILIKE` patterns).
+
+---
+
+## 6. Critical Domain Knowledge & Value Formats
+
+### ⚠️ Location filtering — NO city or state column
+- **`state` column = operating status** (`open`/`closed`/`temporarily closed`) — NOT a US state.
+- To find businesses in Los Angeles: `description ILIKE '%Los Angeles%'`
+- To find businesses in a specific state: `description ILIKE '%Los Angeles, CA%'`
+- The LA subset is **small (~7 businesses total)**. Getting 0 results means wrong filter, not empty dataset.
+
+### ⚠️ Category filtering — NO category column
+- No dedicated `category` column exists. Infer business type from `description` using `ILIKE`.
+- Examples: `description ILIKE '%massage therapy%'`, `description ILIKE '%restaurant%'`
+
+### ⚠️ Average rating — NO avg_rating column
+- `avg_rating` does **not exist** as a column. Always compute: `AVG(rating)` from the `review` table grouped by `gmap_id`.
+- `num_of_reviews` is a count only — never use it for rating calculations.
+
+### Rating scale
+- `review.rating` is **INTEGER 1–5** (whole numbers only — 4.5 is never an individual rating).
+- For queries asking "4.5 or higher": since ratings are integers, use `rating >= 5`.
+- For "4.0 or higher": use `rating >= 4`.
+
+### Time / year filtering
+- `review.time` is TEXT stored as Unix milliseconds (13-digit string).
+- To filter by year in SQLite:
+  ```sql
+  strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch')) = '2019'
+  ```
+- Sample first to confirm format: `SELECT time FROM review LIMIT 3`
+
+### Hours parsing
+- `hours` is serialised text like `[['Monday', '9:00 AM – 5:00 PM'], ...]`
+- To find businesses open after 6 PM on weekdays use string matching:
+  ```sql
+  WHERE (hours LIKE '%Monday%' OR hours LIKE '%Friday%')
+    AND (hours LIKE '% 7:00 PM%' OR hours LIKE '% 8:00 PM%'
+      OR hours LIKE '% 9:00 PM%' OR hours LIKE '%Open 24 hours%')
+  ```
+
+---
+
+## 7. Query Execution Patterns
+
+### Pattern A — Top-N businesses in a city by average rating (Query 1 type)
+**Question shape:** "What are the top N businesses in [City, State], ranked by highest average rating?"
+
+**Step 1 — PostgreSQL:** Get all gmap_ids for businesses in the target city
 ```sql
-SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as review_count 
-FROM review 
+SELECT gmap_id, name
+FROM business_description
+WHERE description ILIKE '%Los Angeles%';
+```
+Returns ~7 businesses. Fetch ALL — do not LIMIT here.
+
+**Step 2 — SQLite:** Compute average rating per business
+```sql
+SELECT gmap_id, AVG(rating) AS avg_rating, COUNT(*) AS review_count
+FROM review
+GROUP BY gmap_id;
+```
+Fetch all rows, merge in Python — do NOT add `IN (...)` filter here.
+
+**Step 3 — Python merge:**
+```python
+merged = businesses_df.merge(ratings_df, on='gmap_id')
+top5 = merged.sort_values('avg_rating', ascending=False).head(5)
+```
+
+**Output format:** `Business1, Business2, Business3, Business4, Business5` (descending by avg_rating)
+
+**Tie-breaking:** If two businesses have the same avg_rating, break ties by review_count DESC, then name alphabetically.
+
+---
+
+### Pattern B — Businesses of a category meeting a rating threshold (Query 2 type)
+**Question shape:** "Which [category] businesses have an average rating of at least [X]?"
+
+**Step 1 — PostgreSQL:** Filter by category keyword in description
+```sql
+SELECT gmap_id, name
+FROM business_description
+WHERE description ILIKE '%massage therapy%';
+```
+
+**Step 2 — SQLite:** Compute avg rating, apply threshold
+```sql
+SELECT gmap_id, AVG(rating) AS avg_rating
+FROM review
+WHERE gmap_id IN ('id1', 'id2', ...)
 GROUP BY gmap_id
+HAVING AVG(rating) >= 4.0;
 ```
-**NEVER add a subquery or IN clause here — get ALL businesses, join in synthesize.**
 
-**Synthesize:** Join on gmap_id, keep only the ~7 LA businesses, sort by avg_rating DESC, return top 5 names comma-separated in descending order.
+**Step 3:** Join back to get business names. Sort alphabetically or by rating as question specifies.
 
-**Answer format:** `Business1, Business2, Business3, Business4, Business5`
+---
+
+### Pattern C — Businesses open after specific hours (Query 3 type)
+**Question shape:** "Which businesses are open after [time] on [weekday]?"
+
+**Step 1 — PostgreSQL:** Filter on `hours` column using string matching
+```sql
+SELECT gmap_id, name, hours
+FROM business_description
+WHERE hours LIKE '%Monday%'
+  AND (hours LIKE '% 7:00 PM%' OR hours LIKE '%Open 24 hours%');
+```
+Sample `hours` values first to confirm exact serialisation format.
+
+**Step 2 — SQLite:** Compute avg rating per gmap_id.
+
+**Step 3:** Merge and rank.
+
+---
+
+### Pattern D — Count or filter by review year and rating (Query 4 type)
+**Question shape:** "How many [high-rating] reviews were left in [year]?"
+
+**SQLite only (if no business filter needed):**
+```sql
+SELECT COUNT(*) AS count
+FROM review
+WHERE rating >= 5
+  AND strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch')) = '2019';
+```
+
+Cross-reference `business_description` via gmap_id if a location or category filter also applies.
+
+---
+
+## 8. Common Agent Failure Modes
+
+| Failure | How to avoid |
+|---|---|
+| Using `state` column for US state/city filtering | `state` = operating status. Use `description ILIKE '%<city>%'` instead |
+| Reading `num_of_reviews` as average rating | Always compute `AVG(review.rating)` from the `review` table |
+| Trying a single cross-DB SQL JOIN | Not possible. Query each DB separately, merge in Python |
+| Filtering `rating >= 4.5` on an integer column | Ratings are integers 1–5. Use `rating >= 5` for "4.5 or higher" |
+| Wrong `time` parsing | `time` is Unix milliseconds as TEXT. Use `datetime(CAST(time AS INTEGER)/1000, 'unixepoch')` |
+| Expecting a `category` column | No such column. Infer from `description` using `ILIKE` |
+| Expecting a `city` or `avg_rating` column | Neither exists. City from `description ILIKE`, rating from `AVG(review.rating)` |
+| Getting 0 LA results | Dataset has only ~7 LA businesses — check filter, not data emptiness |
+| Adding LIMIT to PostgreSQL step | Get ALL gmap_ids first, then rank after merging with ratings |
+
+---
+
+## 9. Upstream Source
+
+| Field | Value |
+|---|---|
+| Original dataset | [Google Local Reviews](https://mcauleylab.ucsd.edu/public_datasets/gdrive/googlelocal/) |
+| Curated by | Tianyang Zhang et al., UCSD McAuley Lab |
+| Coverage | US businesses and reviews up to September 2021 |
+| DAB citation | Li et al., 2022 — *UCTopic: Unsupervised Contrastive Learning for Phrase Representations and Topic Mining* |
+```
