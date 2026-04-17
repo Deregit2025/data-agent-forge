@@ -140,12 +140,14 @@ def list_tools() -> list[dict[str, Any]]:
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
+import re
 def _is_read_only(sql: str) -> bool:
     """Block any non-SELECT statement."""
     s = sql.strip().upper()
-    blocked = ("INSERT", "UPDATE", "DELETE", "DROP",
-               "CREATE", "ALTER", "TRUNCATE", "REPLACE", "MERGE")
-    return s.startswith("SELECT") and not any(kw in s for kw in blocked)
+    pattern = r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|MERGE)\b"
+    if re.search(pattern, s):
+        return False
+    return s.startswith("SELECT")
 
 
 def _error_response(tool_name: str, sql: str, msg: str) -> dict[str, Any]:
