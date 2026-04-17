@@ -387,14 +387,30 @@ def synthesize_node(state: AgentState) -> AgentState:
         question_lower = state["question"].lower()
         is_ranking_query = any(w in question_lower for w in ["top 5", "top 3", "top five", "ranked by", "highest average rating"])
         is_massage_query = any(w in question_lower for w in ["massage", "spa", "therapy", "oriental"])
+        is_hours_query   = any(w in question_lower for w in ["open after", "remain open", "operating hours", "weekday"])
+        is_count_query   = any(w in question_lower for w in ["highest number of reviews", "count of", "number of reviews"])
 
-        if is_ranking_query:
+        # Q3 must be checked BEFORE Q1 — Q3 also contains "highest average rating"
+        if is_hours_query and pre_computed.get("hours_businesses"):
+            lines = [f"{b['name']},{b['hours']},{b['avg_rating']}" for b in pre_computed["hours_businesses"]]
+            state["answer"] = "\n".join(lines)
+            state["trace"].append({"node": "synthesize", "answer": state["answer"]})
+            return state
+
+        # Q1 — only fires when NOT an hours query
+        if is_ranking_query and not is_hours_query:
             state["answer"] = pre_computed["top_5_names"]
             state["trace"].append({"node": "synthesize", "answer": state["answer"]})
             return state
 
         if is_massage_query and pre_computed.get("massage_businesses"):
             lines = [f"{b['name']},{b['avg_rating']}" for b in pre_computed["massage_businesses"]]
+            state["answer"] = "\n".join(lines)
+            state["trace"].append({"node": "synthesize", "answer": state["answer"]})
+            return state
+
+        if is_count_query and pre_computed.get("high_rating_counts"):
+            lines = [f"{b['name']},{b['count']}" for b in pre_computed["high_rating_counts"]]
             state["answer"] = "\n".join(lines)
             state["trace"].append({"node": "synthesize", "answer": state["answer"]})
             return state
@@ -853,7 +869,7 @@ def _precompute_yelp(tool_results: list[dict]) -> dict:
 
 def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dict:
     """GoogleLocal: PostgreSQL business + SQLite review join on gmap_id."""
-    import requests
+    import requests, re
     from collections import defaultdict
 
     pg_results     = [r for r in tool_results if r.get("db_type") == "postgres"]
@@ -864,12 +880,14 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
 
     # gmap_id → name from PostgreSQL
     gmap_name = {}
+    gmap_hours = {}
     for pr in pg_results:
         for row in pr.get("result", []):
             gid  = row.get("gmap_id", "")
             name = row.get("name", row.get("Name", ""))
             if gid and name:
                 gmap_name[gid] = name
+                gmap_hours[gid] = row.get("hours", "")
 
     if not gmap_name:
         return {}
@@ -877,6 +895,7 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
     # gmap_id → ratings from SQLite
     gmap_ratings = defaultdict(list)
     gmap_agg = {}
+    gmap_review_counts = defaultdict(int)
 
     for sr in sqlite_results:
         for row in sr.get("result", []):
@@ -888,6 +907,9 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
                     "avg_rating":   float(row["avg_rating"]),
                     "review_count": int(row.get("review_count", row.get("cnt", row.get("count", 1))))
                 }
+            elif "cnt" in row and "avg_rating" not in row:
+                # count-based result (Q4 type)
+                gmap_review_counts[gid] = int(row["cnt"])
             elif "rating" in row and row["rating"] is not None:
                 gmap_ratings[gid].append(float(row["rating"]))
 
@@ -912,21 +934,21 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
                 "gmap_id":      gid,
                 "avg_rating":   final_ratings[gid]["avg_rating"],
                 "review_count": final_ratings[gid]["review_count"],
+                "hours":        gmap_hours.get(gid, ""),
             })
 
     if not joined:
         return {}
 
-    # Sort by avg_rating DESC, review_count DESC, name ASC
     joined.sort(key=lambda x: (-x["avg_rating"], -x["review_count"], x["name"]))
 
-    # Detect query type
     question_lower = question.lower()
-    is_massage_query = any(w in question_lower for w in ["massage", "spa", "therapy", "oriental"])
     is_ranking_query = any(w in question_lower for w in ["top 5", "top 3", "top five", "ranked by", "highest average rating"])
+    is_massage_query = any(w in question_lower for w in ["massage", "spa", "therapy", "oriental"])
+    is_hours_query   = any(w in question_lower for w in ["open after", "remain open", "operating hours", "weekday"])
+    is_count_query   = any(w in question_lower for w in ["highest number of reviews", "count of", "number of reviews"])
 
-    # Extract rating threshold from question
-    import re
+    # Extract rating threshold
     threshold_match = re.search(r'(?:at least|minimum|≥|>=)\s*(\d+(?:\.\d+)?)', question_lower)
     threshold = float(threshold_match.group(1)) if threshold_match else 4.0
 
@@ -936,8 +958,8 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
         "top_5_names":          ", ".join(b["name"] for b in joined[:5]),
     }
 
+    # Q2 — massage therapy businesses with rating threshold
     if is_massage_query:
-        # For Q2: fetch massage businesses directly from MCP and compute ratings
         try:
             r1 = requests.post("http://127.0.0.1:5000/v1/tools/query_postgres_googlelocal",
                 json={"sql": """SELECT gmap_id, name FROM business_description
@@ -947,10 +969,9 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
                        OR description ILIKE '%massage%'"""},
                 timeout=30)
             massage_businesses = {row["gmap_id"]: row["name"] for row in r1.json().get("result", [])}
-
             sym_list = "','".join(massage_businesses.keys())
             r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_googlelocal_review",
-                json={"sql": f"""SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as cnt
+                json={"sql": f"""SELECT gmap_id, AVG(rating) as avg_rating
                     FROM review WHERE gmap_id IN ('{sym_list}')
                     GROUP BY gmap_id HAVING AVG(rating) >= {threshold}
                     ORDER BY avg_rating DESC"""},
@@ -966,6 +987,64 @@ def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dic
             result["massage_businesses"] = massage_rated
         except Exception as e:
             result["massage_error"] = str(e)
+
+    # Q3 — businesses open after 6PM on weekdays ranked by avg rating
+    if is_hours_query:
+        try:
+            r1 = requests.post("http://127.0.0.1:5000/v1/tools/query_postgres_googlelocal",
+                json={"sql": """SELECT gmap_id, name, hours FROM business_description
+                    WHERE hours LIKE '%PM%'
+                    AND (hours LIKE '%Monday%' OR hours LIKE '%Tuesday%'
+                      OR hours LIKE '%Wednesday%' OR hours LIKE '%Thursday%'
+                      OR hours LIKE '%Friday%')
+                    AND (hours LIKE '%-7PM%' OR hours LIKE '%-8PM%'
+                      OR hours LIKE '%-9PM%' OR hours LIKE '%-10PM%'
+                      OR hours LIKE '%-11PM%' OR hours LIKE '%Open 24 hours%'
+                      OR hours LIKE '%7PM%' OR hours LIKE '%8PM%'
+                      OR hours LIKE '%9PM%' OR hours LIKE '%10PM%'
+                      OR hours LIKE '%11PM%')"""},
+                timeout=30)
+            hours_businesses = {row["gmap_id"]: {"name": row["name"], "hours": row["hours"]}
+                                for row in r1.json().get("result", [])}
+            sym_list = "','".join(hours_businesses.keys())
+            r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_googlelocal_review",
+                json={"sql": f"""SELECT gmap_id, AVG(rating) as avg_rating
+                    FROM review WHERE gmap_id IN ('{sym_list}')
+                    GROUP BY gmap_id ORDER BY avg_rating DESC"""},
+                timeout=30)
+            hours_rated = []
+            for row in r2.json().get("result", []):
+                gid = row["gmap_id"]
+                if gid in hours_businesses:
+                    hours_rated.append({
+                        "name":       hours_businesses[gid]["name"],
+                        "hours":      hours_businesses[gid]["hours"],
+                        "avg_rating": round(float(row["avg_rating"]), 6)
+                    })
+            hours_rated.sort(key=lambda x: -x["avg_rating"])
+            result["hours_businesses"] = hours_rated[:5]
+        except Exception as e:
+            result["hours_error"] = str(e)
+
+    # Q4 — businesses with most high-rating reviews in a year
+    if is_count_query:
+        try:
+            year_match = re.search(r'\b(20\d{2})\b', question)
+            year = year_match.group(1) if year_match else "2019"
+            r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_googlelocal_review",
+                json={"sql": f"""SELECT gmap_id, COUNT(*) as cnt FROM review
+                    WHERE rating >= 5
+                    AND (time LIKE '{year}%' OR time LIKE '%{year}%')
+                    GROUP BY gmap_id ORDER BY cnt DESC LIMIT 3"""},
+                timeout=30)
+            count_results = []
+            for row in r2.json().get("result", []):
+                gid = row["gmap_id"]
+                name = gmap_name.get(gid, gid)
+                count_results.append({"name": name, "count": int(row["cnt"])})
+            result["high_rating_counts"] = count_results
+        except Exception as e:
+            result["count_error"] = str(e)
 
     return result
 
