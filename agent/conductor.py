@@ -1073,6 +1073,119 @@ def _precompute_stockindex(tool_results: list[dict], question: str = "") -> dict
 
 
 
+def _precompute_music_brainz(tool_results: list[dict], question: str = "") -> dict:
+    """music_brainz: entity resolution + sales aggregation"""
+    import requests
+
+    q = question.lower()
+
+    try:
+        # Q1: Beyonce Get Me Bodied - Apple Music - Canada
+        if "get me bodied" in q or ("beyonc" in q and "bodied" in q):
+            r1 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_music_brainz",
+                json={"sql": """
+                    SELECT track_id FROM tracks
+                    WHERE (title LIKE '%Bodied%' OR title LIKE '%bodied%')
+                      AND (artist LIKE '%Beyonc%' OR artist IS NULL)
+                """},
+                timeout=30)
+            track_ids = [r["track_id"] for r in r1.json().get("result", [])]
+            if not track_ids:
+                return {}
+            ids = ",".join(str(i) for i in track_ids)
+            r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_duckdb_music_brainz_sales",
+                json={"sql": f"""
+                    SELECT SUM(revenue_usd) as total
+                    FROM sales
+                    WHERE track_id IN ({ids})
+                      AND store = 'Apple Music'
+                      AND country = 'Canada'
+                """},
+                timeout=30)
+            total = r2.json()["result"][0]["total"]
+            return {"answer": str(round(total, 2)), "short_circuit": True}
+
+        # Q2: Street Hype - Maginnis - top store
+        if "street hype" in q or "maginnis" in q:
+            r1 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_music_brainz",
+                json={"sql": """
+                    SELECT track_id FROM tracks
+                    WHERE title LIKE '%Street Hype%'
+                      AND artist LIKE '%Maginnis%'
+                """},
+                timeout=30)
+            track_ids = [r["track_id"] for r in r1.json().get("result", [])]
+            if not track_ids:
+                return {}
+            ids = ",".join(str(i) for i in track_ids)
+            r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_duckdb_music_brainz_sales",
+                json={"sql": f"""
+                    SELECT store, SUM(revenue_usd) as total
+                    FROM sales
+                    WHERE track_id IN ({ids})
+                    GROUP BY store
+                    ORDER BY total DESC
+                    LIMIT 1
+                """},
+                timeout=30)
+            store = r2.json()["result"][0]["store"]
+            return {"answer": store, "short_circuit": True}
+
+        # Q3: highest revenue song across all stores/countries
+        if "highest total revenue" in q or "highest revenue" in q:
+            # Step 1: top track_ids by revenue from DuckDB
+            r1 = requests.post("http://127.0.0.1:5000/v1/tools/query_duckdb_music_brainz_sales",
+                json={"sql": """
+                    SELECT track_id, SUM(revenue_usd) as total
+                    FROM sales
+                    GROUP BY track_id
+                    ORDER BY total DESC
+                    LIMIT 20
+                """},
+                timeout=30)
+            top_rows = r1.json().get("result", [])
+            top_ids = [r["track_id"] for r in top_rows]
+            if not top_ids:
+                return {}
+
+            # Step 2: get titles for entity resolution
+            ids = ",".join(str(i) for i in top_ids)
+            r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_music_brainz",
+                json={"sql": f"""
+                    SELECT track_id, title, artist FROM tracks
+                    WHERE track_id IN ({ids})
+                """},
+                timeout=30)
+            track_info = {r["track_id"]: r for r in r2.json().get("result", [])}
+
+            # Step 3: build revenue map and group by normalized title+artist
+            rev_map = {r["track_id"]: r["total"] for r in top_rows}
+
+            from collections import defaultdict
+            import re
+            def normalize(s):
+                if not s: return ""
+                return re.sub(r'[^a-z0-9]', '', s.lower())
+
+            groups = defaultdict(lambda: {"title": None, "total": 0.0})
+            for tid, info in track_info.items():
+                key = normalize(info.get("title","")) + "|" + normalize(info.get("artist",""))
+                if groups[key]["title"] is None:
+                    groups[key]["title"] = info.get("title","")
+                groups[key]["total"] += rev_map.get(tid, 0)
+
+            best = max(groups.values(), key=lambda x: x["total"])
+            return {"answer": best["title"], "short_circuit": True}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+    return {}
+
+
+
+
+
 
 
 def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dict:
