@@ -183,7 +183,7 @@ Rules:
     ]
 
     try:
-        response = llm_call(messages, max_tokens=1000)
+        response = llm_call(messages, max_tokens=4000)
         # robust JSON extraction — handle nested braces correctly
         response = response.strip()
         # strip markdown fences first
@@ -316,7 +316,7 @@ Provide a corrected query. Respond with JSON only:
         ]
 
         try:
-            response = llm_call(messages, max_tokens=500)
+            response = llm_call(messages, max_tokens=4000)
             response = response.strip()
             if response.startswith("```"):
                 response = response.split("```")[1]
