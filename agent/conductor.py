@@ -1260,7 +1260,7 @@ def _precompute_github_repos(tool_results, question):
             LIMIT 1
         """)
         if rows:
-            return {'short_circuit': True, 'answer': rows[0]['repo_name']}
+            return {'short_circuit': True, 'answer': f"The repository is {rows[0]['repo_name']}"}
         return {}
 
     # ── Q3: count commit messages in Shell+Apache-2.0 repos, filtered ──
