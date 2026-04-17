@@ -384,9 +384,20 @@ def synthesize_node(state: AgentState) -> AgentState:
         return state
 
     if dataset == "googlelocal" and pre_computed.get("businesses_by_rating"):
-        state["answer"] = pre_computed["top_5_names"]
-        state["trace"].append({"node": "synthesize", "answer": state["answer"]})
-        return state
+        question_lower = state["question"].lower()
+        is_ranking_query = any(w in question_lower for w in ["top 5", "top 3", "top five", "ranked by", "highest average rating"])
+        is_massage_query = any(w in question_lower for w in ["massage", "spa", "therapy", "oriental"])
+
+        if is_ranking_query:
+            state["answer"] = pre_computed["top_5_names"]
+            state["trace"].append({"node": "synthesize", "answer": state["answer"]})
+            return state
+
+        if is_massage_query and pre_computed.get("massage_businesses"):
+            lines = [f"{b['name']},{b['avg_rating']}" for b in pre_computed["massage_businesses"]]
+            state["answer"] = "\n".join(lines)
+            state["trace"].append({"node": "synthesize", "answer": state["answer"]})
+            return state
 
     # ── dataset-specific joining rules for the prompt ─────────────────────────
     joining_rule = ""
@@ -840,8 +851,9 @@ def _precompute_yelp(tool_results: list[dict]) -> dict:
     }
 
 
-def _precompute_googlelocal(tool_results: list[dict]) -> dict:
+def _precompute_googlelocal(tool_results: list[dict], question: str = "") -> dict:
     """GoogleLocal: PostgreSQL business + SQLite review join on gmap_id."""
+    import requests
     from collections import defaultdict
 
     pg_results     = [r for r in tool_results if r.get("db_type") == "postgres"]
@@ -862,27 +874,24 @@ def _precompute_googlelocal(tool_results: list[dict]) -> dict:
     if not gmap_name:
         return {}
 
-    # gmap_id → list of ratings from SQLite
-    # Handles BOTH raw rows (one rating per row) AND pre-aggregated rows (avg_rating column)
+    # gmap_id → ratings from SQLite
     gmap_ratings = defaultdict(list)
-    gmap_agg = {}  # for pre-aggregated results
+    gmap_agg = {}
 
     for sr in sqlite_results:
         for row in sr.get("result", []):
             gid = row.get("gmap_id", "")
             if not gid:
                 continue
-            # Case 1: pre-aggregated row has avg_rating column
             if "avg_rating" in row:
                 gmap_agg[gid] = {
                     "avg_rating":   float(row["avg_rating"]),
                     "review_count": int(row.get("review_count", row.get("cnt", row.get("count", 1))))
                 }
-            # Case 2: raw review row has individual rating
             elif "rating" in row and row["rating"] is not None:
                 gmap_ratings[gid].append(float(row["rating"]))
 
-    # Build final ratings map — prefer pre-aggregated, fall back to computing from raw
+    # Build final ratings map
     final_ratings = {}
     for gid in set(list(gmap_agg.keys()) + list(gmap_ratings.keys())):
         if gid in gmap_agg:
@@ -894,7 +903,7 @@ def _precompute_googlelocal(tool_results: list[dict]) -> dict:
                 "review_count": len(vals)
             }
 
-    # Join businesses with ratings and rank
+    # Join businesses with ratings
     joined = []
     for gid, name in gmap_name.items():
         if gid in final_ratings:
@@ -908,15 +917,57 @@ def _precompute_googlelocal(tool_results: list[dict]) -> dict:
     if not joined:
         return {}
 
-    # Sort by avg_rating DESC, then review_count DESC, then name ASC for tie-breaking
+    # Sort by avg_rating DESC, review_count DESC, name ASC
     joined.sort(key=lambda x: (-x["avg_rating"], -x["review_count"], x["name"]))
 
-    return {
+    # Detect query type
+    question_lower = question.lower()
+    is_massage_query = any(w in question_lower for w in ["massage", "spa", "therapy", "oriental"])
+    is_ranking_query = any(w in question_lower for w in ["top 5", "top 3", "top five", "ranked by", "highest average rating"])
+
+    # Extract rating threshold from question
+    import re
+    threshold_match = re.search(r'(?:at least|minimum|≥|>=)\s*(\d+(?:\.\d+)?)', question_lower)
+    threshold = float(threshold_match.group(1)) if threshold_match else 4.0
+
+    result = {
         "businesses_by_rating": joined,
         "top_business":         joined[0]["name"] if joined else None,
         "top_5_names":          ", ".join(b["name"] for b in joined[:5]),
     }
 
+    if is_massage_query:
+        # For Q2: fetch massage businesses directly from MCP and compute ratings
+        try:
+            r1 = requests.post("http://127.0.0.1:5000/v1/tools/query_postgres_googlelocal",
+                json={"sql": """SELECT gmap_id, name FROM business_description
+                    WHERE name ILIKE '%massage%'
+                       OR name ILIKE '%spa%'
+                       OR name ILIKE '%oriental%'
+                       OR description ILIKE '%massage%'"""},
+                timeout=30)
+            massage_businesses = {row["gmap_id"]: row["name"] for row in r1.json().get("result", [])}
+
+            sym_list = "','".join(massage_businesses.keys())
+            r2 = requests.post("http://127.0.0.1:5000/v1/tools/query_sqlite_googlelocal_review",
+                json={"sql": f"""SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as cnt
+                    FROM review WHERE gmap_id IN ('{sym_list}')
+                    GROUP BY gmap_id HAVING AVG(rating) >= {threshold}
+                    ORDER BY avg_rating DESC"""},
+                timeout=30)
+            massage_rated = []
+            for row in r2.json().get("result", []):
+                gid = row["gmap_id"]
+                if gid in massage_businesses:
+                    massage_rated.append({
+                        "name": massage_businesses[gid],
+                        "avg_rating": round(float(row["avg_rating"]), 6)
+                    })
+            result["massage_businesses"] = massage_rated
+        except Exception as e:
+            result["massage_error"] = str(e)
+
+    return result
 
 # ── routing ───────────────────────────────────────────────────────────────────
 

@@ -170,26 +170,44 @@ top5 = merged.sort_values('avg_rating', ascending=False).head(5)
 
 ---
 
-### Pattern B — Businesses of a category meeting a rating threshold (Query 2 type)
-**Question shape:** "Which [category] businesses have an average rating of at least [X]?"
+### Pattern B — Massage therapy businesses with avg rating threshold (Query 2)
+**Question shape:** "Which massage therapy businesses have an average rating of at least [X]?"
 
-**Step 1 — PostgreSQL:** Filter by category keyword in description
+**CRITICAL — "massage therapy businesses" filter:**
 ```sql
-SELECT gmap_id, name
-FROM business_description
-WHERE description ILIKE '%massage therapy%';
+WHERE name ILIKE '%massage%'
+   OR name ILIKE '%spa%'
+   OR name ILIKE '%oriental%'
+   OR description ILIKE '%massage%'
+```
+This catches: named massage businesses + spa businesses + J B Oriental Inc (which is a massage business but has no massage keyword in description).
+
+**Step 1 — PostgreSQL:**
+```sql
+SELECT gmap_id, name FROM business_description
+WHERE name ILIKE '%massage%'
+   OR name ILIKE '%spa%'
+   OR name ILIKE '%oriental%'
+   OR description ILIKE '%massage%'
 ```
 
-**Step 2 — SQLite:** Compute avg rating, apply threshold
+**Step 2 — SQLite:**
 ```sql
-SELECT gmap_id, AVG(rating) AS avg_rating
+SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as cnt
 FROM review
 WHERE gmap_id IN ('id1', 'id2', ...)
 GROUP BY gmap_id
-HAVING AVG(rating) >= 4.0;
+HAVING AVG(rating) >= 4.0
+ORDER BY avg_rating DESC
 ```
 
-**Step 3:** Join back to get business names. Sort alphabetically or by rating as question specifies.
+**Step 3:** Join back to get names. Output format: `Name,avg_rating` one per line.
+
+**Ground truth (4 businesses):**
+- Elite Massage, 5.0
+- Angel-A Massage, 4.333...
+- Aurora Massage, 4.178...
+- J B Oriental Inc, 4.166...
 
 ---
 
