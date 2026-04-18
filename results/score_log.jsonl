@@ -1,0 +1,1 @@
+{"date": "2026-04-18", "run_id": "benchmark_20260418_114351", "pass_rate": 0.444, "pass_count": 24, "total_queries": 54, "n_trials": 5, "model": "claude-sonnet-4.6", "dab_pr": "https://github.com/ucbepic/DataAgentBench/pull/32", "notes": "Final submission — TRP1 FDE Programme April 2026"}
