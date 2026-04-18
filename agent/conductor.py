@@ -817,14 +817,16 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
                      'offside', 'strikeout', 'home run',
                      'rebounds', 'assists', 'tackles']
     
-        scitech = ['tech', 'software', 'computer', 'internet', 'digital', 'science',
-               'research', 'nasa', 'space', 'robot', 'linux', 'security', 'network',
-               'wireless', 'chip', 'processor', 'server', 'microsoft', 'google',
-               'apple', 'ibm', 'intel', 'cisco', 'oracle', 'ebay', 'amazon', 'yahoo',
-               'broadband', 'telecom', 'satellite', 'genome', 'biotech', 'physics',
-               'chemistry', 'astronomy', 'climate', 'energy', 'scientists',
-               'researchers', 'laboratory', 'gene', 'virus', 'vaccine', 'drug',
-               'medical', 'cancer', 'stem cell']
+        scitech = ['tech', 'software', 'computer', 'internet', 'science',
+           'nasa', 'space exploration', 'robot', 'linux',
+           'wireless network', 'microchip', 'processor', 'microsoft',
+           'google', 'ibm', 'ebay', 'amazon', 'yahoo',
+           'broadband', 'telecom', 'satellite radio', 'genome', 'biotech',
+           'physics', 'chemistry', 'astronomy', 'climate change',
+           'scientists say', 'researchers say', 'laboratory',
+           'virus software', 'vaccine', 'cancer drug',
+           'stem cell', 'artificial intelligence', 'semiconductor',
+           'fiber optic', 'encryption', 'open source', 'bandwidth']
     
         business = ['stock', 'shares', 'investor', 'ceo', 'merger', 'acquisition',
                     'earnings', 'profit', 'revenue', 'quarterly', 'fiscal',
