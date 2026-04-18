@@ -58,7 +58,7 @@
 - [x] ReadyTensor final cross-post
 - [x] Reddit r/MachineLearning post — 
 - [x] Reddit r/LocalLLaMA post —
-- [ ] Discord DAB Community post — [the channel not found
+- [ ] Discord DAB Community post — the channel not found
 
 ### Community intelligence gathered
 
