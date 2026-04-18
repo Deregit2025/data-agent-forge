@@ -52,20 +52,26 @@ def convert(results_file: Path) -> list:
     return submission
 
 if __name__ == "__main__":
-    # Find the most recent results file
-    result_files = sorted(RESULTS_DIR.glob("benchmark_*.json"), reverse=True)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--file", type=str, default=None)
+    args = parser.parse_args()
 
-    if not result_files:
-        print("No results files found in eval/results/")
-        exit(1)
+    if args.file:
+        latest = Path(args.file)
+    else:
+        result_files = sorted(RESULTS_DIR.glob("benchmark_*.json"), reverse=True)
+        if not result_files:
+            print("No results files found in eval/results/")
+            exit(1)
+        # Find the file with most queries
+        latest = max(result_files, key=lambda f: json.load(open(f)).get("total_queries", 0))
 
-    latest = result_files[0]
     print(f"Converting: {latest.name}")
 
     submission = convert(latest)
     print(f"Total entries: {len(submission)}")
 
-    # Verify coverage
     datasets = set(e["dataset"] for e in submission)
     queries_per_dataset = {}
     for e in submission:
@@ -76,7 +82,6 @@ if __name__ == "__main__":
     print(f"Unique queries: {len(queries_per_dataset)}")
     print(f"Trials per query: {list(queries_per_dataset.values())[0] if queries_per_dataset else 0}")
 
-    # Save
     OUTPUT_FILE.parent.mkdir(exist_ok=True)
     with open(OUTPUT_FILE, "w") as f:
         json.dump(submission, f, indent=2)
