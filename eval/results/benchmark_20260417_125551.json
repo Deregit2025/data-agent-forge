@@ -1,0 +1,79 @@
+{
+  "run_id": "20260417_125551",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "music_brainz",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "music_brainz",
+      "query_id": 2,
+      "question": "Which store earned the most revenue in USD from Brucqe Maginnis' song 'Street Hype' across all countries?",
+      "ground_truth": "Amazon Music",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "music_brainz",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which store earned the most revenue in USD from Brucqe Maginnis' song 'Street Hype' across all countries?",
+          "answer": "iTunes",
+          "is_valid": false,
+          "reason": "Ground truth 'Amazon Music' not found in LLM output: iTunes",
+          "ground_truth": "Amazon Music",
+          "elapsed_s": 22.63,
+          "root_name": "trial_1_20260417_125551",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This is query2 from the music_brainz domain knowledge. Step 1: Find all track_ids for 'Street Hype' by the artist matching 'Maginnis' (note: 'Brucqe Maginnis' is likely a misspelling) using fuzzy LIKE search in SQLite tracks table. Step 2: Use those track_ids to query DuckDB sales table, grouping by store and summing revenue to find the top-earning store.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_music_brainz",
+                "query_duckdb_music_brainz_sales"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_music_brainz",
+              "db_type": "sqlite",
+              "query_used": "SELECT track_id, title, artist, album, year FROM tracks WHERE title LIKE '%Street Hype%' AND artist LIKE '%Maginnis%'",
+              "row_count": 3,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_music_brainz_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT store, SUM(revenue_usd) AS total_revenue\nFROM sales\nWHERE track_id IN (4122, 4628, 14080)\nGROUP BY store\nORDER BY total_revenue DESC\nLIMIT 1",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "iTunes"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

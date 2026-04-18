@@ -1,0 +1,139 @@
+{
+  "run_id": "20260417_095620",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 2,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 2,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 3,
+      "question": "What are the top 5 businesses that remain open after 6:00 PM on at least one weekday, ranked by highest average rating? Include their names, operating hours, and average ratings.",
+      "ground_truth": "TACOS LA CABANA,\"[['Thursday', 'Closed'], ['Friday', '5\u201311PM'], ['Saturday', '5\u201311PM'], ['Sunday', '5\u201311PM'], ['Monday', '5\u201311PM'], ['Tuesday', 'Closed'], ['Wednesday', 'Closed']]\",5.0\nWhite Barn Candle Co,\"[['Thursday', '10AM\u20139PM'], ['Friday', '10AM\u20139PM'], ['Saturday', '10AM\u20139PM'], ['Sunday', '11AM\u20137PM'], ['Monday', '10AM\u20139PM'], ['Tuesday', '10AM\u20139PM'], ['Wednesday', '10AM\u20139PM']]\",5.0\nMariscos el poblano,\"[['Thursday', 'Open 24 hours'], ['Friday', '8AM\u20133:30PM'], ['Saturday', '8AM\u20133:30PM'], ['Sunday', '8AM\u20133:30PM'], ['Monday', '9AM\u20133:30AM'], ['Tuesday', '8AM\u20133:30PM'], ['Wednesday', '8AM\u20133:30PM']]\",5.0\nBeauty Divine Artistry,\"[['Thursday', '9AM\u20138PM'], ['Friday', '9AM\u20138PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '9AM\u20138PM'], ['Tuesday', '9AM\u20138PM'], ['Wednesday', '9AM\u20138PM']]\",5.0\nTaba Rug Gallery,\"[['Thursday', '10AM\u20137PM'], ['Friday', '10AM\u20137PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '10AM\u20137PM'], ['Tuesday', '10AM\u20137PM'], ['Wednesday', '10AM\u20137PM']]\",5.0",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses that remain open after 6:00 PM on at least one weekday, ranked by highest average rating? Include their names, operating hours, and average ratings.",
+          "answer": "Mariscos el poblano, Regus - California, Irvine - Oracle Tower, Mobile Moreno Valley Dispensary",
+          "is_valid": false,
+          "reason": "Missing business name: TACOS LA CABANA",
+          "ground_truth": "TACOS LA CABANA,\"[['Thursday', 'Closed'], ['Friday', '5\u201311PM'], ['Saturday', '5\u201311PM'], ['Sunday', '5\u201311PM'], ['Monday', '5\u201311PM'], ['Tuesday', 'Closed'], ['Wednesday', 'Closed']]\",5.0\nWhite Barn Candle Co,\"[['Thursday', '10AM\u20139PM'], ['Friday', '10AM\u20139PM'], ['Saturday', '10AM\u20139PM'], ['Sunday', '11AM\u20137PM'], ['Monday', '10AM\u20139PM'], ['Tuesday', '10AM\u20139PM'], ['Wednesday', '10AM\u20139PM']]\",5.0\nMariscos el poblano,\"[['Thursday', 'Open 24 hours'], ['Friday', '8AM\u20133:30PM'], ['Saturday', '8AM\u20133:30PM'], ['Sunday', '8AM\u20133:30PM'], ['Monday', '9AM\u20133:30AM'], ['Tuesday', '8AM\u20133:30PM'], ['Wednesday', '8AM\u20133:30PM']]\",5.0\nBeauty Divine Artistry,\"[['Thursday', '9AM\u20138PM'], ['Friday', '9AM\u20138PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '9AM\u20138PM'], ['Tuesday', '9AM\u20138PM'], ['Wednesday', '9AM\u20138PM']]\",5.0\nTaba Rug Gallery,\"[['Thursday', '10AM\u20137PM'], ['Friday', '10AM\u20137PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '10AM\u20137PM'], ['Tuesday', '10AM\u20137PM'], ['Wednesday', '10AM\u20137PM']]\",5.0",
+          "elapsed_s": 81.92,
+          "root_name": "trial_1_20260417_095620",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This query requires: (1) finding businesses open after 6 PM on at least one weekday from business_description in PostgreSQL, (2) getting average ratings from review table in SQLite, then merging and ranking. The hours column in PostgreSQL contains serialized text with day/time info. We need to filter for businesses where hours contain a weekday (Monday-Friday) with closing time after 6 PM (7:00 PM, 8:00 PM, 9:00 PM, 10:00 PM, 11:00 PM, midnight, or Open 24 hours). Then compute AVG(rating) from SQLite review table grouped by gmap_id, merge results, and return top 5.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_googlelocal",
+                "query_sqlite_googlelocal_review"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\", \"hours\" FROM business_description WHERE (\"hours\" ILIKE '%Monday%' OR \"hours\" ILIKE '%Tuesday%' OR \"hours\" ILIKE '%Wednesday%' OR \"hours\" ILIKE '%Thursday%' OR \"hours\" ILIKE '%Friday%') AND (\"hours\" ILIKE '%7:00 PM%' OR \"hours\" ILIKE '%8:00 PM%' OR \"hours\" ILIKE '%9:00 PM%' OR \"hours\" ILIKE '%10:00 PM%' OR \"hours\" ILIKE '%11:00 PM%' OR \"hours\" ILIKE '%Open 24 hours%')",
+              "row_count": 3,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, AVG(rating) AS avg_rating, COUNT(*) AS review_count FROM review GROUP BY gmap_id",
+              "row_count": 79,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "Mariscos el poblano, Regus - California, Irvine - Oracle Tower, Mobile Moreno Valley Dispensary"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 4,
+      "question": "Which 3 businesses received the highest number of reviews with ratings of 4.5 or higher during 2019? Include their names and the count of high-rating reviews.",
+      "ground_truth": "Encino Dermatology & Laser: Alex Khadavi MD,19\nThe Boochyard @ Local Roots,17\nAurora Massage,14",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "Which 3 businesses received the highest number of reviews with ratings of 4.5 or higher during 2019? Include their names and the count of high-rating reviews.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing business name: Encino Dermatology & Laser",
+          "ground_truth": "Encino Dermatology & Laser: Alex Khadavi MD,19\nThe Boochyard @ Local Roots,17\nAurora Massage,14",
+          "elapsed_s": 12.57,
+          "root_name": "trial_1_20260417_095742",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Ratings are integers 1-5, so 4.5 or higher means rating >= 5. Review time is stored as Unix milliseconds text. Need to: 1) Get all gmap_ids and names from PostgreSQL business_description, 2) Query SQLite review table filtering for rating >= 5 and year 2019, group by gmap_id, then merge with business names in Python to get top 3.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_googlelocal",
+                "query_sqlite_googlelocal_review"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\" FROM \"business_description\"",
+              "row_count": 79,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, COUNT(*) AS high_rating_count FROM review WHERE rating >= 5 AND strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch')) = '2019' GROUP BY gmap_id ORDER BY high_rating_count DESC LIMIT 3",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

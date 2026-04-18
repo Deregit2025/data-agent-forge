@@ -1,0 +1,127 @@
+{
+  "run_id": "20260413_143622",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 4,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 4,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 1,
+      "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+      "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+          "answer": "Widows Peak Salon, City Textile, San Soo Dang, Nobel Textile Co, Ace Jewelry & Loan",
+          "is_valid": false,
+          "reason": "Name out of order: San Soo Dang",
+          "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+          "elapsed_s": 12.35,
+          "root_name": "trial_1_20260413_143622",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 2,
+      "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+      "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+          "answer": "gmap_0, 4.89; gmap_1, 5.0; gmap_10, 5.0; gmap_11, 4.96; gmap_12, 5.0;",
+          "is_valid": false,
+          "reason": "Missing name in LLM output: Elite Massage",
+          "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+          "elapsed_s": 13.26,
+          "root_name": "trial_1_20260413_143634",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 3,
+      "question": "What are the top 5 businesses that remain open after 6:00 PM on at least one weekday, ranked by highest average rating? Include their names, operating hours, and average ratings.",
+      "ground_truth": "TACOS LA CABANA,\"[['Thursday', 'Closed'], ['Friday', '5\u201311PM'], ['Saturday', '5\u201311PM'], ['Sunday', '5\u201311PM'], ['Monday', '5\u201311PM'], ['Tuesday', 'Closed'], ['Wednesday', 'Closed']]\",5.0\nWhite Barn Candle Co,\"[['Thursday', '10AM\u20139PM'], ['Friday', '10AM\u20139PM'], ['Saturday', '10AM\u20139PM'], ['Sunday', '11AM\u20137PM'], ['Monday', '10AM\u20139PM'], ['Tuesday', '10AM\u20139PM'], ['Wednesday', '10AM\u20139PM']]\",5.0\nMariscos el poblano,\"[['Thursday', 'Open 24 hours'], ['Friday', '8AM\u20133:30PM'], ['Saturday', '8AM\u20133:30PM'], ['Sunday', '8AM\u20133:30PM'], ['Monday', '9AM\u20133:30AM'], ['Tuesday', '8AM\u20133:30PM'], ['Wednesday', '8AM\u20133:30PM']]\",5.0\nBeauty Divine Artistry,\"[['Thursday', '9AM\u20138PM'], ['Friday', '9AM\u20138PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '9AM\u20138PM'], ['Tuesday', '9AM\u20138PM'], ['Wednesday', '9AM\u20138PM']]\",5.0\nTaba Rug Gallery,\"[['Thursday', '10AM\u20137PM'], ['Friday', '10AM\u20137PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '10AM\u20137PM'], ['Tuesday', '10AM\u20137PM'], ['Wednesday', '10AM\u20137PM']]\",5.0",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses that remain open after 6:00 PM on at least one weekday, ranked by highest average rating? Include their names, operating hours, and average ratings.",
+          "answer": "I need to find businesses open after 6:00 PM on at least one weekday (Mon-Fri), then rank by average rating.",
+          "is_valid": false,
+          "reason": "Missing business name: TACOS LA CABANA",
+          "ground_truth": "TACOS LA CABANA,\"[['Thursday', 'Closed'], ['Friday', '5\u201311PM'], ['Saturday', '5\u201311PM'], ['Sunday', '5\u201311PM'], ['Monday', '5\u201311PM'], ['Tuesday', 'Closed'], ['Wednesday', 'Closed']]\",5.0\nWhite Barn Candle Co,\"[['Thursday', '10AM\u20139PM'], ['Friday', '10AM\u20139PM'], ['Saturday', '10AM\u20139PM'], ['Sunday', '11AM\u20137PM'], ['Monday', '10AM\u20139PM'], ['Tuesday', '10AM\u20139PM'], ['Wednesday', '10AM\u20139PM']]\",5.0\nMariscos el poblano,\"[['Thursday', 'Open 24 hours'], ['Friday', '8AM\u20133:30PM'], ['Saturday', '8AM\u20133:30PM'], ['Sunday', '8AM\u20133:30PM'], ['Monday', '9AM\u20133:30AM'], ['Tuesday', '8AM\u20133:30PM'], ['Wednesday', '8AM\u20133:30PM']]\",5.0\nBeauty Divine Artistry,\"[['Thursday', '9AM\u20138PM'], ['Friday', '9AM\u20138PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '9AM\u20138PM'], ['Tuesday', '9AM\u20138PM'], ['Wednesday', '9AM\u20138PM']]\",5.0\nTaba Rug Gallery,\"[['Thursday', '10AM\u20137PM'], ['Friday', '10AM\u20137PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '10AM\u20137PM'], ['Tuesday', '10AM\u20137PM'], ['Wednesday', '10AM\u20137PM']]\",5.0",
+          "elapsed_s": 15.75,
+          "root_name": "trial_1_20260413_143648",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 4,
+      "question": "Which 3 businesses received the highest number of reviews with ratings of 4.5 or higher during 2019? Include their names and the count of high-rating reviews.",
+      "ground_truth": "Encino Dermatology & Laser: Alex Khadavi MD,19\nThe Boochyard @ Local Roots,17\nAurora Massage,14",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "Which 3 businesses received the highest number of reviews with ratings of 4.5 or higher during 2019? Include their names and the count of high-rating reviews.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing business name: Encino Dermatology & Laser",
+          "ground_truth": "Encino Dermatology & Laser: Alex Khadavi MD,19\nThe Boochyard @ Local Roots,17\nAurora Massage,14",
+          "elapsed_s": 12.56,
+          "root_name": "trial_1_20260413_143703",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

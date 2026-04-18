@@ -1,0 +1,89 @@
+{
+  "run_id": "20260417_102854",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "deps_dev",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "deps_dev",
+      "query_id": 1,
+      "question": "Considering only the latest release versions for each distinct NPM package, which packages are the top 5 most popular based on the Github star number, as well as their versions?",
+      "ground_truth": "\ufeffName,Version\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "deps_dev",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Considering only the latest release versions for each distinct NPM package, which packages are the top 5 most popular based on the Github star number, as well as their versions?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing name: @dmrvos/infrajs>0.0.6>typescript",
+          "ground_truth": "\ufeffName,Version\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5",
+          "elapsed_s": 48.15,
+          "root_name": "trial_1_20260417_102854",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To find the top 5 most popular NPM packages by GitHub stars among their latest release versions, I need to: 1) Get all NPM packages with IsRelease=true and find the latest (highest Ordinal) version per package from SQLite packageinfo. 2) Join those packages to project_packageversion in DuckDB to get ProjectName. 3) Join to project_info in DuckDB to extract GitHub stars from Project_Information. Then rank by stars and return top 5.",
+              "step_count": 3,
+              "tools_planned": [
+                "query_sqlite_deps_dev_package",
+                "query_duckdb_deps_dev_project",
+                "query_duckdb_deps_dev_project"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_deps_dev_package",
+              "db_type": "sqlite",
+              "query_used": "SELECT Name, Version\nFROM (\n    SELECT Name, Version, \n           CAST(SUBSTR(VersionInfo, INSTR(VersionInfo, '\"Ordinal\": ') + 11) AS INTEGER) AS Ordinal,\n           ROW_NUMBER() OVER (PARTITION BY Name ORDER BY CAST(SUBSTR(VersionInfo, INSTR(VersionInfo, '\"Ordinal\": ') + 11) AS INTEGER) DESC) AS rn\n    FROM packageinfo\n    WHERE System = 'NPM' \n      AND VersionInfo LIKE '%\"IsRelease\": true%'\n) ranked\nWHERE rn = 1",
+              "row_count": 15811,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT DISTINCT\n    ppv.Name,\n    ppv.Version,\n    ppv.ProjectName\nFROM project_packageversion ppv\nJOIN (\n    SELECT Name, Version\n    FROM packageinfo\n    WHERE System = 'NPM' AND \n    VersionInfo LIKE '%\"IsRelease\": true%' AND\n    CAST(json_extract(VersionInfo, '$.Ordinal') AS INTEGER) = (\n        SELECT MAX(CAST(json_extract(VersionInfo, '$.Ordinal') AS INTEGER))\n        FROM packageinfo p2\n        WHERE p2.System = 'NPM' AND \n        p2.Name = packageinfo.Name AND\n        p2.VersionInfo LIKE '%\"IsRelease\": true%'\n    )\n) latest_releases\nON ppv.System = 'NPM' AND \n   ppv.Name = latest_releases.Name AND \n   ppv.Version = latest_releases.Version",
+              "row_count": 0,
+              "error": "Catalog Error: Table with name packageinfo does not exist!\nDid you mean \"project_info\"?\n\nLINE 8:     FROM packageinfo\n                 ^"
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    pv.Name, \n    pv.Version, \n    pi.ProjectName, \n    CAST(REGEXP_EXTRACT(pi.Project_Information, '(\\d+) stars', 1) AS INTEGER) AS github_stars\nFROM \n    project_packageversion pv\nJOIN \n    project_info pi ON pv.ProjectName = REGEXP_EXTRACT(pi.Project_Information, '([\\w-]+/[\\w-]+)')\nWHERE \n    pv.System = 'NPM'\n    AND REGEXP_EXTRACT(pi.Project_Information, '(\\d+) stars', 1) IS NOT NULL\nORDER BY \n    github_stars DESC\nLIMIT 5",
+              "row_count": 0,
+              "error": "Binder Error: Table \"pi\" does not have a column named \"ProjectName\"\n\nCandidate bindings: : \"Project_Information\"\n\nLINE 4:     pi.ProjectName, \n            ^"
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

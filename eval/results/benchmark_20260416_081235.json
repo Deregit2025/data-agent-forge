@@ -1,0 +1,79 @@
+{
+  "run_id": "20260416_081235",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "patents",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "patents",
+      "query_id": 1,
+      "question": "Identify the CPC technology areas with the highest exponential moving average of patent filings each year (smoothing factor 0.2), and return only the CPC group codes at level 5 whose best year is 2022.",
+      "ground_truth": "cpc_group\nA22B\nA23J\nA23P\nA24D\nA24F\nA41G\nA47F\nA61P\nA62B\nA62D\nA63H\nB08B\nB09B\nB09C\nB24B\nB27C\nB27G\nB28D\nB30B\nB60H\nB60P\nB63G\nB65G\nC01D\nC01G\nC21B\nC25B\nE02D\nE04G\nE21D\nE21F\nF16M\nF17B\nF24D\nF25J\nF26B\nG01H\nG01L\nG05G\nG06J\nG06N\nG06T\nG06V\nG08G\nG16B\nG16C\nG16H\nG21F\nH02B\nH02G",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "patents",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Identify the CPC technology areas with the highest exponential moving average of patent filings each year (smoothing factor 0.2), and return only the CPC group codes at level 5 whose best year is 2022.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing CPC code: A22B",
+          "ground_truth": "cpc_group\nA22B\nA23J\nA23P\nA24D\nA24F\nA41G\nA47F\nA61P\nA62B\nA62D\nA63H\nB08B\nB09B\nB09C\nB24B\nB27C\nB27G\nB28D\nB30B\nB60H\nB60P\nB63G\nB65G\nC01D\nC01G\nC21B\nC25B\nE02D\nE04G\nE21D\nE21F\nF16M\nF17B\nF24D\nF25J\nF26B\nG01H\nG01L\nG05G\nG06J\nG06N\nG06T\nG06V\nG08G\nG16B\nG16C\nG16H\nG21F\nH02B\nH02G",
+          "elapsed_s": 31.29,
+          "root_name": "trial_1_20260416_081235",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "We need to find level-5 CPC codes whose exponential moving average of patent filings peaks in 2022. Step 1: Get all level-5 published CPC symbols from PostgreSQL. Step 2: Get filing years and CPC text from SQLite for all patents. Then synthesize in Python: parse CPC codes from each patent's cpc field, count filings per (year, code), compute EMA with alpha=0.2, find best year per code, return codes where best year = 2022.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_patents",
+                "query_sqlite_patents"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_patents",
+              "db_type": "postgres",
+              "query_used": "SELECT symbol, \"titleFull\" FROM cpc_definition WHERE level = 5.0 AND status = 'published'",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_postgres_patents (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_patents",
+              "db_type": "sqlite",
+              "query_used": "SELECT \n  SUBSTR(filing_date, LENGTH(filing_date)-3, 4) AS year, \n  cpc \nFROM publicationinfo \nWHERE filing_date IS NOT NULL \n  AND cpc IS NOT NULL \n  AND CAST(SUBSTR(filing_date, LENGTH(filing_date)-3, 4) AS INTEGER) BETWEEN 2015 AND 2023",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_sqlite_patents (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

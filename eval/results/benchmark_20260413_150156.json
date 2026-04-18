@@ -1,0 +1,114 @@
+{
+  "run_id": "20260413_150156",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 3,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockindex",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    },
+    {
+      "dataset": "music_brainz",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    },
+    {
+      "dataset": "deps_dev",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockindex",
+      "query_id": 1,
+      "question": "Which stock index in the Asia region has exhibited the highest average intraday volatility since 2020?",
+      "ground_truth": "399001.SZ",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockindex",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Which stock index in the Asia region has exhibited the highest average intraday volatility since 2020?",
+          "answer": "000001.SS",
+          "is_valid": false,
+          "reason": "Missing target: 399001.SZ",
+          "ground_truth": "399001.SZ",
+          "elapsed_s": 17.92,
+          "root_name": "trial_1_20260413_150156",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "music_brainz",
+      "query_id": 1,
+      "question": "How much revenue in USD did Apple Music make from Beyonc\u00e9's song 'Get Me Bodied' in Canada?",
+      "ground_truth": "1059.46",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "music_brainz",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "How much revenue in USD did Apple Music make from Beyonc\u00e9's song 'Get Me Bodied' in Canada?",
+          "answer": "601.44",
+          "is_valid": false,
+          "reason": "Ground truth '1059.46' not found in LLM output: 601.44",
+          "ground_truth": "1059.46",
+          "elapsed_s": 13.97,
+          "root_name": "trial_1_20260413_150214",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "deps_dev",
+      "query_id": 1,
+      "question": "Considering only the latest release versions for each distinct NPM package, which packages are the top 5 most popular based on the Github star number, as well as their versions?",
+      "ground_truth": "\ufeffName,Version\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "deps_dev",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Considering only the latest release versions for each distinct NPM package, which packages are the top 5 most popular based on the Github star number, as well as their versions?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing name: @dmrvos/infrajs>0.0.6>typescript",
+          "ground_truth": "\ufeffName,Version\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5",
+          "elapsed_s": 706.07,
+          "root_name": "trial_1_20260413_150228",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

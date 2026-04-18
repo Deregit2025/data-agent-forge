@@ -1,6 +1,6 @@
 {
-  "run_id": "20260418_105802",
-  "n_trials": 5,
+  "run_id": "20260413_142858",
+  "n_trials": 1,
   "model": "claude-sonnet-4.6",
   "total_queries": 0,
   "pass_count": 0,

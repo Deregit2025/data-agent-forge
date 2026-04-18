@@ -1,0 +1,46 @@
+{
+  "run_id": "20260413_160506",
+  "n_trials": 2,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockindex",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockindex",
+      "query_id": 3,
+      "question": "If an investor had made regular monthly investments in all indices since 2000, which 5 indices would have produced the highest overall returns, and what countries do they belong to?",
+      "ground_truth": "399001.SZ,China\nNSEI,India\nIXIC,United States\n000001.SS,China\nNYA,United States",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockindex",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "If an investor had made regular monthly investments in all indices since 2000, which 5 indices would have produced the highest overall returns, and what countries do they belong to?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing name: 399001.SZ",
+          "ground_truth": "399001.SZ,China\nNSEI,India\nIXIC,United States\n000001.SS,China\nNYA,United States",
+          "elapsed_s": 22.42,
+          "root_name": "trial_1_20260413_160506",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

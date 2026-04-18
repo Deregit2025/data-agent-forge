@@ -1,0 +1,58 @@
+{
+  "run_id": "20260417_084529",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockmarket",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockmarket",
+      "query_id": 1,
+      "question": "What was the maximum adjusted closing price in 2020 for The RealReal, Inc.?",
+      "ground_truth": "18.440000534057617",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What was the maximum adjusted closing price in 2020 for The RealReal, Inc.?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No number found in LLM output.",
+          "ground_truth": "18.440000534057617",
+          "elapsed_s": 2.29,
+          "root_name": "trial_1_20260417_084529",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Planning failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 505. To increase, visit https://openrouter.ai/settings/keys and create a key with a higher weekly limit', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'org_3B7LqR6KG0MSzOr4fEskO8X8zKr'}",
+              "step_count": 0,
+              "tools_planned": []
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "run_id": "20260418_082258",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 4,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "crmarenapro",
+      "n_queries": 4,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "crmarenapro",
+      "query_id": 10,
+      "question": "In the past four months, which agent had the lowest average handle time for those processing more than one case? Return only the Id of the agent.\n\n## Handle Time Policy\n- Definition: The duration taken to close a case. Specifically, it is the time from when a case is opened to when it is closed.\n- In the queries that specify 'agents managed/queries x cases' -- this filter applies to both the first agent that the case was first assigned to and the agent that the case was transferred to. This means that if an agent has 2 cases that was initially assigned to itself by admin and 1 case transferred from another agent, a filter like 'handled/managed at least 3 cases' would not filter this agent out.\n- When computing handle time, we do not compute handle time for cases that have been transferred to other agents.\n- For cases that have NOT been transferred to an other agent, there will be only ONE 'Owner Assignment', and for those that have been transferred, there will be MORE THAN ONE 'Owner Assignment'.\n\n## Today's date: 2023-09-02",
+      "ground_truth": "005Wt000003NDqDIAW",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 10,
+          "trial_num": 1,
+          "question": "In the past four months, which agent had the lowest average handle time for those processing more than one case? Return only the Id of the agent.\n\n## Handle Time Policy\n- Definition: The duration taken to close a case. Specifically, it is the time from when a case is opened to when it is closed.\n- In the queries that specify 'agents managed/queries x cases' -- this filter applies to both the first agent that the case was first assigned to and the agent that the case was transferred to. This means that if an agent has 2 cases that was initially assigned to itself by admin and 1 case transferred from another agent, a filter like 'handled/managed at least 3 cases' would not filter this agent out.\n- When computing handle time, we do not compute handle time for cases that have been transferred to other agents.\n- For cases that have NOT been transferred to an other agent, there will be only ONE 'Owner Assignment', and for those that have been transferred, there will be MORE THAN ONE 'Owner Assignment'.\n\n## Today's date: 2023-09-02",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No agent ID found in LLM output",
+          "ground_truth": "005Wt000003NDqDIAW",
+          "elapsed_s": 29.29,
+          "root_name": "trial_1_20260418_082258",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This query requires finding agents who processed more than one case in the past four months (2023-05-02 to 2023-09-02), then computing average handle time only for non-transferred cases. Per the domain knowledge, I must use the mandatory Query 10 SQL injection pattern with inline subqueries (no CTEs) in PostgreSQL. The agent load is counted from casehistory__c using 'Owner Assignment' events, and handle time is computed only for cases with exactly one 'Owner Assignment' (non-transferred).",
+              "step_count": 1,
+              "tools_planned": [
+                "query_postgres_crmarenapro"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT al.agent_id, AVG(EXTRACT(EPOCH FROM (c.closeddate::timestamp - c.createddate::timestamp))) as handle FROM (SELECT newvalue as agent_id, COUNT(DISTINCT caseid__c) as case_count FROM casehistory__c WHERE field__c = 'Owner Assignment' GROUP BY newvalue HAVING COUNT(DISTINCT caseid__c) > 1) al JOIN \"Case\" c ON c.ownerid = al.agent_id JOIN (SELECT caseid__c FROM casehistory__c WHERE field__c = 'Owner Assignment' GROUP BY caseid__c HAVING COUNT(*) = 1) nt ON c.id = nt.caseid__c WHERE c.status = 'Closed' AND c.createddate >= '2023-05-02' AND c.createddate <= '2023-09-02' GROUP BY al.agent_id ORDER BY handle ASC LIMIT 1",
+              "row_count": 0,
+              "error": "Write operations are not permitted. Only SELECT queries are allowed."
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "crmarenapro",
+      "query_id": 11,
+      "question": "Can you show me the AI processing unit I purchased last month? Return only the Id of the product from the contact's relevant past transaction.\n\n- Contact Id interacting: 003Wt00000Jqy8SIAR\n- Today's date: 2021-07-15",
+      "ground_truth": "01tWt000006hV8LIAU",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 11,
+          "trial_num": 1,
+          "question": "Can you show me the AI processing unit I purchased last month? Return only the Id of the product from the contact's relevant past transaction.\n\n- Contact Id interacting: 003Wt00000Jqy8SIAR\n- Today's date: 2021-07-15",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No product ID found in LLM output",
+          "ground_truth": "01tWt000006hV8LIAU",
+          "elapsed_s": 17.4,
+          "root_name": "trial_1_20260418_082327",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "The question asks for the product (Product2.Id) purchased by a contact last month (June 2021). The contact is linked to orders via Account. I need to: 1) Find the AccountId for the contact from SQLite core, 2) Find orders for that account in June 2021 from SQLite products, 3) Find the order items and filter for AI processing unit product, returning the Product2Id.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_crmarenapro_core",
+                "query_sqlite_crmarenapro_products"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_crmarenapro_core",
+              "db_type": "sqlite",
+              "query_used": "SELECT Id, AccountId FROM Contact WHERE LTRIM(Id, '#') = '003Wt00000Jqy8SIAR' OR Id = '003Wt00000Jqy8SIAR'",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_crmarenapro_products",
+              "db_type": "sqlite",
+              "query_used": "SELECT oi.Id as OrderItemId, oi.Product2Id, p.Name FROM 'Order' o JOIN OrderItem oi ON LTRIM(o.Id, '#') = LTRIM(oi.OrderId, '#') JOIN Product2 p ON LTRIM(oi.Product2Id, '#') = LTRIM(p.Id, '#') WHERE LTRIM(o.AccountId, '#') = '001Wt00000PGXrNIAX' AND o.EffectiveDate >= '2021-06-01' AND o.EffectiveDate <= '2021-06-30' AND LOWER(p.Name) LIKE '%ai%processing%'",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "crmarenapro",
+      "query_id": 12,
+      "question": "Who had the quickest average turnaround from opening to closing opportunities among agents in April 2023? Return only the Id of the agent.\n\n## Sales Cycle Policy\n- Definition: The sales cycle is measured as the number of days between an opportunity's creation date and the company signed date on the corresponding contract.\n\n## Today's date: 2024-09-12",
+      "ground_truth": "005Wt000003NDEBIA4",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 12,
+          "trial_num": 1,
+          "question": "Who had the quickest average turnaround from opening to closing opportunities among agents in April 2023? Return only the Id of the agent.\n\n## Sales Cycle Policy\n- Definition: The sales cycle is measured as the number of days between an opportunity's creation date and the company signed date on the corresponding contract.\n\n## Today's date: 2024-09-12",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No agent ID found in LLM output",
+          "ground_truth": "005Wt000003NDEBIA4",
+          "elapsed_s": 16.61,
+          "root_name": "trial_1_20260418_082344",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Per the domain knowledge, Query 12 has an exact SQL pattern to use. The 'in April 2023' filter applies to the CLOSING date (CompanySignedDate), and we use date_diff in DuckDB to calculate turnaround days from Opportunity.CreatedDate to Contract.CompanySignedDate. We join Opportunity to Contract via ContractID__c, strip leading '#' from IDs, filter by CompanySignedDate in April 2023, group by OwnerId, and return the agent with the lowest average turnaround.",
+              "step_count": 1,
+              "tools_planned": [
+                "query_duckdb_crmarenapro_sales"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT o.OwnerId, AVG(date_diff('day', CAST(o.CreatedDate AS DATE), CAST(c.CompanySignedDate AS DATE))) as turnaround FROM Opportunity o JOIN Contract c ON LTRIM(o.ContractID__c, '#') = LTRIM(c.Id, '#') WHERE CAST(c.CompanySignedDate AS DATE) >= '2023-04-01' AND CAST(c.CompanySignedDate AS DATE) <= '2023-04-30' AND c.CompanySignedDate IS NOT NULL GROUP BY o.OwnerId ORDER BY turnaround ASC LIMIT 1;",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "crmarenapro",
+      "query_id": 13,
+      "question": "Identify the agent who achieved the top sales figures for orders made in the past five months. Return only the Id of the agent.\n\n## Sales Amount Policy\n- Definition: The sales amount for an order is calculated as the product of the quantity and the unit price from the Order object (Quantity * UnitPrice). An opportunity is eligible if its associated contract has a company signed date that falls within the time interval of interest.\n\n- Today's date: 2022-11-25",
+      "ground_truth": "005Wt000003NIXCIA4",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 13,
+          "trial_num": 1,
+          "question": "Identify the agent who achieved the top sales figures for orders made in the past five months. Return only the Id of the agent.\n\n## Sales Amount Policy\n- Definition: The sales amount for an order is calculated as the product of the quantity and the unit price from the Order object (Quantity * UnitPrice). An opportunity is eligible if its associated contract has a company signed date that falls within the time interval of interest.\n\n- Today's date: 2022-11-25",
+          "answer": "I need to join the two datasets: match account IDs from the opportunity-agent mapping with account totals, then sum by agent.",
+          "is_valid": false,
+          "reason": "No agent ID found in LLM output",
+          "ground_truth": "005Wt000003NIXCIA4",
+          "elapsed_s": 20.85,
+          "root_name": "trial_1_20260418_082401",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Following the NO SQL INJECTION (Query 13) pattern from the domain KB. Need to find the agent with top sales figures for orders in the past 5 months (2022-06-25 to 2022-11-25). Step 1: Fetch Opportunity-to-Agent mappings from DuckDB where the associated Contract's CompanySignedDate falls in the window. Step 2: Fetch all Order/OrderItem totals grouped by AccountId from SQLite. Step 3: Synthesize by mapping account_id to agent_id and summing totals per agent.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_duckdb_crmarenapro_sales",
+                "query_sqlite_crmarenapro_products"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT LTRIM(o.AccountId, '#') as act, o.OwnerId as agt FROM Opportunity o JOIN Contract c ON LTRIM(o.ContractID__c, '#') = LTRIM(c.Id, '#') WHERE CAST(c.CompanySignedDate AS DATE) >= '2022-06-25' AND CAST(c.CompanySignedDate AS DATE) <= '2022-11-25'",
+              "row_count": 16,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_crmarenapro_products",
+              "db_type": "sqlite",
+              "query_used": "SELECT LTRIM(o.AccountId, '#') as act, SUM(CAST(oi.Quantity AS REAL) * CAST(oi.UnitPrice AS REAL)) as act_total FROM \"Order\" o JOIN OrderItem oi ON LTRIM(o.Id, '#') = LTRIM(oi.OrderId, '#') GROUP BY act",
+              "row_count": 72,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "I need to join the two datasets: match account IDs from the opportunity-agent mapping with account totals, then sum by agent."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

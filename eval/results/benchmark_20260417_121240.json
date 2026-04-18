@@ -1,0 +1,79 @@
+{
+  "run_id": "20260417_121240",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "github_repos",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "github_repos",
+      "query_id": 1,
+      "question": "Among repositories that do not use Python, what proportion of their README.md files include copyright information?",
+      "ground_truth": "total_readmes,copyright_readmes,proportion\n3,1,0.3333333333333333",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "github_repos",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Among repositories that do not use Python, what proportion of their README.md files include copyright information?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No value in LLM output rounds to 0.33",
+          "ground_truth": "total_readmes,copyright_readmes,proportion\n3,1,0.3333333333333333",
+          "elapsed_s": 23.69,
+          "root_name": "trial_1_20260417_121240",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "First, find all repositories that do not use Python at all (language_description does not contain 'Python') from SQLite. Then, query DuckDB contents table for README.md files belonging to those repositories, and check what proportion contain copyright information (case-insensitive search for 'copyright' in content).",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_github_metadata",
+                "query_duckdb_github_artifacts"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_github_metadata",
+              "db_type": "sqlite",
+              "query_used": "SELECT repo_name FROM languages WHERE language_description NOT LIKE '%Python%'",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_sqlite_github_metadata (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_github_artifacts",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    COUNT(*) AS total_readme_count,\n    COUNT(CASE WHEN LOWER(content) LIKE '%copyright%' THEN 1 END) AS copyright_readme_count,\n    ROUND(COUNT(CASE WHEN LOWER(content) LIKE '%copyright%' THEN 1 END) * 100.0 / COUNT(*), 2) AS copyright_proportion\nFROM contents\nWHERE \n    sample_path = 'README.md' AND \n    sample_repo_name IN (\n        SELECT repo_name \n        FROM languages \n        WHERE language_description NOT LIKE '%Python%'\n    )",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_duckdb_github_artifacts (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

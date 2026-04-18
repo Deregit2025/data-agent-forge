@@ -1,0 +1,89 @@
+{
+  "run_id": "20260414_123147",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "bookreview",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "bookreview",
+      "query_id": 1,
+      "question": "Which decade of publication (e.g., 1980s) has the highest average rating among decades with at least 10 distinct books that have been rated? Return the decade with the highest average rating.",
+      "ground_truth": "2020",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "bookreview",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Which decade of publication (e.g., 1980s) has the highest average rating among decades with at least 10 distinct books that have been rated? Return the decade with the highest average rating.",
+          "answer": "I need to join book decades with ratings, then compute average rating per decade for decades with \u226510 distinct books.",
+          "is_valid": false,
+          "reason": "Ground truth '2020' not found in LLM output.",
+          "ground_truth": "2020",
+          "elapsed_s": 28.53,
+          "root_name": "trial_1_20260414_123147",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To find the decade with the highest average rating among decades with at least 10 distinct rated books, I need to: 1) Extract publication years from books_info.details in PostgreSQL to determine decades, 2) Get average ratings per book from the review table in SQLite, 3) Join on book_id=purchase_id, group by decade, filter decades with >=10 distinct rated books, and return the one with highest average rating.",
+              "step_count": 3,
+              "tools_planned": [
+                "query_postgres_bookreview",
+                "query_sqlite_bookreview",
+                "query_postgres_bookreview"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_bookreview",
+              "db_type": "postgres",
+              "query_used": "SELECT \"book_id\", FLOOR(CAST(SUBSTRING(\"details\" FROM '[12][0-9]{3}') AS INTEGER) / 10) * 10 AS decade FROM \"books_info\" WHERE \"details\" ~ '[12][0-9]{3}' AND CAST(SUBSTRING(\"details\" FROM '[12][0-9]{3}') AS INTEGER) BETWEEN 1900 AND 2023",
+              "row_count": 191,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_bookreview",
+              "db_type": "sqlite",
+              "query_used": "SELECT purchase_id, AVG(rating) as avg_rating FROM review GROUP BY purchase_id",
+              "row_count": 200,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_postgres_bookreview",
+              "db_type": "postgres",
+              "query_used": "SELECT \n    FLOOR(CAST(SUBSTRING(\"details\" FROM '[12][0-9]{3}') AS INTEGER) / 10) * 10 AS decade,\n    \"book_id\"\nFROM \n    \"books_info\"\nWHERE \n    \"details\" ~ '[12][0-9]{3}' \n    AND CAST(SUBSTRING(\"details\" FROM '[12][0-9]{3}') AS INTEGER) BETWEEN 1900 AND 2023\nORDER BY \n    decade",
+              "row_count": 191,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "I need to join book decades with ratings, then compute average rating per decade for decades with \u226510 distinct books."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "run_id": "20260414_122557",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 5,
+      "question": "Which U.S. state has the highest number of businesses that offer WiFi, and what is the average rating for those businesses?",
+      "ground_truth": "PA,3.48",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 5,
+          "trial_num": 1,
+          "question": "Which U.S. state has the highest number of businesses that offer WiFi, and what is the average rating for those businesses?",
+          "answer": "I need to find the state with the highest number of businesses offering WiFi, then calculate the average rating for those businesses.",
+          "is_valid": false,
+          "reason": "Neither 'PA' nor 'Pennsylvania' found in LLM output",
+          "ground_truth": "PA,3.48",
+          "elapsed_s": 20.25,
+          "root_name": "trial_1_20260414_122557",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To find the U.S. state with the highest number of businesses offering WiFi and their average rating, I need to: 1) Query MongoDB to get all businesses with WiFi attribute set to true/free/paid, extracting their business_id and description (to parse state). 2) Query DuckDB to get average ratings for those businesses using the business_ref IDs (with prefix swap). Then synthesize: group by state extracted from description, find state with most WiFi businesses, compute average rating for that state's businesses.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_mongo_yelp_business",
+                "query_duckdb_yelp_user"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_mongo_yelp_business",
+              "db_type": "mongodb",
+              "query_used": "[\n    {\n        \"$match\": {\n            \"attributes.WiFi\": {\"$regex\": \"free|paid\", \"$options\": \"i\"}\n        }\n    },\n    {\n        \"$project\": {\n            \"_id\": 0,\n            \"business_id\": 1,\n            \"description\": 1\n        }\n    }\n]",
+              "row_count": 22,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_yelp_user",
+              "db_type": "duckdb",
+              "query_used": "SELECT business_ref, AVG(rating) as avg_rating, COUNT(*) as review_count \nFROM review \nWHERE business_ref IN ('businessref_64', 'businessref_54', 'businessref_91', 'businessref_93', 'businessref_26', 'businessref_89', 'businessref_97', 'businessref_67', 'businessref_51', 'businessref_6', 'businessref_55', 'businessref_77', 'businessref_86', 'businessref_40', 'businessref_44', 'businessref_43', 'businessref_20', 'businessref_25', 'businessref_82', 'businessref_12', 'businessref_16', 'businessref_46') \nGROUP BY business_ref",
+              "row_count": 22,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "I need to find the state with the highest number of businesses offering WiFi, then calculate the average rating for those businesses."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

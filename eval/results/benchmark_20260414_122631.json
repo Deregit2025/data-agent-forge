@@ -1,0 +1,79 @@
+{
+  "run_id": "20260414_122631",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 6,
+      "question": "Which business received the highest average rating between January 1, 2016 and June 30, 2016, and what category does it belong to? Consider only businesses with at least 5 reviews.",
+      "ground_truth": "Coffee House Too Cafe, Restaurants, Breakfast & Brunch, American (New), Cafes",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 6,
+          "trial_num": 1,
+          "question": "Which business received the highest average rating between January 1, 2016 and June 30, 2016, and what category does it belong to? Consider only businesses with at least 5 reviews.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing name: Coffee House Too Cafe",
+          "ground_truth": "Coffee House Too Cafe, Restaurants, Breakfast & Brunch, American (New), Cafes",
+          "elapsed_s": 25.27,
+          "root_name": "trial_1_20260414_122631",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To find the highest average rated business in H1 2016 with at least 5 reviews, I need to: 1) Query DuckDB review table filtering by date range 2016-01-01 to 2016-06-30, group by business_ref, filter for min 5 reviews, get top business_ref by avg rating. 2) Query MongoDB to get the business name and category (from description) for that business_id.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_duckdb_yelp_user",
+                "query_mongo_yelp_business"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_yelp_user",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    business_ref, \n    AVG(rating) as avg_rating, \n    COUNT(*) as review_count\nFROM review\nWHERE date LIKE '%2016%' AND \n      CAST(SUBSTR(REPLACE(TRIM(date), 't ', ''), 6, 2) AS INTEGER) BETWEEN 1 AND 6\nGROUP BY business_ref\nHAVING COUNT(*) >= 5\nORDER BY avg_rating DESC\nLIMIT 1",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_mongo_yelp_business",
+              "db_type": "mongodb",
+              "query_used": "[\n    {\n        \"$match\": {\n            \"business_id\": \"businessid_1\"\n        }\n    },\n    {\n        \"$project\": {\n            \"_id\": 0,\n            \"name\": 1,\n            \"description\": 1\n        }\n    }\n]",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

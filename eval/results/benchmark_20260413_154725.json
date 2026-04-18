@@ -1,0 +1,46 @@
+{
+  "run_id": "20260413_154725",
+  "n_trials": 2,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 2,
+      "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+      "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing name in LLM output: Elite Massage",
+          "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+          "elapsed_s": 7.99,
+          "root_name": "trial_1_20260413_154725",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

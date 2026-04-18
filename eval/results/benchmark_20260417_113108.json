@@ -1,0 +1,169 @@
+{
+  "run_id": "20260417_113108",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 2,
+  "pass_count": 1,
+  "pass_rate": 0.5,
+  "per_dataset": [
+    {
+      "dataset": "deps_dev",
+      "n_queries": 2,
+      "pass_count": 1,
+      "any_pass_count": 1,
+      "pass_rate": 0.5
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "deps_dev",
+      "query_id": 1,
+      "question": "Considering only the latest release versions for each distinct NPM package, which packages are the top 5 most popular based on the Github star number, as well as their versions?",
+      "ground_truth": "\ufeffName,Version\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "deps_dev",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Considering only the latest release versions for each distinct NPM package, which packages are the top 5 most popular based on the Github star number, as well as their versions?",
+          "answer": "@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dollarshaveclub/cli>1.0.0>lodash,4.17.4\n@dollarshaveclub/cli>1.1.0>lodash,4.17.4\n@dollarshaveclub/cli>1.10.0>lodash,4.17.5\n@dollarshaveclub/cli>1.10.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.0>lodash,4.17.5\n@dollarshaveclub/cli>1.11.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.2>lodash,4.17.4\n@dollarshaveclub/cli>1.11.3>lodash,4.17.4\n@dollarshaveclub/cli>1.11.4>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5-rc.1>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5>lodash,4.17.11\n@dollarshaveclub/cli>1.12.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.1>lodash,4.17.11\n@dollarshaveclub/cli>1.2.0>lodash,4.17.4\n@dollarshaveclub/cli>1.3.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.1>lodash,4.17.4\n@dollarshaveclub/cli>1.5.2>lodash,4.17.4\n@dollarshaveclub/cli>1.5.3>lodash,4.17.4\n@dollarshaveclub/cli>1.5.4>lodash,4.17.4\n@dollarshaveclub/cli>1.5.5>lodash,4.17.4\n@dollarshaveclub/cli>1.5.6>lodash,4.17.4\n@dollarshaveclub/cli>1.5.7>lodash,4.17.4\n@dollarshaveclub/cli>1.6.0>lodash,4.17.4\n@dollarshaveclub/cli>1.7.1>lodash,4.17.5\n@dollarshaveclub/cli>1.8.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.1>lodash,4.17.5\n@dollarshaveclub/cli>2.0.0>lodash,4.17.11\n@dollarshaveclub/cli>2.0.1>lodash,4.17.11\n@dollarshaveclub/cli>2.1.0>lodash,4.17.11\n@dollarshaveclub/cli>2.1.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.0>lodash,4.17.11\n@dollarshaveclub/cli>2.2.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.2>lodash,4.17.11\n@dpoineau/react-scripts>1.0.0>eslint-plugin-flowtype>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>html-webpack-plugin>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>http-proxy-middleware>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>lodash,4.9.0\n@dpoineau/react-scripts>1.0.0>lodash._arraycopy,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._arrayeach,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._baseassign,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash._baseclone,3.3.0\n@dpoineau/react-scripts>1.0.0>lodash._basecopy,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._basefor,3.0.3\n@dpoineau/react-scripts>1.0.0>lodash._bindcallback,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._createcompounder,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._getnative,3.9.1\n@dpoineau/react-scripts>1.0.0>lodash._root,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.assign,4.2.0\n@dpoineau/react-scripts>1.0.0>lodash.camelcase,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.clonedeep,4.5.0\n@dpoineau/react-scripts>1.0.0>lodash.cond,4.5.2\n@dpoineau/react-scripts>1.0.0>lodash.deburr,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash.endswith,4.2.1\n@dpoineau/react-scripts>1.0.0>lodash.find,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.findindex,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.indexof,4.0.5\n@dpoineau/react-scripts>1.0.0>lodash.isarguments,3.1.0\n@dpoineau/react-scripts>1.0.0>lodash.isarray,3.0.4\n@dpoineau/react-scripts>1.0.0>lodash.keys,3.1.2\n@dpoineau/react-scripts>1.0.0>lodash.pickby,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.words,3.2.0\n@dpoineau/react-scripts>1.0.0>node-notifier>lodash.clonedeep,3.0.2\n@dummmy/pack-cli>1.0.8>lodash,4.17.19\n@dummmy/pack-cli>1.0.9>lodash,4.17.19\n@dummmy/webpack-cli>1.0.2>lodash,4.17.19\n@dummmy/webpack-cli>1.0.3>lodash,4.17.19\n@dummmy/webpack-cli>1.0.4>lodash,4.17.19\n@dummmy/webpack-cli>1.0.5>lodash,4.17.19\n@dummmy/webpack-cli>1.0.6>lodash,4.17.19\n@dummmy/webpack-cli>1.0.7>lodash,4.17.19\n@dwarvesf/react-scripts>0.7.0>lodash,4.17.2\n@dwarvesf/react-scripts>0.7.0>lodash._arraycopy,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._arrayeach,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseassign,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseclone,3.3.0\n@dwarvesf/react-scripts>0.7.0>lodash._basecopy,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._basefor,3.0.3\n@dwarvesf/react-scripts>0.7.0>lodash._bindcallback,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._createcompounder,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._getnative,3.9.1\n@dwarvesf/react-scripts>0.7.0>lodash._root,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.assign,4.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.camelcase,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.clonedeep,3.0.2\n@dwarvesf/react-scripts>0.7.0>lodash.cond,4.5.2\n@dwarvesf/react-scripts>0.7.0>lodash.deburr,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5\n@dwarvesf/react-scripts>0.7.0>lodash.isarguments,3.1.0\n@dwarvesf/react-scripts>0.7.0>lodash.isarray,3.0.4\n@dwarvesf/react-scripts>0.7.0>lodash.keys,3.1.2\n@dwarvesf/react-scripts>0.7.0>lodash.pickby,4.6.0\n@dwarvesf/react-scripts>0.7.0>lodash.words,3.2.0",
+          "is_valid": true,
+          "reason": "All name-version pairs validated successfully.",
+          "ground_truth": "\ufeffName,Version\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5",
+          "elapsed_s": 37.04,
+          "root_name": "trial_1_20260417_113108",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To find the top 5 most popular NPM packages by GitHub star count among latest release versions, I need to: 1) Get all NPM release packages from SQLite packageinfo, 2) Find their ProjectNames in DuckDB project_packageversion, 3) Extract star counts from DuckDB project_info text field. The 'latest release' per package is determined by the maximum Ordinal value in VersionInfo JSON among rows where IsRelease=true.",
+              "step_count": 3,
+              "tools_planned": [
+                "query_sqlite_deps_dev_package",
+                "query_duckdb_deps_dev_project",
+                "query_duckdb_deps_dev_project"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_deps_dev_package",
+              "db_type": "sqlite",
+              "query_used": "SELECT Name, Version, VersionInfo, \n       CAST(json_extract(VersionInfo, '$.Ordinal') AS INTEGER) AS Ordinal \nFROM packageinfo \nWHERE System = 'NPM' \n  AND VersionInfo LIKE '%\"IsRelease\": true%'",
+              "row_count": 337844,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT Name, Version, ProjectName \nFROM project_packageversion \nWHERE System = 'NPM' \n  AND (Name, Version) IN (\n    ('@ecl/twig-component-carousel', '3.11.1'),\n    ('@douganderson444/panzoom-node', '1.1.5'),\n    ('@discue/ui-components', '0.13.0'),\n    ('@dvcol/web-extension-utils', '1.1.1'),\n    ('@edgedev/firebase', '1.0.12'),\n    ('@dyoshikawa/mentor-php-env', '0.0.11'),\n    ('@eclipsejs/cli', '1.0.0'),\n    ('@dytesdk/electron-main', '1.0.2'),\n    ('@ebot7/edem-react', '0.18.8'),\n    ('@e4a/irmaseal-wasm-bindings', '0.0.1')\n  )",
+              "row_count": 10,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT Project_Information, \n       CAST(regexp_extract(Project_Information, '(\\d+)\\s+stars?', 1) AS INTEGER) AS star_count \nFROM project_info \nWHERE Project_Information LIKE '%stars%'\n  AND ProjectName IN (\n    'edge-marketing-and-design/edgedevfirebase',\n    'dyte-in/electron-sdk', \n    'douganderson444/panzoom-node', \n    'ec-europa/europa-component-library', \n    'discue/ui-components', \n    'dyoshikawa/mentor-php-env', \n    'encryption4all/irmaseal', \n    'dlesage25/eclipse-cli', \n    'ebot7/edem', \n    'dvcol/web-extension-utils'\n)\nORDER BY star_count DESC\nLIMIT 5",
+              "row_count": 0,
+              "error": "Binder Error: Referenced column \"ProjectName\" not found in FROM clause!\nCandidate bindings: \"Project_Information\", \"Homepage\"\n\nLINE 5:   AND ProjectName IN (\n              ^"
+            },
+            {
+              "node": "synthesize",
+              "answer": "@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dollarshaveclub/cli>1.0.0>lodash,4.17.4\n@dollarshaveclub/cli>1.1.0>lodash,4.17.4\n@dollarshaveclub/cli>1.10.0>lodash,4.17.5\n@dollarshaveclub/cli>1.10.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.0>lodash,4.17.5\n@dollarshaveclub/cli>1.11.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.2>lodash,4.17.4\n@dollarshaveclub/cli>1.11.3>lodash,4.17.4\n@dollarshaveclub/cli>1.11.4>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5-rc.1>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5>lodash,4.17.11\n@dollarshaveclub/cli>1.12.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.1>lodash,4.17.11\n@dollarshaveclub/cli>1.2.0>lodash,4.17.4\n@dollarshaveclub/cli>1.3.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.1>lodash,4.17.4\n@dollarshaveclub/cli>1.5.2>lodash,4.17.4\n@dollarshaveclub/cli>1.5.3>lodash,4.17.4\n@dollarshaveclub/cli>1.5.4>lodash,4.17.4\n@dollarshaveclub/cli>1.5.5>lodash,4.17.4\n@dollarshaveclub/cli>1.5.6>lodash,4.17.4\n@dollarshaveclub/cli>1.5.7>lodash,4.17.4\n@dollarshaveclub/cli>1.6.0>lodash,4.17.4\n@dollarshaveclub/cli>1.7.1>lodash,4.17.5\n@dollarshaveclub/cli>1.8.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.1>lodash,4.17.5\n@dollarshaveclub/cli>2.0.0>lodash,4.17.11\n@dollarshaveclub/cli>2.0.1>lodash,4.17.11\n@dollarshaveclub/cli>2.1.0>lodash,4.17.11\n@dollarshaveclub/cli>2.1.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.0>lodash,4.17.11\n@dollarshaveclub/cli>2.2.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.2>lodash,4.17.11\n@dpoineau/react-scripts>1.0.0>eslint-plugin-flowtype>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>html-webpack-plugin>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>http-proxy-middleware>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>lodash,4.9.0\n@dpoineau/react-scripts>1.0.0>lodash._arraycopy,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._arrayeach,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._baseassign,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash._baseclone,3.3.0\n@dpoineau/react-scripts>1.0.0>lodash._basecopy,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._basefor,3.0.3\n@dpoineau/react-scripts>1.0.0>lodash._bindcallback,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._createcompounder,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._getnative,3.9.1\n@dpoineau/react-scripts>1.0.0>lodash._root,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.assign,4.2.0\n@dpoineau/react-scripts>1.0.0>lodash.camelcase,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.clonedeep,4.5.0\n@dpoineau/react-scripts>1.0.0>lodash.cond,4.5.2\n@dpoineau/react-scripts>1.0.0>lodash.deburr,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash.endswith,4.2.1\n@dpoineau/react-scripts>1.0.0>lodash.find,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.findindex,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.indexof,4.0.5\n@dpoineau/react-scripts>1.0.0>lodash.isarguments,3.1.0\n@dpoineau/react-scripts>1.0.0>lodash.isarray,3.0.4\n@dpoineau/react-scripts>1.0.0>lodash.keys,3.1.2\n@dpoineau/react-scripts>1.0.0>lodash.pickby,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.words,3.2.0\n@dpoineau/react-scripts>1.0.0>node-notifier>lodash.clonedeep,3.0.2\n@dummmy/pack-cli>1.0.8>lodash,4.17.19\n@dummmy/pack-cli>1.0.9>lodash,4.17.19\n@dummmy/webpack-cli>1.0.2>lodash,4.17.19\n@dummmy/webpack-cli>1.0.3>lodash,4.17.19\n@dummmy/webpack-cli>1.0.4>lodash,4.17.19\n@dummmy/webpack-cli>1.0.5>lodash,4.17.19\n@dummmy/webpack-cli>1.0.6>lodash,4.17.19\n@dummmy/webpack-cli>1.0.7>lodash,4.17.19\n@dwarvesf/react-scripts>0.7.0>lodash,4.17.2\n@dwarvesf/react-scripts>0.7.0>lodash._arraycopy,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._arrayeach,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseassign,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseclone,3.3.0\n@dwarvesf/react-scripts>0.7.0>lodash._basecopy,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._basefor,3.0.3\n@dwarvesf/react-scripts>0.7.0>lodash._bindcallback,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._createcompounder,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._getnative,3.9.1\n@dwarvesf/react-scripts>0.7.0>lodash._root,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.assign,4.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.camelcase,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.clonedeep,3.0.2\n@dwarvesf/react-scripts>0.7.0>lodash.cond,4.5.2\n@dwarvesf/react-scripts>0.7.0>lodash.deburr,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5\n@dwarvesf/react-scripts>0.7.0>lodash.isarguments,3.1.0\n@dwarvesf/react-scripts>0.7.0>lodash.isarray,3.0.4\n@dwarvesf/react-scripts>0.7.0>lodash.keys,3.1.2\n@dwarvesf/react-scripts>0.7.0>lodash.pickby,4.6.0\n@dwarvesf/react-scripts>0.7.0>lodash.words,3.2.0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "deps_dev",
+      "query_id": 2,
+      "question": "Among all NPM packages with project license 'MIT' and marked as release, which 5 projects have the highest GitHub fork count?",
+      "ground_truth": "\ufeffProjectName,Version,ForksCount\nmui-org/material-ui,0.2.0,30522\nmoment/moment,2.22.2,7201\nsemantic-org/semantic-ui,2.2.11,4955\nreact-native-elements/react-native-elements,4.0.2,4623\nsveltejs/svelte,3.25.4,4091",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "deps_dev",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Among all NPM packages with project license 'MIT' and marked as release, which 5 projects have the highest GitHub fork count?",
+          "answer": "@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dollarshaveclub/cli>1.0.0>lodash,4.17.4\n@dollarshaveclub/cli>1.1.0>lodash,4.17.4\n@dollarshaveclub/cli>1.10.0>lodash,4.17.5\n@dollarshaveclub/cli>1.10.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.0>lodash,4.17.5\n@dollarshaveclub/cli>1.11.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.2>lodash,4.17.4\n@dollarshaveclub/cli>1.11.3>lodash,4.17.4\n@dollarshaveclub/cli>1.11.4>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5-rc.1>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5>lodash,4.17.11\n@dollarshaveclub/cli>1.12.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.1>lodash,4.17.11\n@dollarshaveclub/cli>1.2.0>lodash,4.17.4\n@dollarshaveclub/cli>1.3.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.1>lodash,4.17.4\n@dollarshaveclub/cli>1.5.2>lodash,4.17.4\n@dollarshaveclub/cli>1.5.3>lodash,4.17.4\n@dollarshaveclub/cli>1.5.4>lodash,4.17.4\n@dollarshaveclub/cli>1.5.5>lodash,4.17.4\n@dollarshaveclub/cli>1.5.6>lodash,4.17.4\n@dollarshaveclub/cli>1.5.7>lodash,4.17.4\n@dollarshaveclub/cli>1.6.0>lodash,4.17.4\n@dollarshaveclub/cli>1.7.1>lodash,4.17.5\n@dollarshaveclub/cli>1.8.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.1>lodash,4.17.5\n@dollarshaveclub/cli>2.0.0>lodash,4.17.11\n@dollarshaveclub/cli>2.0.1>lodash,4.17.11\n@dollarshaveclub/cli>2.1.0>lodash,4.17.11\n@dollarshaveclub/cli>2.1.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.0>lodash,4.17.11\n@dollarshaveclub/cli>2.2.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.2>lodash,4.17.11\n@dpoineau/react-scripts>1.0.0>eslint-plugin-flowtype>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>html-webpack-plugin>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>http-proxy-middleware>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>lodash,4.9.0\n@dpoineau/react-scripts>1.0.0>lodash._arraycopy,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._arrayeach,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._baseassign,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash._baseclone,3.3.0\n@dpoineau/react-scripts>1.0.0>lodash._basecopy,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._basefor,3.0.3\n@dpoineau/react-scripts>1.0.0>lodash._bindcallback,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._createcompounder,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._getnative,3.9.1\n@dpoineau/react-scripts>1.0.0>lodash._root,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.assign,4.2.0\n@dpoineau/react-scripts>1.0.0>lodash.camelcase,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.clonedeep,4.5.0\n@dpoineau/react-scripts>1.0.0>lodash.cond,4.5.2\n@dpoineau/react-scripts>1.0.0>lodash.deburr,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash.endswith,4.2.1\n@dpoineau/react-scripts>1.0.0>lodash.find,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.findindex,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.indexof,4.0.5\n@dpoineau/react-scripts>1.0.0>lodash.isarguments,3.1.0\n@dpoineau/react-scripts>1.0.0>lodash.isarray,3.0.4\n@dpoineau/react-scripts>1.0.0>lodash.keys,3.1.2\n@dpoineau/react-scripts>1.0.0>lodash.pickby,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.words,3.2.0\n@dpoineau/react-scripts>1.0.0>node-notifier>lodash.clonedeep,3.0.2\n@dummmy/pack-cli>1.0.8>lodash,4.17.19\n@dummmy/pack-cli>1.0.9>lodash,4.17.19\n@dummmy/webpack-cli>1.0.2>lodash,4.17.19\n@dummmy/webpack-cli>1.0.3>lodash,4.17.19\n@dummmy/webpack-cli>1.0.4>lodash,4.17.19\n@dummmy/webpack-cli>1.0.5>lodash,4.17.19\n@dummmy/webpack-cli>1.0.6>lodash,4.17.19\n@dummmy/webpack-cli>1.0.7>lodash,4.17.19\n@dwarvesf/react-scripts>0.7.0>lodash,4.17.2\n@dwarvesf/react-scripts>0.7.0>lodash._arraycopy,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._arrayeach,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseassign,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseclone,3.3.0\n@dwarvesf/react-scripts>0.7.0>lodash._basecopy,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._basefor,3.0.3\n@dwarvesf/react-scripts>0.7.0>lodash._bindcallback,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._createcompounder,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._getnative,3.9.1\n@dwarvesf/react-scripts>0.7.0>lodash._root,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.assign,4.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.camelcase,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.clonedeep,3.0.2\n@dwarvesf/react-scripts>0.7.0>lodash.cond,4.5.2\n@dwarvesf/react-scripts>0.7.0>lodash.deburr,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5\n@dwarvesf/react-scripts>0.7.0>lodash.isarguments,3.1.0\n@dwarvesf/react-scripts>0.7.0>lodash.isarray,3.0.4\n@dwarvesf/react-scripts>0.7.0>lodash.keys,3.1.2\n@dwarvesf/react-scripts>0.7.0>lodash.pickby,4.6.0\n@dwarvesf/react-scripts>0.7.0>lodash.words,3.2.0",
+          "is_valid": false,
+          "reason": "Missing project name: mui-org/material-ui",
+          "ground_truth": "\ufeffProjectName,Version,ForksCount\nmui-org/material-ui,0.2.0,30522\nmoment/moment,2.22.2,7201\nsemantic-org/semantic-ui,2.2.11,4955\nreact-native-elements/react-native-elements,4.0.2,4623\nsveltejs/svelte,3.25.4,4091",
+          "elapsed_s": 39.03,
+          "root_name": "trial_1_20260417_113145",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This is Query 2 pattern: filter by project-level MIT license, find NPM packages marked as release, then rank by GitHub fork count. Step 1: Get MIT-licensed projects from DuckDB project_info. Step 2: Get NPM packages for those projects from DuckDB project_packageversion. Step 3: Filter to release versions in SQLite packageinfo. Step 4: Extract fork counts from project_info text and rank top 5 projects.",
+              "step_count": 4,
+              "tools_planned": [
+                "query_duckdb_deps_dev_project",
+                "query_duckdb_deps_dev_project",
+                "query_sqlite_deps_dev_package",
+                "query_duckdb_deps_dev_project"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT Project_Information, \n       TRIM(REGEXP_EXTRACT(Project_Information, '([^/]+/[^/]+)')) AS ProjectName\nFROM project_info \nWHERE Licenses = 'MIT' OR Licenses LIKE '%MIT%'",
+              "row_count": 520,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT System, Name, Version, ProjectName\nFROM project_packageversion\nWHERE System = 'NPM'\nAND ProjectName IN (\n    SELECT DISTINCT regexp_extract(Project_Information, 'The project (.*?) is hosted on', 1)\n    FROM project_info\n    WHERE Licenses LIKE '%MIT%'\n)",
+              "row_count": 4262,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_sqlite_deps_dev_package",
+              "db_type": "sqlite",
+              "query_used": "SELECT Name, Version, VersionInfo\nFROM packageinfo\nWHERE System = 'NPM'\n  AND VersionInfo LIKE '%\"IsRelease\": true%'\n  AND (Name, Version) IN (\n    ('domp/is', '0.2.0'),\n    ('domp/is', '0.1.3'),\n    ('@duik/it', '0.1.7-alpha.6'),\n    ('@duik/it', '0.5.3'),\n    ('@duik/it', '0.2.1'),\n    ('@duik/it', '0.1.7-alpha.5'),\n    ('@duik/it', '0.1.7-beta.3'),\n    ('@duik/it', '0.6.0')\n  )",
+              "row_count": 6,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 4,
+              "tool_name": "query_duckdb_deps_dev_project",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    ProjectName, \n    CAST(regexp_extract(Project_Information, '(\\d+)\\s+forks?', 1) AS INTEGER) as fork_count\nFROM project_info\nWHERE \n    Licenses LIKE '%MIT%' AND\n    ProjectName IN (\n        SELECT DISTINCT ProjectName \n        FROM project_packageversion \n        WHERE \n            System = 'NPM' AND \n            Name IN (\n                SELECT Name \n                FROM project_packageversion \n                WHERE \n                    System = 'NPM' AND\n                    Name IN (SELECT Name FROM project_packageversion WHERE System = 'NPM')\n            )\n    )\nORDER BY fork_count DESC\nLIMIT 5",
+              "row_count": 0,
+              "error": "Binder Error: Referenced column \"ProjectName\" not found in FROM clause!\nCandidate bindings: \"Project_Information\", \"Homepage\"\n\nLINE 7:     ProjectName IN (\n            ^"
+            },
+            {
+              "node": "synthesize",
+              "answer": "@dmrvos/infrajs>0.0.5>typescript,2.6.2\n@dmrvos/infrajs>0.0.6>typescript,2.6.2\n@dylanvann/svelte,3.25.4\n@dumc11/tailwindcss,0.4.0\n@dollarshaveclub/cli>1.0.0>lodash,4.17.4\n@dollarshaveclub/cli>1.1.0>lodash,4.17.4\n@dollarshaveclub/cli>1.10.0>lodash,4.17.5\n@dollarshaveclub/cli>1.10.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.0>lodash,4.17.5\n@dollarshaveclub/cli>1.11.1>lodash,4.17.5\n@dollarshaveclub/cli>1.11.2>lodash,4.17.4\n@dollarshaveclub/cli>1.11.3>lodash,4.17.4\n@dollarshaveclub/cli>1.11.4>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5-rc.1>lodash,4.17.11\n@dollarshaveclub/cli>1.11.5>lodash,4.17.11\n@dollarshaveclub/cli>1.12.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.0>lodash,4.17.11\n@dollarshaveclub/cli>1.13.1>lodash,4.17.11\n@dollarshaveclub/cli>1.2.0>lodash,4.17.4\n@dollarshaveclub/cli>1.3.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.0>lodash,4.17.4\n@dollarshaveclub/cli>1.5.1>lodash,4.17.4\n@dollarshaveclub/cli>1.5.2>lodash,4.17.4\n@dollarshaveclub/cli>1.5.3>lodash,4.17.4\n@dollarshaveclub/cli>1.5.4>lodash,4.17.4\n@dollarshaveclub/cli>1.5.5>lodash,4.17.4\n@dollarshaveclub/cli>1.5.6>lodash,4.17.4\n@dollarshaveclub/cli>1.5.7>lodash,4.17.4\n@dollarshaveclub/cli>1.6.0>lodash,4.17.4\n@dollarshaveclub/cli>1.7.1>lodash,4.17.5\n@dollarshaveclub/cli>1.8.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.0>lodash,4.17.5\n@dollarshaveclub/cli>1.9.1>lodash,4.17.5\n@dollarshaveclub/cli>2.0.0>lodash,4.17.11\n@dollarshaveclub/cli>2.0.1>lodash,4.17.11\n@dollarshaveclub/cli>2.1.0>lodash,4.17.11\n@dollarshaveclub/cli>2.1.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.0>lodash,4.17.11\n@dollarshaveclub/cli>2.2.1>lodash,4.17.11\n@dollarshaveclub/cli>2.2.2>lodash,4.17.11\n@dpoineau/react-scripts>1.0.0>eslint-plugin-flowtype>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>html-webpack-plugin>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>http-proxy-middleware>lodash,4.16.3\n@dpoineau/react-scripts>1.0.0>lodash,4.9.0\n@dpoineau/react-scripts>1.0.0>lodash._arraycopy,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._arrayeach,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._baseassign,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash._baseclone,3.3.0\n@dpoineau/react-scripts>1.0.0>lodash._basecopy,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._basefor,3.0.3\n@dpoineau/react-scripts>1.0.0>lodash._bindcallback,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash._createcompounder,3.0.0\n@dpoineau/react-scripts>1.0.0>lodash._getnative,3.9.1\n@dpoineau/react-scripts>1.0.0>lodash._root,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.assign,4.2.0\n@dpoineau/react-scripts>1.0.0>lodash.camelcase,3.0.1\n@dpoineau/react-scripts>1.0.0>lodash.clonedeep,4.5.0\n@dpoineau/react-scripts>1.0.0>lodash.cond,4.5.2\n@dpoineau/react-scripts>1.0.0>lodash.deburr,3.2.0\n@dpoineau/react-scripts>1.0.0>lodash.endswith,4.2.1\n@dpoineau/react-scripts>1.0.0>lodash.find,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.findindex,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.indexof,4.0.5\n@dpoineau/react-scripts>1.0.0>lodash.isarguments,3.1.0\n@dpoineau/react-scripts>1.0.0>lodash.isarray,3.0.4\n@dpoineau/react-scripts>1.0.0>lodash.keys,3.1.2\n@dpoineau/react-scripts>1.0.0>lodash.pickby,4.6.0\n@dpoineau/react-scripts>1.0.0>lodash.words,3.2.0\n@dpoineau/react-scripts>1.0.0>node-notifier>lodash.clonedeep,3.0.2\n@dummmy/pack-cli>1.0.8>lodash,4.17.19\n@dummmy/pack-cli>1.0.9>lodash,4.17.19\n@dummmy/webpack-cli>1.0.2>lodash,4.17.19\n@dummmy/webpack-cli>1.0.3>lodash,4.17.19\n@dummmy/webpack-cli>1.0.4>lodash,4.17.19\n@dummmy/webpack-cli>1.0.5>lodash,4.17.19\n@dummmy/webpack-cli>1.0.6>lodash,4.17.19\n@dummmy/webpack-cli>1.0.7>lodash,4.17.19\n@dwarvesf/react-scripts>0.7.0>lodash,4.17.2\n@dwarvesf/react-scripts>0.7.0>lodash._arraycopy,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._arrayeach,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseassign,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash._baseclone,3.3.0\n@dwarvesf/react-scripts>0.7.0>lodash._basecopy,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._basefor,3.0.3\n@dwarvesf/react-scripts>0.7.0>lodash._bindcallback,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash._createcompounder,3.0.0\n@dwarvesf/react-scripts>0.7.0>lodash._getnative,3.9.1\n@dwarvesf/react-scripts>0.7.0>lodash._root,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.assign,4.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.camelcase,3.0.1\n@dwarvesf/react-scripts>0.7.0>lodash.clonedeep,3.0.2\n@dwarvesf/react-scripts>0.7.0>lodash.cond,4.5.2\n@dwarvesf/react-scripts>0.7.0>lodash.deburr,3.2.0\n@dwarvesf/react-scripts>0.7.0>lodash.indexof,4.0.5\n@dwarvesf/react-scripts>0.7.0>lodash.isarguments,3.1.0\n@dwarvesf/react-scripts>0.7.0>lodash.isarray,3.0.4\n@dwarvesf/react-scripts>0.7.0>lodash.keys,3.1.2\n@dwarvesf/react-scripts>0.7.0>lodash.pickby,4.6.0\n@dwarvesf/react-scripts>0.7.0>lodash.words,3.2.0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

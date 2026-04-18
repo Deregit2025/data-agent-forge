@@ -1,0 +1,139 @@
+{
+  "run_id": "20260417_095453",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 2,
+  "pass_count": 2,
+  "pass_rate": 1.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 2,
+      "pass_count": 2,
+      "any_pass_count": 2,
+      "pass_rate": 1.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 1,
+      "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+      "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+          "answer": "Widows Peak Salon, City Textile, Nobel Textile Co, San Soo Dang, Nova Fabrics",
+          "is_valid": true,
+          "reason": "All names are present and in correct order.",
+          "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+          "elapsed_s": 11.57,
+          "root_name": "trial_1_20260417_095453",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Need to find top 5 businesses in Los Angeles, CA by average rating. Since avg_rating column doesn't exist, must: (1) get all gmap_ids + names for LA businesses from PostgreSQL using description ILIKE filter, (2) compute AVG(rating) per gmap_id from SQLite review table, then merge and rank in Python.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_googlelocal",
+                "query_sqlite_googlelocal_review"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\" FROM \"business_description\" WHERE \"description\" ILIKE '%Los Angeles%'",
+              "row_count": 7,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, AVG(rating) AS avg_rating, COUNT(*) AS review_count FROM review GROUP BY gmap_id",
+              "row_count": 79,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "Widows Peak Salon, City Textile, Nobel Textile Co, San Soo Dang, Nova Fabrics"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 2,
+      "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+      "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+          "answer": "Elite Massage (5.0), Angel-A Massage (4.33), Aurora Massage (4.18), J B Oriental Inc (4.17)",
+          "is_valid": true,
+          "reason": "All names and scores matched successfully.",
+          "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+          "elapsed_s": 21.22,
+          "root_name": "trial_1_20260417_095505",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Need to find massage therapy businesses and their average ratings. Step 1: Query PostgreSQL business_description to get gmap_ids and names of massage therapy businesses (filtering by name/description keywords for massage, spa, oriental). Step 2: Query SQLite review table to compute average ratings per gmap_id for those businesses, filtering to those with avg >= 4.0.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_googlelocal",
+                "query_sqlite_googlelocal_review"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\" FROM \"business_description\" WHERE \"name\" ILIKE '%massage%' OR \"name\" ILIKE '%spa%' OR \"name\" ILIKE '%oriental%' OR \"description\" ILIKE '%massage%'",
+              "row_count": 8,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as review_count FROM review WHERE gmap_id IN ('gmap_22', 'gmap_25', 'gmap_33', 'gmap_24', 'gmap_20', 'gmap_32', 'gmap_21', 'gmap_28') GROUP BY gmap_id HAVING AVG(rating) >= 4.0 ORDER BY avg_rating DESC",
+              "row_count": 4,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "Elite Massage (5.0), Angel-A Massage (4.33), Aurora Massage (4.18), J B Oriental Inc (4.17)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "run_id": "20260413_154513",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 1,
+      "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+      "ground_truth": "3.547008547008547",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the average rating of all businesses located in Indianapolis, Indiana?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No number found in LLM output.",
+          "ground_truth": "3.547008547008547",
+          "elapsed_s": 7.69,
+          "root_name": "trial_1_20260413_154513",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

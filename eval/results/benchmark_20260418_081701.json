@@ -1,0 +1,89 @@
+{
+  "run_id": "20260418_081701",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 1,
+  "pass_rate": 1.0,
+  "per_dataset": [
+    {
+      "dataset": "crmarenapro",
+      "n_queries": 1,
+      "pass_count": 1,
+      "any_pass_count": 1,
+      "pass_rate": 1.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "crmarenapro",
+      "query_id": 2,
+      "question": "Does the cost and setup of this quote comply with our company policy? If it doesn't, which knowledge article is it in conflict with? Return only the Id of the knowledge article that the quote violates. If no violation is found, return None.\n\n## Quote approval guide.\nLook for relevant knowledge articles to justify the quote approval.\n\n- Quote Id to be considered is: 0Q0Wt000001WSDVKA4",
+      "ground_truth": "ka0Wt000000Eq0MIAS",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Does the cost and setup of this quote comply with our company policy? If it doesn't, which knowledge article is it in conflict with? Return only the Id of the knowledge article that the quote violates. If no violation is found, return None.\n\n## Quote approval guide.\nLook for relevant knowledge articles to justify the quote approval.\n\n- Quote Id to be considered is: 0Q0Wt000001WSDVKA4",
+          "answer": "ka0Wt000000Eq0MIAS",
+          "is_valid": true,
+          "reason": "Found expected agent ID: ka0Wt000000Eq0MIAS",
+          "ground_truth": "ka0Wt000000Eq0MIAS",
+          "elapsed_s": 22.54,
+          "root_name": "trial_1_20260418_081701",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To determine if a quote complies with company policy, I need to: 1) Fetch the quote details (status, amounts, discounts, line items) from DuckDB sales pipeline, 2) Fetch the quote line items with pricing details, 3) Search knowledge base articles in PostgreSQL for quote approval policies, then compare the quote details against the policies to find any violations.",
+              "step_count": 3,
+              "tools_planned": [
+                "query_duckdb_crmarenapro_sales",
+                "query_duckdb_crmarenapro_sales",
+                "query_postgres_crmarenapro"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT * FROM Quote WHERE LTRIM(Id, '#') = '0Q0Wt000001WSDVKA4'",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT * FROM QuoteLineItem WHERE LTRIM(QuoteId, '#') = '0Q0Wt000001WSDVKA4'",
+              "row_count": 4,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT \"id\", \"title\", \"summary\", \"faq_answer__c\" FROM \"knowledge__kav\" WHERE \"faq_answer__c\" ILIKE '%quote%' OR \"faq_answer__c\" ILIKE '%discount%' OR \"faq_answer__c\" ILIKE '%approval%' OR \"faq_answer__c\" ILIKE '%pricing%' OR \"title\" ILIKE '%quote%' OR \"title\" ILIKE '%discount%' OR \"title\" ILIKE '%approval%'",
+              "row_count": 6,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "ka0Wt000000Eq0MIAS"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

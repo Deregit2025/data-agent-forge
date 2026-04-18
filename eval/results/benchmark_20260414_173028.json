@@ -1,0 +1,79 @@
+{
+  "run_id": "20260414_173028",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 1,
+  "pass_rate": 1.0,
+  "per_dataset": [
+    {
+      "dataset": "yelp",
+      "n_queries": 1,
+      "pass_count": 1,
+      "any_pass_count": 1,
+      "pass_rate": 1.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "yelp",
+      "query_id": 3,
+      "question": "During 2018, how many businesses that received reviews offered either business parking or bike parking?",
+      "ground_truth": "35",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "yelp",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "During 2018, how many businesses that received reviews offered either business parking or bike parking?",
+          "answer": "35",
+          "is_valid": true,
+          "reason": "Found number: 35",
+          "ground_truth": "35",
+          "elapsed_s": 18.56,
+          "root_name": "trial_1_20260414_173028",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Pattern D from the KB: First get all distinct business_refs reviewed in 2018 from DuckDB, then query MongoDB with those business_ids (prefix-swapped) filtered by parking attributes, and count the results.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_duckdb_yelp_user",
+                "query_mongo_yelp_business"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_yelp_user",
+              "db_type": "duckdb",
+              "query_used": "SELECT DISTINCT business_ref FROM review WHERE date LIKE '%2018%'",
+              "row_count": 67,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_mongo_yelp_business",
+              "db_type": "mongodb",
+              "query_used": "[\n    {\n        \"$match\": {\n            \"business_id\": {\n                \"$in\": [\n                    \"businessid_79\", \"businessid_6\", \"businessid_47\", \"businessid_13\", \n                    \"businessid_44\", \"businessid_91\", \"businessid_71\", \"businessid_46\", \n                    \"businessid_73\", \"businessid_77\", \"businessid_50\", \"businessid_3\", \n                    \"businessid_20\", \"businessid_28\", \"businessid_76\", \"businessid_22\", \n                    \"businessid_69\", \"businessid_14\", \"businessid_27\", \"businessid_70\", \n                    \"businessid_18\", \"businessid_43\", \"businessid_99\", \"businessid_31\", \n                    \"businessid_17\", \"businessid_67\", \"businessid_15\", \"businessid_81\", \n                    \"businessid_24\", \"businessid_52\", \"businessid_33\", \"businessid_89\", \n                    \"businessid_36\", \"businessid_60\", \"businessid_12\", \"businessid_49\", \n                    \"businessid_45\", \"businessid_82\", \"businessid_35\", \"businessid_10\", \n                    \"businessid_23\", \"businessid_26\", \"businessid_68\", \"businessid_40\", \n                    \"businessid_34\", \"businessid_92\", \"businessid_83\", \"businessid_21\", \n                    \"businessid_95\", \"businessid_4\", \"businessid_61\", \"businessid_59\", \n                    \"businessid_25\", \"businessid_29\", \"businessid_66\", \"businessid_86\", \n                    \"businessid_8\", \"businessid_72\", \"businessid_62\", \"businessid_85\", \n                    \"businessid_57\", \"businessid_56\", \"businessid_80\", \"businessid_90\", \n                    \"businessid_51\", \"businessid_97\", \"businessid_37\"\n                ]\n            },\n            \"$or\": [\n                {\"attributes.BusinessParking\": {\"$regex\": \"True\"}},\n                {\"attributes.BikeParking\": {\"$regex\": \"True\"}}\n            ]\n        }\n    },\n    {\n        \"$count\": \"total\"\n    }\n]",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "35"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

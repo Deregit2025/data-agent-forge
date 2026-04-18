@@ -1,0 +1,149 @@
+{
+  "run_id": "20260417_152707",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 2,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "github_repos",
+      "n_queries": 2,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "github_repos",
+      "query_id": 3,
+      "question": "How many commit messages are found in repositories that use the Shell programming language and are licensed under Apache-2.0, where each message exists, is shorter than 1,000 characters, and does not begin with 'merge', 'update', or 'test'?",
+      "ground_truth": "num_messages\n1077",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "github_repos",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "How many commit messages are found in repositories that use the Shell programming language and are licensed under Apache-2.0, where each message exists, is shorter than 1,000 characters, and does not begin with 'merge', 'update', or 'test'?",
+          "answer": "0",
+          "is_valid": false,
+          "reason": "Number 1077 not found in LLM output.",
+          "ground_truth": "num_messages\n1077",
+          "elapsed_s": 37.46,
+          "root_name": "trial_1_20260417_152707",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This is query3 from the github_repos domain knowledge. Need to: 1) Find repos using Shell language from SQLite languages table, 2) Intersect with repos licensed under apache-2.0 from SQLite licenses table, 3) Count qualifying commit messages from DuckDB commits table filtered by the intersected repo list.",
+              "step_count": 3,
+              "tools_planned": [
+                "query_sqlite_github_metadata",
+                "query_sqlite_github_metadata",
+                "query_duckdb_github_artifacts"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_github_metadata",
+              "db_type": "sqlite",
+              "query_used": "SELECT repo_name FROM languages WHERE language_description LIKE '%Shell%'",
+              "row_count": 659616,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_github_metadata",
+              "db_type": "sqlite",
+              "query_used": "SELECT repo_name \nFROM licenses \nWHERE license = 'apache-2.0' \nAND repo_name IN (\n    SELECT repo_name \n    FROM languages \n    WHERE language_description LIKE '%Shell%'\n)",
+              "row_count": 114972,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_duckdb_github_artifacts",
+              "db_type": "duckdb",
+              "query_used": "SELECT COUNT(*) as qualifying_commit_count\nFROM commits\nWHERE repo_name IN (\n    SELECT repo_name \n    FROM (\n        SELECT repo_name \n        FROM (\n            SELECT repo_name \n            FROM languages \n            WHERE language_description LIKE '%Shell%'\n        ) shell_repos\n        INNER JOIN (\n            SELECT repo_name \n            FROM licenses \n            WHERE license = 'apache-2.0'\n        ) apache_repos ON shell_repos.repo_name = apache_repos.repo_name\n    )\n) \nAND message IS NOT NULL \nAND length(message) < 1000 \nAND NOT (\n    message ILIKE 'merge%' \n    OR message ILIKE 'update%' \n    OR message ILIKE 'test%'\n)",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "github_repos",
+      "query_id": 4,
+      "question": "List the repository names for the top five GitHub repositories whose main language is not Python, ordered by the highest number of commits.",
+      "ground_truth": "repo_name,num_commits\napple/swift,1051\ntwbs/bootstrap,340\nMicrosoft/vscode,190\nfacebook/react,178\ntensorflow/tensorflow,156",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "github_repos",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "List the repository names for the top five GitHub repositories whose main language is not Python, ordered by the highest number of commits.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Could not match: 'apple/swift'",
+          "ground_truth": "repo_name,num_commits\napple/swift,1051\ntwbs/bootstrap,340\nMicrosoft/vscode,190\nfacebook/react,178\ntensorflow/tensorflow,156",
+          "elapsed_s": 128.28,
+          "root_name": "trial_1_20260417_152744",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Need to find top 5 repos by commit count where the main language (highest byte count) is not Python. Step 1: Get all repos with their language descriptions from SQLite to identify non-Python main language repos. Step 2: Query DuckDB commits table filtered to those repos, count commits per repo, return top 5.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_github_metadata",
+                "query_duckdb_github_artifacts"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_github_metadata",
+              "db_type": "sqlite",
+              "query_used": "SELECT repo_name, language_description FROM languages WHERE language_description NOT LIKE '%Python%' OR (CAST(REPLACE(SUBSTR(language_description, INSTR(language_description, 'Python:') + 7), ' bytes', '') AS INTEGER) <= CAST(REPLACE(SUBSTR(language_description, 1, INSTR(language_description, ':') - 1), ' ', '') AS INTEGER))",
+              "row_count": 0,
+              "error": "Write operations are not permitted. Only SELECT queries are allowed."
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_github_artifacts",
+              "db_type": "duckdb",
+              "query_used": "SELECT repo_name, COUNT(*) as commit_count \nFROM commits \nWHERE repo_name IN (\n    SELECT repo_name \n    FROM (\n        SELECT repo_name, \n               REGEXP_EXTRACT(language_description, '(\\w+): (\\d+) bytes', 1) as main_language,\n               CAST(REGEXP_EXTRACT(language_description, '(\\w+): (\\d+) bytes', 2) AS INTEGER) as language_bytes\n        FROM languages\n        WHERE language_description NOT LIKE '%Python%'\n    ) lang_subquery\n    GROUP BY repo_name\n    QUALIFY ROW_NUMBER() OVER (PARTITION BY repo_name ORDER BY language_bytes DESC) = 1\n) \nGROUP BY repo_name \nORDER BY commit_count DESC \nLIMIT 5",
+              "row_count": 0,
+              "error": "Catalog Error: Table with name languages does not exist!\nDid you mean \"pg_namespace\"?\n\nLINE 9:         FROM languages\n                     ^"
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

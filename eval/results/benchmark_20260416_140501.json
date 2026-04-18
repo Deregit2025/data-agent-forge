@@ -1,0 +1,47 @@
+{
+  "run_id": "20260416_140501",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "agnews",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "agnews",
+      "query_id": 4,
+      "question": "In 2015, which region published the largest number of articles in the World category?",
+      "ground_truth": "Africa",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "agnews",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "In 2015, which region published the largest number of articles in the World category?",
+          "answer": "",
+          "is_valid": false,
+          "reason": "Empty answer \u2014 agent returned nothing",
+          "ground_truth": "Africa",
+          "elapsed_s": 22.62,
+          "root_name": "trial_1_20260416_140501",
+          "error": "UnboundLocalError: local variable 'dataset' referenced before assignment",
+          "steps": []
+        }
+      ]
+    }
+  ]
+}

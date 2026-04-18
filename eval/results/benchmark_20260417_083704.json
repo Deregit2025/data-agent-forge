@@ -1,0 +1,214 @@
+{
+  "run_id": "20260417_083704",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 5,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockmarket",
+      "n_queries": 5,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockmarket",
+      "query_id": 1,
+      "question": "What was the maximum adjusted closing price in 2020 for The RealReal, Inc.?",
+      "ground_truth": "18.440000534057617",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What was the maximum adjusted closing price in 2020 for The RealReal, Inc.?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No number found in LLM output.",
+          "ground_truth": "18.440000534057617",
+          "elapsed_s": 3.36,
+          "root_name": "trial_1_20260417_083704",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Planning failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 839. To increase, visit https://openrouter.ai/settings/keys and create a key with a higher weekly limit', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'org_3B7LqR6KG0MSzOr4fEskO8X8zKr'}",
+              "step_count": 0,
+              "tools_planned": []
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "stockmarket",
+      "query_id": 2,
+      "question": "List all ETF securities listed on NYSE Arca that reached an adjusted closing price above $200 at any point during 2015, and also report the total number of such ETFs.",
+      "ground_truth": "ProShares Ultra Bloomberg Natural Gas\nProShares UltraShort MSCI Brazil Capped\nDirexion Auspice Broad Commodity Strategy ETF\nDirexion Daily Gold Miners Index Bear 2X Shares\nDirexion Emerging Markets Bear 3X Shares\nDirexion Energy Bull 2X Shares\nDirexion Financial Bear 3X Shares\nProShares Ultrashort FTSE China 50\nGoldman Sachs Motif Finance Reimagined ETF\nDirexion Daily S&P Oil & Gas Exp. & Prod. Bull 2X Shares\nXtrackers High Beta High Yield Bond ETF\nDirexion Daily Junior Gold Miners Index Bear 2X Shares\nDirexion Daily Junior Gold Miners Index Bull 2X Shares\nXtrackers Japan JPX-Nikkei 400 Equity ETF\nDirexion Daily S&P Biotech Bear 3X Shares\nDirexion Daily S&P Biotech Bull 3X Shares\nDirexion Daily Latin America 3x Bull Shares\nSPDR MidCap Trust Series I\nPacer Trendpilot International ETF\nPacer Benchmark Retail Real Estate SCTR ETF\nUltraPro Short Dow30\nDirexion Daily Semiconductor Bear 3x Shares\nProShares UltraShort Semiconductors\nDirexion Technology Bear 3X Shares\nDirexion Small Cap Bear 3X Shares\nProShares Trust Ultra VIX Short Term Futures ETF\nProShares Trust VIX Short-Term Futures ETF\nVirtus Private Credit Strategy ETF\nSPDR Series Trust SPDR S&P Oil & Gas Equipment & Services ETF\nSPDR S&P Oil & Gas Explor & Product\nDirexion Daily FTSE China Bear 3x Shares\nTotal: 31",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "List all ETF securities listed on NYSE Arca that reached an adjusted closing price above $200 at any point during 2015, and also report the total number of such ETFs.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing number: 31",
+          "ground_truth": "ProShares Ultra Bloomberg Natural Gas\nProShares UltraShort MSCI Brazil Capped\nDirexion Auspice Broad Commodity Strategy ETF\nDirexion Daily Gold Miners Index Bear 2X Shares\nDirexion Emerging Markets Bear 3X Shares\nDirexion Energy Bull 2X Shares\nDirexion Financial Bear 3X Shares\nProShares Ultrashort FTSE China 50\nGoldman Sachs Motif Finance Reimagined ETF\nDirexion Daily S&P Oil & Gas Exp. & Prod. Bull 2X Shares\nXtrackers High Beta High Yield Bond ETF\nDirexion Daily Junior Gold Miners Index Bear 2X Shares\nDirexion Daily Junior Gold Miners Index Bull 2X Shares\nXtrackers Japan JPX-Nikkei 400 Equity ETF\nDirexion Daily S&P Biotech Bear 3X Shares\nDirexion Daily S&P Biotech Bull 3X Shares\nDirexion Daily Latin America 3x Bull Shares\nSPDR MidCap Trust Series I\nPacer Trendpilot International ETF\nPacer Benchmark Retail Real Estate SCTR ETF\nUltraPro Short Dow30\nDirexion Daily Semiconductor Bear 3x Shares\nProShares UltraShort Semiconductors\nDirexion Technology Bear 3X Shares\nDirexion Small Cap Bear 3X Shares\nProShares Trust Ultra VIX Short Term Futures ETF\nProShares Trust VIX Short-Term Futures ETF\nVirtus Private Credit Strategy ETF\nSPDR Series Trust SPDR S&P Oil & Gas Equipment & Services ETF\nSPDR S&P Oil & Gas Explor & Product\nDirexion Daily FTSE China Bear 3x Shares\nTotal: 31",
+          "elapsed_s": 2.03,
+          "root_name": "trial_1_20260417_083708",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Planning failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 839. To increase, visit https://openrouter.ai/settings/keys and create a key with a higher weekly limit', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'org_3B7LqR6KG0MSzOr4fEskO8X8zKr'}",
+              "step_count": 0,
+              "tools_planned": []
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "stockmarket",
+      "query_id": 3,
+      "question": "List all company names on the NASDAQ-listed Market that were financially troubled (delinquent, deficient, or both) and have trading volume in 2008, for each, report its exisiting non-null average daily trading volume in 2008.",
+      "ground_truth": "Apex Global Brands Inc,23781.42\nBIO-key International, Inc,10988.14\nCBAK Energy Technology, Inc,86223.32\nChina Ceramics Co, Ltd,4366.80\nCorrevio Pharma Corp,145247.83\nCounterPath Corporation,375.49\nDASAN Zhone Solutions, Inc,15578.66\nFuture FinTech Group Inc,9.85\nFrontier Communications Corporation,254397.63\nIdeanomics, Inc,10.28\nOcean Power Technologies, Inc,254.15\nPacific Ethanol, Inc,10706.72\nSynthesis Energy Systems, Inc,2390.51\nSunesis Pharmaceuticals, Inc,781.82\nSypris Solutions, Inc,36836.36",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "List all company names on the NASDAQ-listed Market that were financially troubled (delinquent, deficient, or both) and have trading volume in 2008, for each, report its exisiting non-null average daily trading volume in 2008.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Name not found within 5 edits: 'Apex Global Brands Inc', closest: '' (distance=inf)",
+          "ground_truth": "Apex Global Brands Inc,23781.42\nBIO-key International, Inc,10988.14\nCBAK Energy Technology, Inc,86223.32\nChina Ceramics Co, Ltd,4366.80\nCorrevio Pharma Corp,145247.83\nCounterPath Corporation,375.49\nDASAN Zhone Solutions, Inc,15578.66\nFuture FinTech Group Inc,9.85\nFrontier Communications Corporation,254397.63\nIdeanomics, Inc,10.28\nOcean Power Technologies, Inc,254.15\nPacific Ethanol, Inc,10706.72\nSynthesis Energy Systems, Inc,2390.51\nSunesis Pharmaceuticals, Inc,781.82\nSypris Solutions, Inc,36836.36",
+          "elapsed_s": 2.71,
+          "root_name": "trial_1_20260417_083710",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Planning failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 839. To increase, visit https://openrouter.ai/settings/keys and create a key with a higher weekly limit', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'org_3B7LqR6KG0MSzOr4fEskO8X8zKr'}",
+              "step_count": 0,
+              "tools_planned": []
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "stockmarket",
+      "query_id": 4,
+      "question": "What are the names (not symbol) of the top 5 non-ETF stocks listed on the New York Stock Exchange (NYSE) that had more up days than down days in 2017? (Up days: closing price > opening price; Down days: closing price < opening price)",
+      "ground_truth": "MFA Financial, Inc\nArgo Group International Holdings, Ltd\nHDFC Bank Limited Common Stock\nAlbany International Corporation Common Stock\nDTE Energy Company",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "What are the names (not symbol) of the top 5 non-ETF stocks listed on the New York Stock Exchange (NYSE) that had more up days than down days in 2017? (Up days: closing price > opening price; Down days: closing price < opening price)",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Name not found within 5 edits: 'MFA Financial, Inc', closest: '' (distance=inf)",
+          "ground_truth": "MFA Financial, Inc\nArgo Group International Holdings, Ltd\nHDFC Bank Limited Common Stock\nAlbany International Corporation Common Stock\nDTE Energy Company",
+          "elapsed_s": 1.51,
+          "root_name": "trial_1_20260417_083713",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Planning failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 796. To increase, visit https://openrouter.ai/settings/keys and create a key with a higher weekly limit', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'org_3B7LqR6KG0MSzOr4fEskO8X8zKr'}",
+              "step_count": 0,
+              "tools_planned": []
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "stockmarket",
+      "query_id": 5,
+      "question": "Which 5 companies listed on the NASDAQ Capital Market had the highest number of days in 2019 where the intraday price range exceeded 20% of the low price, list the company names please?",
+      "ground_truth": "Synthesis Energy Systems, Inc. - Common Stock\nTD Holdings, Inc. - Common Stock\nTMSR Holding Company Limited - Common Stock\nVerb Technology Company, Inc. - Common Stock\nSunesis Pharmaceuticals, Inc. - Common Stock",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 5,
+          "trial_num": 1,
+          "question": "Which 5 companies listed on the NASDAQ Capital Market had the highest number of days in 2019 where the intraday price range exceeded 20% of the low price, list the company names please?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Name not found within 5 edits: 'Synthesis Energy Systems, Inc', closest: '' (distance=inf)",
+          "ground_truth": "Synthesis Energy Systems, Inc. - Common Stock\nTD Holdings, Inc. - Common Stock\nTMSR Holding Company Limited - Common Stock\nVerb Technology Company, Inc. - Common Stock\nSunesis Pharmaceuticals, Inc. - Common Stock",
+          "elapsed_s": 0.98,
+          "root_name": "trial_1_20260417_083714",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Planning failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 796. To increase, visit https://openrouter.ai/settings/keys and create a key with a higher weekly limit', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'org_3B7LqR6KG0MSzOr4fEskO8X8zKr'}",
+              "step_count": 0,
+              "tools_planned": []
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

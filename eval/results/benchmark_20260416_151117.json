@@ -1,0 +1,47 @@
+{
+  "run_id": "20260416_151117",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockmarket",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockmarket",
+      "query_id": 3,
+      "question": "List all company names on the NASDAQ-listed Market that were financially troubled (delinquent, deficient, or both) and have trading volume in 2008, for each, report its exisiting non-null average daily trading volume in 2008.",
+      "ground_truth": "Apex Global Brands Inc,23781.42\nBIO-key International, Inc,10988.14\nCBAK Energy Technology, Inc,86223.32\nChina Ceramics Co, Ltd,4366.80\nCorrevio Pharma Corp,145247.83\nCounterPath Corporation,375.49\nDASAN Zhone Solutions, Inc,15578.66\nFuture FinTech Group Inc,9.85\nFrontier Communications Corporation,254397.63\nIdeanomics, Inc,10.28\nOcean Power Technologies, Inc,254.15\nPacific Ethanol, Inc,10706.72\nSynthesis Energy Systems, Inc,2390.51\nSunesis Pharmaceuticals, Inc,781.82\nSypris Solutions, Inc,36836.36",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "List all company names on the NASDAQ-listed Market that were financially troubled (delinquent, deficient, or both) and have trading volume in 2008, for each, report its exisiting non-null average daily trading volume in 2008.",
+          "answer": "",
+          "is_valid": false,
+          "reason": "Empty answer \u2014 agent returned nothing",
+          "ground_truth": "Apex Global Brands Inc,23781.42\nBIO-key International, Inc,10988.14\nCBAK Energy Technology, Inc,86223.32\nChina Ceramics Co, Ltd,4366.80\nCorrevio Pharma Corp,145247.83\nCounterPath Corporation,375.49\nDASAN Zhone Solutions, Inc,15578.66\nFuture FinTech Group Inc,9.85\nFrontier Communications Corporation,254397.63\nIdeanomics, Inc,10.28\nOcean Power Technologies, Inc,254.15\nPacific Ethanol, Inc,10706.72\nSynthesis Energy Systems, Inc,2390.51\nSunesis Pharmaceuticals, Inc,781.82\nSypris Solutions, Inc,36836.36",
+          "elapsed_s": 0.0,
+          "root_name": "trial_1_20260416_151117",
+          "error": "IndentationError: expected an indented block after function definition on line 571 (conductor.py, line 572)",
+          "steps": []
+        }
+      ]
+    }
+  ]
+}

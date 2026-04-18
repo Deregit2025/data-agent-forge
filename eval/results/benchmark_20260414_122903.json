@@ -1,0 +1,79 @@
+{
+  "run_id": "20260414_122903",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 2,
+      "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+      "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which massage therapy businesses have an average rating of at least 4.0, and what are their respective average ratings?",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing name in LLM output: Elite Massage",
+          "ground_truth": "Elite Massage,5.0\nAngel-A Massage,4.333333333333333\nAurora Massage,4.178571428571429\nJ B Oriental Inc,4.166666666666667",
+          "elapsed_s": 15.91,
+          "root_name": "trial_1_20260414_122903",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Need to find massage therapy businesses with average rating >= 4.0. Step 1: Query PostgreSQL business_description table to find businesses with 'massage' in their description, retrieving gmap_id and name. Step 2: Query SQLite review table to compute average ratings per gmap_id. Then filter to those with avg_rating >= 4.0 by matching the gmap_ids from step 1.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_googlelocal",
+                "query_sqlite_googlelocal_review"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\" FROM business_description WHERE description ILIKE '%massage%'",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, AVG(rating) as avg_rating \nFROM review \nWHERE gmap_id IN ('gmap_id_1', 'gmap_id_2', 'gmap_id_3') \nGROUP BY gmap_id \nHAVING avg_rating >= 4.0",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

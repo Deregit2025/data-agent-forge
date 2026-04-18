@@ -1,0 +1,79 @@
+{
+  "run_id": "20260414_123101",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 4,
+      "question": "Which 3 businesses received the highest number of reviews with ratings of 4.5 or higher during 2019? Include their names and the count of high-rating reviews.",
+      "ground_truth": "Encino Dermatology & Laser: Alex Khadavi MD,19\nThe Boochyard @ Local Roots,17\nAurora Massage,14",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "Which 3 businesses received the highest number of reviews with ratings of 4.5 or higher during 2019? Include their names and the count of high-rating reviews.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing business name: Encino Dermatology & Laser",
+          "ground_truth": "Encino Dermatology & Laser: Alex Khadavi MD,19\nThe Boochyard @ Local Roots,17\nAurora Massage,14",
+          "elapsed_s": 17.0,
+          "root_name": "trial_1_20260414_123101",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Since ratings are integers (1-5) in the review table, '4.5 or higher' means rating >= 5. I need to: 1) Query SQLite review table to find gmap_ids with the most reviews having rating=5 in 2019, 2) Query PostgreSQL business_description to get the business names for those top gmap_ids.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_googlelocal_review",
+                "query_postgres_googlelocal"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, COUNT(*) as high_rating_count FROM review WHERE rating >= 5 AND strftime('%Y', datetime(CAST(time AS INTEGER)/1000, 'unixepoch')) = '2019' GROUP BY gmap_id ORDER BY high_rating_count DESC LIMIT 3",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\" FROM \"business_description\" WHERE \"gmap_id\" IN ('', '', '')",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

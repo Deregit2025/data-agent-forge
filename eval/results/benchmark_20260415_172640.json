@@ -1,0 +1,109 @@
+{
+  "run_id": "20260415_172640",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "crmarenapro",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "crmarenapro",
+      "query_id": 3,
+      "question": "Is the stage name accurately representing the tasks for this opportunity? If it is not, what should the appropriate stage name be? Return only the correct stage label among ('Qualification', 'Discovery', 'Quote', 'Negotiation', 'Closed').\n\n- Opportunity Id to be considered is: 006Wt000007BGGjIAO",
+      "ground_truth": "Negotiation",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "Is the stage name accurately representing the tasks for this opportunity? If it is not, what should the appropriate stage name be? Return only the correct stage label among ('Qualification', 'Discovery', 'Quote', 'Negotiation', 'Closed').\n\n- Opportunity Id to be considered is: 006Wt000007BGGjIAO",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "No valid stage name found in LLM output",
+          "ground_truth": "Negotiation",
+          "elapsed_s": 65.17,
+          "root_name": "trial_1_20260415_172640",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To determine if the stage name accurately represents the tasks for the opportunity, I need to: 1) Get the opportunity details including current stage name, 2) Get all tasks linked to this opportunity via WhatId, 3) Get any voice call transcripts linked to this opportunity, 4) Get any events linked to this opportunity. Then analyze the activity content against the stage definitions to determine the correct stage.",
+              "step_count": 5,
+              "tools_planned": [
+                "query_duckdb_crmarenapro_sales",
+                "query_duckdb_crmarenapro_activities",
+                "query_duckdb_crmarenapro_activities",
+                "query_duckdb_crmarenapro_activities",
+                "query_duckdb_crmarenapro_sales"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    Id, \n    Name, \n    StageName, \n    Amount, \n    Probability, \n    CreatedDate, \n    CloseDate, \n    AccountId, \n    OwnerId \nFROM Opportunity \nWHERE Id = '006Wt000007BGGjIAO' OR Id = '#006Wt000007BGGjIAO' OR Id = LTRIM(Id, '#')",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_duckdb_crmarenapro_sales (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_crmarenapro_activities",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    Id, \n    WhatId, \n    Priority, \n    Status, \n    ActivityDate, \n    Subject,\n    Description\nFROM Task\nWHERE LTRIM(WhatId, '#') = LTRIM('006Wt000007BGGjIAO', '#')",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_duckdb_crmarenapro_activities (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_duckdb_crmarenapro_activities",
+              "db_type": "duckdb",
+              "query_used": "SELECT Id, WhatId, OwnerId, StartDateTime, DurationInMinutes, Location FROM Event WHERE WhatId IN (REPLACE('006Wt000007BGGjIAO', '#', ''), '006Wt000007BGGjIAO')",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_duckdb_crmarenapro_activities (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "execute",
+              "step": 4,
+              "tool_name": "query_duckdb_crmarenapro_activities",
+              "db_type": "duckdb",
+              "query_used": "SELECT \n    Id, \n    OpportunityId__c, \n    Body__c \nFROM VoiceCallTranscript__c \nWHERE \n    REPLACE(OpportunityId__c, '#', '') = '006Wt000007BGGjIAO'",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_duckdb_crmarenapro_activities (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "execute",
+              "step": 5,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT Id, OpportunityId, Name, Status, CreatedDate, ExpirationDate FROM Quote WHERE OpportunityId IN (REPLACE(LTRIM('006Wt000007BGGjIAO', '#'), '#', ''), REPLACE(LTRIM('006Wt000007BGGjIAO', '#'), '#', ''))",
+              "row_count": 0,
+              "error": "HTTPConnectionPool(host='127.0.0.1', port=5000): Max retries exceeded with url: /v1/tools/query_duckdb_crmarenapro_sales (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=5000): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

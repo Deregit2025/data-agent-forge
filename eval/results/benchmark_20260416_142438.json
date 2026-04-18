@@ -1,0 +1,79 @@
+{
+  "run_id": "20260416_142438",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockmarket",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockmarket",
+      "query_id": 4,
+      "question": "What are the names (not symbol) of the top 5 non-ETF stocks listed on the New York Stock Exchange (NYSE) that had more up days than down days in 2017? (Up days: closing price > opening price; Down days: closing price < opening price)",
+      "ground_truth": "MFA Financial, Inc\nArgo Group International Holdings, Ltd\nHDFC Bank Limited Common Stock\nAlbany International Corporation Common Stock\nDTE Energy Company",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 4,
+          "trial_num": 1,
+          "question": "What are the names (not symbol) of the top 5 non-ETF stocks listed on the New York Stock Exchange (NYSE) that had more up days than down days in 2017? (Up days: closing price > opening price; Down days: closing price < opening price)",
+          "answer": "Albany International Corporation, AMN Healthcare Services Inc., American Tower Corporation",
+          "is_valid": false,
+          "reason": "Name not found within 5 edits: 'MFA Financial, Inc', closest: 'rnational c' (distance=11)",
+          "ground_truth": "MFA Financial, Inc\nArgo Group International Holdings, Ltd\nHDFC Bank Limited Common Stock\nAlbany International Corporation Common Stock\nDTE Energy Company",
+          "elapsed_s": 54.75,
+          "root_name": "trial_1_20260416_142438",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Need to find non-ETF stocks listed on NYSE (Listing Exchange = 'N'), get their symbols, then query each stock's 2017 trading data to count up days (Close > Open) and down days (Close < Open), compute net up days, and return top 5 by company name. Step 1: Get all non-ETF NYSE symbols and company descriptions from SQLite. Step 2: Query DuckDB to compute net up days (up days - down days) for 2017 for those stocks, then rank and return top 5.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_stockmarket_info",
+                "query_duckdb_stockmarket_trade"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_stockmarket_info",
+              "db_type": "sqlite",
+              "query_used": "SELECT Symbol, \"Company Description\" FROM stockinfo WHERE ETF = 'N' AND \"Listing Exchange\" = 'N'",
+              "row_count": 234,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_stockmarket_trade",
+              "db_type": "duckdb",
+              "query_used": "SELECT Symbol, up_days, down_days, (up_days - down_days) as net\nFROM (\n    SELECT 'AEFC' as Symbol, \n           COUNT(CASE WHEN Close > Open THEN 1 END) as up_days,\n           COUNT(CASE WHEN Close < Open THEN 1 END) as down_days\n    FROM AEFC\n    WHERE Date LIKE '2017%'\n    \n    UNION ALL\n    \n    SELECT 'AIN' as Symbol, \n           COUNT(CASE WHEN Close > Open THEN 1 END) as up_days,\n           COUNT(CASE WHEN Close < Open THEN 1 END) as down_days\n    FROM AIN\n    WHERE Date LIKE '2017%'\n    \n    UNION ALL\n    \n    SELECT 'AIV' as Symbol, \n           COUNT(CASE WHEN Close > Open THEN 1 END) as up_days,\n           COUNT(CASE WHEN Close < Open THEN 1 END) as down_days\n    FROM AIV\n    WHERE Date LIKE '2017%'\n    \n    UNION ALL\n    \n    SELECT 'AMN' as Symbol, \n           COUNT(CASE WHEN Close > Open THEN 1 END) as up_days,\n           COUNT(CASE WHEN Close < Open THEN 1 END) as down_days\n    FROM AMN\n    WHERE Date LIKE '2017%'\n    \n    UNION ALL\n    \n    SELECT 'AMT' as Symbol, \n           COUNT(CASE WHEN Close > Open THEN 1 END) as up_days,\n           COUNT(CASE WHEN Close < Open THEN 1 END) as down_days\n    FROM AMT\n    WHERE Date LIKE '2017%'\n) subquery\nWHERE up_days > 0 OR down_days > 0\nORDER BY net DESC\nLIMIT 5",
+              "row_count": 4,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "Albany International Corporation, AMN Healthcare Services Inc., American Tower Corporation"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

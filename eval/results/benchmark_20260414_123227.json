@@ -1,0 +1,89 @@
+{
+  "run_id": "20260414_123227",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "bookreview",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "bookreview",
+      "query_id": 2,
+      "question": "Which English-language books in the 'Literature & Fiction' category have a perfect average rating of 5.0? Return all matching books.",
+      "ground_truth": "The Sludge\nSomething That Feels Like Truth (Switchgrass Books)\nKennebago Moments\nHollywood Confessions: Hollywood Headlines Book #3 (Hollywood Headlines Mysteries)\nForged in Blood (Freehold)\nLocal Honey\n\"Exits, Desires, & Slow Fires\"\nFire Cracker\nReunion: The Children of Lauderdale Park\nChilde Harold of Dysna\nThe Prophet: With Original 1923 Illustrations by the Author\nKnowing When To Die: Uncollected Stories\nLiza of Lambeth\nChild Of The King A Journey of Hope Book 1: Earthly Story With A Heavenly Message\nThe Melancholy Strumpet Master",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "bookreview",
+          "query_id": 2,
+          "trial_num": 1,
+          "question": "Which English-language books in the 'Literature & Fiction' category have a perfect average rating of 5.0? Return all matching books.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing book title in LLM output: The Sludge",
+          "ground_truth": "The Sludge\nSomething That Feels Like Truth (Switchgrass Books)\nKennebago Moments\nHollywood Confessions: Hollywood Headlines Book #3 (Hollywood Headlines Mysteries)\nForged in Blood (Freehold)\nLocal Honey\n\"Exits, Desires, & Slow Fires\"\nFire Cracker\nReunion: The Children of Lauderdale Park\nChilde Harold of Dysna\nThe Prophet: With Original 1923 Illustrations by the Author\nKnowing When To Die: Uncollected Stories\nLiza of Lambeth\nChild Of The King A Journey of Hope Book 1: Earthly Story With A Heavenly Message\nThe Melancholy Strumpet Master",
+          "elapsed_s": 27.41,
+          "root_name": "trial_1_20260414_123227",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This is query2 from the bookreview domain knowledge. I need to: 1) Find books in 'Literature & Fiction' category with English language from books_info (PostgreSQL), 2) Get their ratings from review table (SQLite), 3) Filter to only those with perfect 5.0 average rating. The join key is books_info.book_id = review.purchase_id.",
+              "step_count": 3,
+              "tools_planned": [
+                "query_postgres_bookreview",
+                "query_sqlite_bookreview",
+                "query_postgres_bookreview"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_bookreview",
+              "db_type": "postgres",
+              "query_used": "SELECT \"book_id\", \"title\" FROM \"books_info\" WHERE \"categories\" LIKE '%Literature & Fiction%' AND \"details\" LIKE '%English%'",
+              "row_count": 40,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_bookreview",
+              "db_type": "sqlite",
+              "query_used": "SELECT purchase_id, AVG(rating) AS avg_rating \nFROM review \nWHERE purchase_id IN ('bookid_1', 'bookid_9', 'bookid_13', 'bookid_30', 'bookid_36', 'bookid_37', 'bookid_38', 'bookid_39', 'bookid_44', 'bookid_49', 'bookid_55', 'bookid_69', 'bookid_70', 'bookid_74', 'bookid_77', 'bookid_82', 'bookid_84', 'bookid_89', 'bookid_92', 'bookid_93', 'bookid_98', 'bookid_99', 'bookid_101', 'bookid_106', 'bookid_109', 'bookid_111', 'bookid_122', 'bookid_137', 'bookid_142', 'bookid_144', 'bookid_161', 'bookid_167', 'bookid_171', 'bookid_177', 'bookid_179', 'bookid_180', 'bookid_182', 'bookid_187', 'bookid_188', 'bookid_195') \nGROUP BY purchase_id \nHAVING AVG(rating) = 5.0",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_postgres_bookreview",
+              "db_type": "postgres",
+              "query_used": "SELECT \"title\", \"author\", \"book_id\" FROM \"books_info\" WHERE \"book_id\" IN ('bookid_1', 'bookid_9', 'bookid_13', 'bookid_30', 'bookid_36', 'bookid_37', 'bookid_38', 'bookid_39', 'bookid_44', 'bookid_49', 'bookid_55', 'bookid_69', 'bookid_70', 'bookid_74', 'bookid_77', 'bookid_82', 'bookid_84', 'bookid_89', 'bookid_92', 'bookid_93', 'bookid_98', 'bookid_99', 'bookid_101', 'bookid_106', 'bookid_109', 'bookid_111', 'bookid_122', 'bookid_137', 'bookid_142', 'bookid_144', 'bookid_161', 'bookid_167', 'bookid_171', 'bookid_177', 'bookid_179', 'bookid_180', 'bookid_182', 'bookid_187', 'bookid_188', 'bookid_195')",
+              "row_count": 40,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "run_id": "20260413_140205",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 3,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "agnews",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    },
+    {
+      "dataset": "bookreview",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    },
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "agnews",
+      "query_id": 1,
+      "question": "What is the title of the sports article whose description has the greatest number of characters?",
+      "ground_truth": "The Rundown",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "agnews",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What is the title of the sports article whose description has the greatest number of characters?",
+          "answer": "I need to find the sports article with the longest description. The AG News dataset has 4 categories: World, Sports, Business, Sci/Tech. Sports articles are category 2 (article_ids in the range 30400",
+          "is_valid": false,
+          "reason": "Ground truth 'The Rundown' not found in LLM output: I need to find the sports article with the longest description. The AG News dataset has 4 categories: World, Sports, Business, Sci/Tech. Sports articles are category 2 (article_ids in the range 30400",
+          "ground_truth": "The Rundown",
+          "elapsed_s": 13.95,
+          "root_name": "trial_1_20260413_140205",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "bookreview",
+      "query_id": 1,
+      "question": "Which decade of publication (e.g., 1980s) has the highest average rating among decades with at least 10 distinct books that have been rated? Return the decade with the highest average rating.",
+      "ground_truth": "2020",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "bookreview",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Which decade of publication (e.g., 1980s) has the highest average rating among decades with at least 10 distinct books that have been rated? Return the decade with the highest average rating.",
+          "answer": "I need to extract publication years from the book details, map them to decades, then find which decade has the highest average rating among those with at least 10 distinct books.",
+          "is_valid": false,
+          "reason": "Ground truth '2020' not found in LLM output.",
+          "ground_truth": "2020",
+          "elapsed_s": 22.66,
+          "root_name": "trial_1_20260413_140219",
+          "error": null
+        }
+      ]
+    },
+    {
+      "dataset": "googlelocal",
+      "query_id": 1,
+      "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+      "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+          "answer": "City Textile, Nobel Textile Co, San Soo Dang, Nova Fabrics, Beads and More",
+          "is_valid": false,
+          "reason": "Missing name in LLM output: Widows Peak Salon",
+          "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+          "elapsed_s": 24.29,
+          "root_name": "trial_1_20260413_140242",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

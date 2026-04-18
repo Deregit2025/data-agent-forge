@@ -1,0 +1,79 @@
+{
+  "run_id": "20260414_122945",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 3,
+      "question": "What are the top 5 businesses that remain open after 6:00 PM on at least one weekday, ranked by highest average rating? Include their names, operating hours, and average ratings.",
+      "ground_truth": "TACOS LA CABANA,\"[['Thursday', 'Closed'], ['Friday', '5\u201311PM'], ['Saturday', '5\u201311PM'], ['Sunday', '5\u201311PM'], ['Monday', '5\u201311PM'], ['Tuesday', 'Closed'], ['Wednesday', 'Closed']]\",5.0\nWhite Barn Candle Co,\"[['Thursday', '10AM\u20139PM'], ['Friday', '10AM\u20139PM'], ['Saturday', '10AM\u20139PM'], ['Sunday', '11AM\u20137PM'], ['Monday', '10AM\u20139PM'], ['Tuesday', '10AM\u20139PM'], ['Wednesday', '10AM\u20139PM']]\",5.0\nMariscos el poblano,\"[['Thursday', 'Open 24 hours'], ['Friday', '8AM\u20133:30PM'], ['Saturday', '8AM\u20133:30PM'], ['Sunday', '8AM\u20133:30PM'], ['Monday', '9AM\u20133:30AM'], ['Tuesday', '8AM\u20133:30PM'], ['Wednesday', '8AM\u20133:30PM']]\",5.0\nBeauty Divine Artistry,\"[['Thursday', '9AM\u20138PM'], ['Friday', '9AM\u20138PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '9AM\u20138PM'], ['Tuesday', '9AM\u20138PM'], ['Wednesday', '9AM\u20138PM']]\",5.0\nTaba Rug Gallery,\"[['Thursday', '10AM\u20137PM'], ['Friday', '10AM\u20137PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '10AM\u20137PM'], ['Tuesday', '10AM\u20137PM'], ['Wednesday', '10AM\u20137PM']]\",5.0",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses that remain open after 6:00 PM on at least one weekday, ranked by highest average rating? Include their names, operating hours, and average ratings.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Missing business name: TACOS LA CABANA",
+          "ground_truth": "TACOS LA CABANA,\"[['Thursday', 'Closed'], ['Friday', '5\u201311PM'], ['Saturday', '5\u201311PM'], ['Sunday', '5\u201311PM'], ['Monday', '5\u201311PM'], ['Tuesday', 'Closed'], ['Wednesday', 'Closed']]\",5.0\nWhite Barn Candle Co,\"[['Thursday', '10AM\u20139PM'], ['Friday', '10AM\u20139PM'], ['Saturday', '10AM\u20139PM'], ['Sunday', '11AM\u20137PM'], ['Monday', '10AM\u20139PM'], ['Tuesday', '10AM\u20139PM'], ['Wednesday', '10AM\u20139PM']]\",5.0\nMariscos el poblano,\"[['Thursday', 'Open 24 hours'], ['Friday', '8AM\u20133:30PM'], ['Saturday', '8AM\u20133:30PM'], ['Sunday', '8AM\u20133:30PM'], ['Monday', '9AM\u20133:30AM'], ['Tuesday', '8AM\u20133:30PM'], ['Wednesday', '8AM\u20133:30PM']]\",5.0\nBeauty Divine Artistry,\"[['Thursday', '9AM\u20138PM'], ['Friday', '9AM\u20138PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '9AM\u20138PM'], ['Tuesday', '9AM\u20138PM'], ['Wednesday', '9AM\u20138PM']]\",5.0\nTaba Rug Gallery,\"[['Thursday', '10AM\u20137PM'], ['Friday', '10AM\u20137PM'], ['Saturday', '10AM\u20137PM'], ['Sunday', '11AM\u20136PM'], ['Monday', '10AM\u20137PM'], ['Tuesday', '10AM\u20137PM'], ['Wednesday', '10AM\u20137PM']]\",5.0",
+          "elapsed_s": 30.07,
+          "root_name": "trial_1_20260414_122945",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "To find top 5 businesses open after 6 PM on at least one weekday ranked by average rating, I need: (1) Get businesses from PostgreSQL that have hours containing weekday entries with closing times after 6 PM, (2) Get average ratings from SQLite review table for those businesses, then join and rank.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_googlelocal",
+                "query_sqlite_googlelocal_review"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_googlelocal",
+              "db_type": "postgres",
+              "query_used": "SELECT \"gmap_id\", \"name\", \"hours\"\nFROM business_description\nWHERE \n    \"hours\" ILIKE '%Monday%' AND (\n        \"hours\" ILIKE '%\u2013 7:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 8:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 9:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 10:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 11:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 12:00 AM%' OR \n        \"hours\" ILIKE '%\u2013 1:00 AM%' OR \n        \"hours\" ILIKE '%Open 24 hours%'\n    )\nOR \n    \"hours\" ILIKE '%Tuesday%' AND (\n        \"hours\" ILIKE '%\u2013 7:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 8:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 9:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 10:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 11:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 12:00 AM%' OR \n        \"hours\" ILIKE '%\u2013 1:00 AM%' OR \n        \"hours\" ILIKE '%Open 24 hours%'\n    )\nOR \n    \"hours\" ILIKE '%Wednesday%' AND (\n        \"hours\" ILIKE '%\u2013 7:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 8:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 9:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 10:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 11:00 PM%' OR \n        \"hours\" ILIKE '%\u2013 12:",
+              "row_count": 0,
+              "error": "unterminated quoted string at or near \"'%\u2013 12:\"\nLINE 32:         \"hours\" ILIKE '%\u2013 12:\n                               ^\n"
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_googlelocal_review",
+              "db_type": "sqlite",
+              "query_used": "SELECT gmap_id, AVG(rating) as avg_rating, COUNT(*) as review_count \nFROM review \nWHERE gmap_id IN ('ChIJN1t_tDeuEmsRUsoyG83frY4', 'ChIJpTvG15DL3IAR-qVNzjNq0Qs', 'ChIJKxDbe_lzLIgR0ZBY6aVoVmM', 'ChIJKxDbe_lzLIgR0ZBY6aVoVmM', 'ChIJN1t_tDeuEmsRUsoyG83frY4', 'ChIJpTvG15DL3IAR-qVNzjNq0Qs') \nGROUP BY gmap_id \nORDER BY avg_rating DESC",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

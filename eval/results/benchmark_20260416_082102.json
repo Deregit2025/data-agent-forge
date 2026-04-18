@@ -1,0 +1,79 @@
+{
+  "run_id": "20260416_082102",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "patents",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "patents",
+      "query_id": 1,
+      "question": "Identify the CPC technology areas with the highest exponential moving average of patent filings each year (smoothing factor 0.2), and return only the CPC group codes at level 5 whose best year is 2022.",
+      "ground_truth": "cpc_group\nA22B\nA23J\nA23P\nA24D\nA24F\nA41G\nA47F\nA61P\nA62B\nA62D\nA63H\nB08B\nB09B\nB09C\nB24B\nB27C\nB27G\nB28D\nB30B\nB60H\nB60P\nB63G\nB65G\nC01D\nC01G\nC21B\nC25B\nE02D\nE04G\nE21D\nE21F\nF16M\nF17B\nF24D\nF25J\nF26B\nG01H\nG01L\nG05G\nG06J\nG06N\nG06T\nG06V\nG08G\nG16B\nG16C\nG16H\nG21F\nH02B\nH02G",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "patents",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "Identify the CPC technology areas with the highest exponential moving average of patent filings each year (smoothing factor 0.2), and return only the CPC group codes at level 5 whose best year is 2022.",
+          "answer": "A23J, A23P, A24F, A41H, A61G, A62B, A62C, A63D, A63F, B07B, B08B, B09B, B09C, B21H, B27G, B27M, B31F, B33Y, B42F, B60P, B63G, B82B, C01G, C12F, C13B, C21C, C40B, D06H, D21J, E03F, E04G, E05F, E21F, F16M, F16N, F17B, G01H, G04",
+          "is_valid": false,
+          "reason": "Missing CPC code: A22B",
+          "ground_truth": "cpc_group\nA22B\nA23J\nA23P\nA24D\nA24F\nA41G\nA47F\nA61P\nA62B\nA62D\nA63H\nB08B\nB09B\nB09C\nB24B\nB27C\nB27G\nB28D\nB30B\nB60H\nB60P\nB63G\nB65G\nC01D\nC01G\nC21B\nC25B\nE02D\nE04G\nE21D\nE21F\nF16M\nF17B\nF24D\nF25J\nF26B\nG01H\nG01L\nG05G\nG06J\nG06N\nG06T\nG06V\nG08G\nG16B\nG16C\nG16H\nG21F\nH02B\nH02G",
+          "elapsed_s": 225.42,
+          "root_name": "trial_1_20260416_082102",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "This query requires two databases: (1) PostgreSQL for CPC definitions to get level-5 symbols and their titles, and (2) SQLite for patent publication records to count filings per year per CPC code. Then we compute EMA with alpha=0.2 across years for each CPC code and find those whose peak EMA year is 2022. Per the domain KB: level=5.0, status='published' (NOT 'active'), year extracted via SUBSTR(filing_date, LENGTH(filing_date)-3, 4).",
+              "step_count": 2,
+              "tools_planned": [
+                "query_postgres_patents",
+                "query_sqlite_patents"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_patents",
+              "db_type": "postgres",
+              "query_used": "SELECT \"symbol\", \"titleFull\" FROM cpc_definition WHERE level = 5.0 AND status = 'published'",
+              "row_count": 677,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_sqlite_patents",
+              "db_type": "sqlite",
+              "query_used": "SELECT \n  SUBSTR(filing_date, LENGTH(filing_date)-3, 4) AS year, \n  cpc \nFROM publicationinfo \nWHERE filing_date IS NOT NULL \n  AND cpc IS NOT NULL \n  AND CAST(SUBSTR(filing_date, LENGTH(filing_date)-3, 4) AS INTEGER) BETWEEN 2015 AND 2023",
+              "row_count": 89314,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "A23J, A23P, A24F, A41H, A61G, A62B, A62C, A63D, A63F, B07B, B08B, B09B, B09C, B21H, B27G, B27M, B31F, B33Y, B42F, B60P, B63G, B82B, C01G, C12F, C13B, C21C, C40B, D06H, D21J, E03F, E04G, E05F, E21F, F16M, F16N, F17B, G01H, G04"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

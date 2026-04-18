@@ -1,0 +1,46 @@
+{
+  "run_id": "20260413_171546",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 1,
+  "pass_rate": 1.0,
+  "per_dataset": [
+    {
+      "dataset": "googlelocal",
+      "n_queries": 1,
+      "pass_count": 1,
+      "any_pass_count": 1,
+      "pass_rate": 1.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "googlelocal",
+      "query_id": 1,
+      "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+      "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "googlelocal",
+          "query_id": 1,
+          "trial_num": 1,
+          "question": "What are the top 5 businesses located in Los Angeles, California, ranked by highest average rating in descending order?",
+          "answer": "Widows Peak Salon, City Textile, Nobel Textile Co, San Soo Dang, Nova Fabrics",
+          "is_valid": true,
+          "reason": "All names are present and in correct order.",
+          "ground_truth": "Widows Peak Salon,4.857142857142857\nCity Textile,4.5\nNobel Textile Co,4.285714285714286\nSan Soo Dang,4.277777777777778\nNova Fabrics,3.3333333333333335",
+          "elapsed_s": 15.0,
+          "root_name": "trial_1_20260413_171546",
+          "error": null
+        }
+      ]
+    }
+  ]
+}

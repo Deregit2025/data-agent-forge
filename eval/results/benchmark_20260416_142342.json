@@ -1,0 +1,79 @@
+{
+  "run_id": "20260416_142342",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 1,
+  "pass_count": 0,
+  "pass_rate": 0.0,
+  "per_dataset": [
+    {
+      "dataset": "stockmarket",
+      "n_queries": 1,
+      "pass_count": 0,
+      "any_pass_count": 0,
+      "pass_rate": 0.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "stockmarket",
+      "query_id": 3,
+      "question": "List all company names on the NASDAQ-listed Market that were financially troubled (delinquent, deficient, or both) and have trading volume in 2008, for each, report its exisiting non-null average daily trading volume in 2008.",
+      "ground_truth": "Apex Global Brands Inc,23781.42\nBIO-key International, Inc,10988.14\nCBAK Energy Technology, Inc,86223.32\nChina Ceramics Co, Ltd,4366.80\nCorrevio Pharma Corp,145247.83\nCounterPath Corporation,375.49\nDASAN Zhone Solutions, Inc,15578.66\nFuture FinTech Group Inc,9.85\nFrontier Communications Corporation,254397.63\nIdeanomics, Inc,10.28\nOcean Power Technologies, Inc,254.15\nPacific Ethanol, Inc,10706.72\nSynthesis Energy Systems, Inc,2390.51\nSunesis Pharmaceuticals, Inc,781.82\nSypris Solutions, Inc,36836.36",
+      "n_trials": 1,
+      "pass_count": 0,
+      "pass_rate": 0.0,
+      "majority_pass": false,
+      "any_pass": false,
+      "pass_at_1": false,
+      "trials": [
+        {
+          "dataset": "stockmarket",
+          "query_id": 3,
+          "trial_num": 1,
+          "question": "List all company names on the NASDAQ-listed Market that were financially troubled (delinquent, deficient, or both) and have trading volume in 2008, for each, report its exisiting non-null average daily trading volume in 2008.",
+          "answer": "N/A",
+          "is_valid": false,
+          "reason": "Name not found within 5 edits: 'Apex Global Brands Inc', closest: '' (distance=inf)",
+          "ground_truth": "Apex Global Brands Inc,23781.42\nBIO-key International, Inc,10988.14\nCBAK Energy Technology, Inc,86223.32\nChina Ceramics Co, Ltd,4366.80\nCorrevio Pharma Corp,145247.83\nCounterPath Corporation,375.49\nDASAN Zhone Solutions, Inc,15578.66\nFuture FinTech Group Inc,9.85\nFrontier Communications Corporation,254397.63\nIdeanomics, Inc,10.28\nOcean Power Technologies, Inc,254.15\nPacific Ethanol, Inc,10706.72\nSynthesis Energy Systems, Inc,2390.51\nSunesis Pharmaceuticals, Inc,781.82\nSypris Solutions, Inc,36836.36",
+          "elapsed_s": 41.62,
+          "root_name": "trial_1_20260416_142342",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "First, query SQLite stockinfo to get all NASDAQ-listed stocks that are financially troubled (Financial Status IN ('D', 'E', 'H', 'G', 'J', 'K')) with their Symbol and Company Description. Then for each symbol, query DuckDB to get average daily trading volume in 2008. Since we can't do a single cross-DB join, we get the symbols from SQLite first, then query DuckDB with those symbols using a UNION or per-ticker approach. Given potentially many tickers, we'll use a single DuckDB query that unions all relevant tickers or uses a dynamic approach. Actually, the best approach is: Step 1 get troubled NASDAQ symbols from SQLite, Step 2 query DuckDB for each symbol's 2008 average volume. We can do this in DuckDB by querying each ticker table. However since we don't know how many there are, we'll get the list first then construct a UNION ALL query in DuckDB.",
+              "step_count": 2,
+              "tools_planned": [
+                "query_sqlite_stockmarket_info",
+                "query_duckdb_stockmarket_trade"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_sqlite_stockmarket_info",
+              "db_type": "sqlite",
+              "query_used": "SELECT Symbol, \"Company Description\", \"Financial Status\"\nFROM stockinfo\nWHERE \"Nasdaq Traded\" = 'Y' AND \"Financial Status\" IN ('D', 'E', 'H', 'G', 'J', 'K')",
+              "row_count": 25,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_stockmarket_trade",
+              "db_type": "duckdb",
+              "query_used": "WITH DeficientStocks AS (\n    SELECT Symbol, \"Company Description\"\n    FROM stockinfo\n    WHERE Financial_Status IN ('D', 'H')\n),\nVolumeStats AS (\n    SELECT \n        'AGMH' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM AGMH \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT \n        'AMTX' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM AMTX \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT \n        'APEX' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM APEX \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT \n        'BIOC' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM BIOC \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT \n        'BKYI' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM BKYI \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT \n        'CBAT' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM CBAT \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT \n        'CCCL' AS symbol, \n        AVG(Volume) AS avg_daily_volume, \n        COUNT(*) AS trading_days \n    FROM CCCL \n    WHERE Date LIKE '2008%' AND Volume IS NOT NULL\n    HAVING COUNT(*) > 0\n\n    UNION ALL\n\n    SELECT",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "N/A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

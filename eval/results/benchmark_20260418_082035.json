@@ -1,0 +1,189 @@
+{
+  "run_id": "20260418_082035",
+  "n_trials": 1,
+  "model": "claude-sonnet-4.6",
+  "total_queries": 2,
+  "pass_count": 2,
+  "pass_rate": 1.0,
+  "per_dataset": [
+    {
+      "dataset": "crmarenapro",
+      "n_queries": 2,
+      "pass_count": 2,
+      "any_pass_count": 2,
+      "pass_rate": 1.0
+    }
+  ],
+  "per_query": [
+    {
+      "dataset": "crmarenapro",
+      "query_id": 6,
+      "question": "Is the product setup in this quotation, including elements like quantity and price, against company regulations? Return only the Id of the knowledge article that the invalid config violates.\n\n## Invalid config guide.\nLook for the relevant knowledge articles to justify the invalid config.\n\n- Quote Id to be considered is: 0Q0Wt000001WRAzKAO",
+      "ground_truth": "ka0Wt000000EnwvIAC",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 6,
+          "trial_num": 1,
+          "question": "Is the product setup in this quotation, including elements like quantity and price, against company regulations? Return only the Id of the knowledge article that the invalid config violates.\n\n## Invalid config guide.\nLook for the relevant knowledge articles to justify the invalid config.\n\n- Quote Id to be considered is: 0Q0Wt000001WRAzKAO",
+          "answer": "ka0Wt000000EnwvIAC",
+          "is_valid": true,
+          "reason": "Found expected agent ID: ka0Wt000000EnwvIAC",
+          "ground_truth": "ka0Wt000000EnwvIAC",
+          "elapsed_s": 31.14,
+          "root_name": "trial_1_20260418_082035",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "Need to find the quote line items for the given Quote ID, then check the product setup (quantity, price, discount) against knowledge base articles (knowledge__kav) to find which policy/regulation is violated. Steps: 1) Get QuoteLineItems for the quote to see quantity/price/discount config. 2) Get the Quote details. 3) Search knowledge__kav for relevant policy articles about product configuration rules (quantity, price, discount limits). Then match the violation.",
+              "step_count": 4,
+              "tools_planned": [
+                "query_duckdb_crmarenapro_sales",
+                "query_duckdb_crmarenapro_sales",
+                "query_sqlite_crmarenapro_products",
+                "query_postgres_crmarenapro"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT QuoteId, Product2Id, Quantity, UnitPrice, Discount, TotalPrice \nFROM QuoteLineItem \nWHERE QuoteId = '0Q0Wt000001WRAzKAO' OR QuoteId = '#0Q0Wt000001WRAzKAO'",
+              "row_count": 4,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_duckdb_crmarenapro_sales",
+              "db_type": "duckdb",
+              "query_used": "SELECT Id, Name, Description, Status, ExpirationDate, OpportunityId, AccountId\nFROM Quote\nWHERE Id = '0Q0Wt000001WRAzKAO' OR Id = '#0Q0Wt000001WRAzKAO' OR LTRIM(Id, '#') = '0Q0Wt000001WRAzKAO'\nLIMIT 1;",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_sqlite_crmarenapro_products",
+              "db_type": "sqlite",
+              "query_used": "SELECT Id, Name, Description, IsActive \nFROM Product2 \nWHERE Id IN ('01tWt000006hV6jIAE', '01tWt000006hV8LIAU', '01tWt000006hPffIAE', '01tWt000006hVczIAE')",
+              "row_count": 4,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 4,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT \"id\", \"title\", \"summary\", \"faq_answer__c\" FROM knowledge__kav WHERE LOWER(\"faq_answer__c\") SIMILAR TO '%quantity%|%limit%|%price%|%discount%|%quote%|%product%|%configuration%|%policy%';",
+              "row_count": 125,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "ka0Wt000000EnwvIAC"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataset": "crmarenapro",
+      "query_id": 7,
+      "question": "Did the agent breach the policy, and if so, which knowledge article was breached? Return only the Id of the knowledge article or None if no violation is found.\n\n- Case Id to be considered is: 500Wt00000DDyznIAD",
+      "ground_truth": "ka0Wt000000EoD3IAK",
+      "n_trials": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0,
+      "majority_pass": true,
+      "any_pass": true,
+      "pass_at_1": true,
+      "trials": [
+        {
+          "dataset": "crmarenapro",
+          "query_id": 7,
+          "trial_num": 1,
+          "question": "Did the agent breach the policy, and if so, which knowledge article was breached? Return only the Id of the knowledge article or None if no violation is found.\n\n- Case Id to be considered is: 500Wt00000DDyznIAD",
+          "answer": "ka0Wt000000EoD3IAK",
+          "is_valid": true,
+          "reason": "Found expected agent ID: ka0Wt000000EoD3IAK",
+          "ground_truth": "ka0Wt000000EoD3IAK",
+          "elapsed_s": 45.13,
+          "root_name": "trial_1_20260418_082106",
+          "error": null,
+          "steps": [
+            {
+              "node": "plan",
+              "reasoning": "We need to check if an agent breached a policy for a specific case. The approach is: 1) Fetch the case details (status, dates, priority, issue, etc.) for the given Case Id from PostgreSQL. 2) Fetch the case history to understand ownership/transfer events. 3) Fetch relevant knowledge articles (policies) from knowledge__kav to check for violations. We need to understand what happened in the case and compare against policy articles. The case may involve handle time, transfer policies, or other SLA policies documented in knowledge__kav.",
+              "step_count": 5,
+              "tools_planned": [
+                "query_postgres_crmarenapro",
+                "query_postgres_crmarenapro",
+                "query_postgres_crmarenapro",
+                "query_postgres_crmarenapro",
+                "query_sqlite_crmarenapro_products"
+              ]
+            },
+            {
+              "node": "execute",
+              "step": 1,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT * FROM \"Case\" WHERE LTRIM(id, '#') = '500Wt00000DDyznIAD' OR id = '500Wt00000DDyznIAD'",
+              "row_count": 1,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 2,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT * FROM \"casehistory__c\" WHERE LTRIM(caseid__c, '#') = '500Wt00000DDyznIAD' ORDER BY createddate ASC",
+              "row_count": 0,
+              "error": "Write operations are not permitted. Only SELECT queries are allowed."
+            },
+            {
+              "node": "execute",
+              "step": 3,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT id, title, summary, \"faq_answer__c\", urlname FROM knowledge__kav",
+              "row_count": 194,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 4,
+              "tool_name": "query_postgres_crmarenapro",
+              "db_type": "postgres",
+              "query_used": "SELECT * FROM emailmessage WHERE LTRIM(parentid, '#') = '500Wt00000DDyznIAD';",
+              "row_count": 8,
+              "error": null
+            },
+            {
+              "node": "execute",
+              "step": 5,
+              "tool_name": "query_sqlite_crmarenapro_products",
+              "db_type": "sqlite",
+              "query_used": "SELECT oi.Id, oi.OrderId, oi.Product2Id, p.Name as product_name \nFROM OrderItem oi \nJOIN Product2 p ON oi.Product2Id = p.Id \nWHERE oi.Id = '802Wt000007928FIAQ'",
+              "row_count": 0,
+              "error": null
+            },
+            {
+              "node": "synthesize",
+              "answer": "ka0Wt000000EoD3IAK"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
