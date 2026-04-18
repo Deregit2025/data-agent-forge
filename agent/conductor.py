@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 
 from langgraph.graph import StateGraph, END
 from openai import OpenAI
+
 import agent.sub_agents.postgres_agent as pg_agent
 import agent.sub_agents.mongo_agent    as mongo_agent
 import agent.sub_agents.sqlite_agent   as sqlite_agent
@@ -64,6 +65,8 @@ def get_client() -> OpenAI:
         }
     )
 
+from openai import OpenAI, PermissionDeniedError, RateLimitError
+
 def llm_call(messages: list[dict], max_tokens: int = 2000) -> str:
     """Make a Claude call via OpenRouter with automatic key rotation."""
     import time
@@ -78,17 +81,15 @@ def llm_call(messages: list[dict], max_tokens: int = 2000) -> str:
                 temperature=0.0,
             )
             return response.choices[0].message.content
-        except Exception as e:
-            error_str = str(e)
+        except (PermissionDeniedError, RateLimitError) as e:
             last_error = e
-            if "402" in error_str or "403" in error_str or "429" in error_str or "payment" in error_str.lower() or "forbidden" in error_str.lower():
-                _key_index[0] += 1
-                if _key_index[0] >= len(_ALL_KEYS):
-                    raise ValueError(f"All {len(_ALL_KEYS)} API keys exhausted.") from e
-                print(f"[KeyRotation] Switching to key {_key_index[0] + 1}/{len(_ALL_KEYS)}")
-                time.sleep(2)
-            else:
-                raise
+            _key_index[0] += 1
+            if _key_index[0] >= len(_ALL_KEYS):
+                raise ValueError(f"All {len(_ALL_KEYS)} API keys exhausted.") from e
+            print(f"[KeyRotation] Switching to key {_key_index[0] + 1}/{len(_ALL_KEYS)}")
+            time.sleep(2)
+        except Exception as e:
+            raise
     raise last_error
 
 
