@@ -839,8 +839,13 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
 
         if any(word_match(kw, text) for kw in strong_sports):
             return 'sports'
-        if any(kw in text for kw in scitech):
+        short_scitech = ['tech', 'software', 'computer', 'science', 'nasa']
+        long_scitech = [kw for kw in scitech if kw not in short_scitech]
+        if any(re.search(r'\b' + re.escape(kw) + r'\b', text) for kw in short_scitech):
             return 'scitech'
+        if any(kw in text for kw in long_scitech):
+            return 'scitech'
+
         if any(kw in text for kw in business):
             return 'business'
         return 'world'
