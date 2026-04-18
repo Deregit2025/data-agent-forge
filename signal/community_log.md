@@ -56,11 +56,9 @@
 
 *Links to substantive technical comments on Reddit (r/MachineLearning, r/LocalLLaMA) or Discord.*
 
-- **Platform**: [Reddit/r/learnmachinelearning](https://www.reddit.com/r/learnmachinelearning) and [Reddit/r/PromptQL](https://www.reddit.com/r/PromptQL)
-- **Post Title**: Breaking the 38% Ceiling: How we hit a 57% pass rate on UC Berkeley’s DataAgentBench (Yelp Dataset)
-- **Link**: [URL](https://www.reddit.com/r/learnmachinelearning/s/Tj2GY36U7I)
-- **Technical Contribution**: Shared detailed insights on how our three-layer context architecture and specific SOPs for handling DAB's unique challenges led to a significant performance boost on the Yelp dataset, achieving a 57% pass rate compared to the 38% ceiling of frontier models. We also solicited community advice on handling ill-formatted join keys in multi-database environments.
-- **Engagement Metrics**: [Upvotes = 5, Comments = 0, Shares = 5] recorded at end of week
+- **Platform**: [Discord]
+- **Link**: https://discord.com/channels/879548962464493619/897390720388825149/1494960835167125655
+- **Technical Contribution**: Discovered that our data agent’s failures were not reasoning issues but infrastructure/tooling failures, where MCP tool connection loss fully invalidated otherwise correct multi-database execution plans.
 
 ---
 
@@ -91,6 +89,15 @@
 - **Reach Metrics**: [Impressions = 8, Engagements = 4, Profile Visits = 0, Detail expands = 0] recorded at end of week
 
 ---
+### 2026-04-18
+
+- **Platform:** LinkedIn
+- **Type:** Final submission post
+- **URL:** https://www.linkedin.com/posts/rafia-kedir_github-deregit2025data-agent-forge-context-layered-share-7451158850134732800-GPet
+- **Summary:** Final Oracle Forge post — score progression 1.85% → 66.7% on yelp, 3-layer context architecture, typed failure routing, team credits and repo link. Getting international impressions.
+- **Reach:** [63]
+- **Notable responses:** None yet
+
 
 ## Community Intelligence
 
