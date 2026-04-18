@@ -1,19 +1,19 @@
-# We're Trying to Beat Gemini 3 Pro on a Public Benchmark. Here's the Architecture We're Betting On — Before We Know If It Works.
+# Oracle Forge — Published Articles
 
-*Author: Rafia Kedir  & Nuhamin Alemayehu— Team Gemini / Oracle Forge*
+*Authors: Rafia Kedir & Nuhamin Alemayehu — Team Gemini / Oracle Forge*
 
 ---
 
-## Published on
+## Article 1 — Kickoff Post (Day 4)
+
+### Published on
 
 | Platform | URL | Date |
 |----------|-----|------|
 | Medium | https://medium.com/@rafia_k./were-trying-to-beat-gemini-3-pro-on-a-public-benchmark-26f844bc9bf1 | 2026-04-12 |
 | ReadyTensor | https://app.readytensor.ai/publications/were-trying-to-beat-gemini-3-pro-on-a-public-benchmark-w29HwYbedo5Y | 2026-04-12 |
 
----
-
-## Article text
+### Article text
 
 *Team Gemini — Oracle Forge, Day 4 of 14*
 
@@ -25,7 +25,7 @@ This post is the plan. A future post will be what actually happened.
 
 ---
 
-### What DataAgentBench is and why 38% is interesting
+#### What DataAgentBench is and why 38% is interesting
 
 DataAgentBench (DAB) was published by the UC Berkeley EPIC Data Lab in 2026. It's the first benchmark designed specifically to evaluate AI data agents on realistic enterprise workloads — not clean academic datasets, but the kind of messy multi-system questions that real analysts face.
 
@@ -42,11 +42,11 @@ A model that can write excellent SQL still fails on these because the bottleneck
 
 ---
 
-### The architectural decisions
+#### The architectural decisions
 
 We made two primary architectural bets in our Inception phase. I'll describe both and flag where I think the risk is.
 
-#### Bet 1: Multi-layer context injection
+**Bet 1: Multi-layer context injection**
 
 The agent loads three context layers before answering any question.
 
@@ -60,7 +60,7 @@ This layer is human-maintained structured markdown, written by our Intelligence 
 
 **Where I think the risk is:** The corrections log value depends entirely on failures being structured enough to be useful. A corrections entry that says "the join failed because customer IDs in the transactions DB use format CUST-001 while the CRM uses plain integers" is genuinely useful context. An entry that says "query failed, error: column 'customer_id' not found" is noise. Whether we can maintain the discipline to write the former rather than the latter, consistently, under deadline pressure — I'm not confident about that.
 
-#### Bet 2: Failure taxonomy before self-correction
+**Bet 2: Failure taxonomy before self-correction**
 
 The naive self-correction loop is: query fails → modify prompt slightly → retry. This works on simple failures. It fails on exactly the cases DAB is designed to test, because the right recovery action depends on understanding *why* the query failed — and that's different for each failure class.
 
@@ -81,7 +81,7 @@ The silent wrong answer is harder to catch than the loud failure.
 
 ---
 
-### What the evaluation looks like
+#### What the evaluation looks like
 
 We're not waiting until submission day to check the score. Every tool call is traced and logged. Every query is scored against expected output from the benchmark. A regression suite runs on every change.
 
@@ -89,7 +89,7 @@ The score is a daily metric. If it goes down, we find out why before we make ano
 
 ---
 
-### Where we are on day 4
+#### Where we are on day 4
 
 The repo is live at github.com/Deregit2025/data-agent-forge. The directory structure is in place — agent, kb, eval, mcp, planning, probes, signal. One commit. No running code.
 
@@ -99,7 +99,7 @@ Construction phase starts today. Interim deadline is April 14. Final benchmark s
 
 ---
 
-### What we'll post next
+#### What we'll post next
 
 When the first queries start running. What the actual failure distribution looks like against the benchmark. Whether the corrections log helps or adds noise. Whether the failure taxonomy holds up or collapses on contact with real error messages.
 
@@ -108,3 +108,27 @@ The plan will not survive contact with the benchmark intact. The useful thing to
 Follow along: github.com/Deregit2025/data-agent-forge
 
 *#DataAgents #ContextEngineering #AIEngineering #DataAgentBench #BuildingInPublic*
+
+---
+
+## Article 2 — Final Retrospective (Day 14)
+
+### Published on
+
+| Platform | URL | Date |
+|----------|-----|------|
+| Medium | https://medium.com/@rafia_k./building-oracle-forge-what-it-actually-takes-to-make-an-ai-agent-work-on-real-enterprise-data-4a1869e8dff9 | 2026-04-18 |
+| ReadyTensor | https://app.readytensor.ai/publications/building-oracle-forge-what-it-actually-takes-to-make-an-ai-agent-work-on-real-enterprise-data-team-GctvZPl2Os2N | 2026-04-18 |
+
+### Article text
+
+*See signal/articles/final_retrospective.md*
+
+---
+
+## Publication summary
+
+| Article | Platforms | Date | Status |
+|---------|-----------|------|--------|
+| Kickoff — Day 4 architecture plan | Medium + ReadyTensor | 2026-04-12 | Published ✅ |
+| Final retrospective — Day 14 results | Medium + ReadyTensor | 2026-04-18 | Published ✅ |
