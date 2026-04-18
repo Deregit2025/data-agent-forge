@@ -863,10 +863,7 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
         )]
         if not ids:
             return {}
-        articles = mongo([
-            {"$match": {"article_id": {"$in": ids}}},
-            {"$project": {"article_id": 1, "title": 1, "description": 1}}
-        ])
+        articles = mongo(query={"article_id": {"$in": ids}})
         total = len(articles)
         scitech_count = sum(1 for a in articles
                            if classify(a.get('title',''), a.get('description','')) == 'scitech')
@@ -884,10 +881,7 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
         if not rows:
             return {}
         id_year = {r['article_id']: r['year'] for r in rows}
-        articles = mongo([
-            {"$match": {"article_id": {"$in": list(id_year.keys())}}},
-            {"$project": {"article_id": 1, "title": 1, "description": 1}}
-        ])
+        articles = mongo(query={"article_id": {"$in": list(id_year.keys())}})
         year_counts = {}
         for a in articles:
             if classify(a.get('title',''), a.get('description','')) == 'business':
