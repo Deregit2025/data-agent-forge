@@ -235,6 +235,8 @@ def run_trial(
 # ── query runner (n trials) ───────────────────────────────────────────────────
 
 def run_query(
+    dataset_folder: str,
+    dataset_name:   str,
     query_id:       int,
     n_trials:       int = 5,
     use_hints:      bool = True,
