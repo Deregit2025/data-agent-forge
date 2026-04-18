@@ -10,6 +10,8 @@
 - **Blockers**: Identified a potential communication gap between sub-teams, resulting in the **Signal Corps** requesting to attend all sub-team technical sessions to ensure accuracy in external reporting.
 - **Next Steps**: Finalize the core architecture design and prepare for initial Inception gate approval.
 
+---
+
 ### [Date: April 9, 2026]
 
 - **Shipped**: Official team X account (**@GeminiTrp1**) launched; first technical thread published explaining the mission and the **Claude Code-inspired** architecture.
@@ -18,6 +20,8 @@
 - **Blockers**: [No specific technical blockers reported for this date].
 - **Next Steps**: Execute the **"First RUN"** of the end-to-end system by 8 PM to validate basic connectivity.
 
+---
+
 ### [Date: April 12, 2026]
 
 - **Shipped**: Detailed technical articles published on **Medium and ReadyTensor** regarding our strategy to challenge the 38% DAB baseline; shared team environment on the **TRP-Gemini server** fully operational.
@@ -25,6 +29,8 @@
 - **Confirmed**: The whole team is now working within a **unified directory** on the shared server and pushing code updates in real-time.
 - **Blockers**: Ongoing difficulty in identifying the correct **DataAgentBench community on Discord** to engage with other benchmark researchers.
 - **Next Steps**: Log all social feedback and technical metrics to the repository engagement log.
+
+---
 
 ### [Date: April 13, 2026]
 
@@ -36,13 +42,25 @@
 
 ---
 
+### [Date: April 14, 2026]
+
+- **Shipped**: End-to-end system demo successfully conducted during the mob session; initial domain knowledge enrichment for the Yelp dataset completed.
+- **Learned**: Tweaking the domain knowledge context layer (Layer 2) significantly improved the agent's performance on Yelp queries, confirming it as a critical area for enhancement.
+- **Confirmed**: Each team member will take ownership of enriching the domain knowledge for two datasets each to accelerate progress.
+- **Blockers**: API key limitations are currently restricting the speed of testing and iteration.
+- **Next Steps**: Continue domain knowledge enrichment for the remaining datasets; prepare for the next mob session to review progress and plan further improvements.
+
+---
+
 ## Community Participation
 
 *Links to substantive technical comments on Reddit (r/MachineLearning, r/LocalLLaMA) or Discord.*
 
-- **Platform**: [Reddit/Discord]
-- **Link**: [URL]
-- **Technical Contribution**: [1-sentence summary of the technical insight or question shared]
+- **Platform**: [Reddit/r/learnmachinelearning](https://www.reddit.com/r/learnmachinelearning) and [Reddit/r/PromptQL](https://www.reddit.com/r/PromptQL)
+- **Post Title**: Breaking the 38% Ceiling: How we hit a 57% pass rate on UC Berkeley’s DataAgentBench (Yelp Dataset)
+- **Link**: [URL](https://www.reddit.com/r/learnmachinelearning/s/Tj2GY36U7I)
+- **Technical Contribution**: Shared detailed insights on how our three-layer context architecture and specific SOPs for handling DAB's unique challenges led to a significant performance boost on the Yelp dataset, achieving a 57% pass rate compared to the 38% ceiling of frontier models. We also solicited community advice on handling ill-formatted join keys in multi-database environments.
+- **Engagement Metrics**: [Upvotes = 5, Comments = 0, Shares = 5] recorded at end of week
 
 ---
 
@@ -71,45 +89,6 @@
 - **Thread Link**: [https://x.com/GeminiTrp1/status/2043655547207999759](https://x.com/GeminiTrp1/status/2043655547207999759)
 - **Technical Observation**: Robustness in data agents requires **typed failure routing** (e.g., `JoinKeyMismatch`, `ContractViolation`) rather than generic retries; this allows the **Conductor flow** to diagnose root causes and apply targeted recovery strategies across heterogeneous database dialects.
 - **Reach Metrics**: [Impressions = 8, Engagements = 4, Profile Visits = 0, Detail expands = 0] recorded at end of week
-
----
-
-## Reddit Posts
-
-The post below was made in the [r/MachineLearning](https://www.reddit.com/r/learnmachinelearning/s/Tj2GY36U7I) subreddit and cross-posted in the [r/PromptQL](https://www.reddit.com/r/PromptQL/s/OmcQuM5EH6) subreddit.
-
-**Title: Breaking the 38% Ceiling: How we hit a 57% pass rate on UC Berkeley’s DataAgentBench (Yelp Dataset)**
-
-Hi everyone! We are team Gemini from the Oracle Forge challenge, and we are currently deep in the trenches of UC Berkeley’s DataAgentBench (DAB) challenge. Our mission is to build a production-grade autonomous data analyst that can navigate the "messy" reality of enterprise data environments where information is fragmented across multiple heterogeneous systems like PostgreSQL, MongoDB, DuckDB, and SQLite.
-
-### The Reality Check: Why DAB is "Hard Mode"
-
-Most Text-to-SQL benchmarks use clean schemas, but DAB deliberately perturbs data to mirror real-world silos. It induces challenges like ill-formatted join keys, unstructured text transformation, and domain knowledge requirements. Currently, even frontier models like Gemini-3-Pro only achieve a 38% pass@1 accuracy across the full benchmark.
-
-### Our First Breakthrough: 57% on Yelp
-
-We are excited to share that by implementing a three-layer context architecture (Schema, Institutional KB, and Corrections Memory), we have achieved a 57% pass rate on the Yelp dataset (4 out of 7 queries correct). While we are still reworking our approach for the remaining 11 datasets, our "Mob Construction" strategy—where Drivers pilot the code while the full team provides architectural oversight—is yielding immediate results.
-
-### The "SOPs" That Broke the Ceiling
-
-Based on the specific query patterns documented in our `AGENT.md`, here is how we solved some of DAB’s most notorious traps:
-
-- **Pattern A** — Solving Unstructured Text: DAB Property iii involves removing structured columns like state and burying them in free-text fields. We engineered our agent to perform non-trivial recovery by extracting locations from descriptions using regex patterns (e.g., {"description": {"$regex": "in Indianapolis, IN", "$options": "i"}}).
-- **Pattern B** — Avoiding Statistical Drift: A common failure mode occurs when agents compute a "mean of means". We mandated a "Flat AVG" Standard Operating Procedure (SOP): the agent retrieves matching IDs from MongoDB first, then runs a single SELECT AVG(rating) across all raw review rows in DuckDB to ensure mathematical correctness.
-- **Pattern E** — BIRD-Style SQL Optimization: To handle perturbed temporal data, we adopted the BIRD benchmark’s two-stage optimization strategy. The agent first writes "clanky but accurate" SQL to handle string-based dates (e.g., WHERE date LIKE '%2016%') and then optimizes for speed by using `MAX()` instead of `ORDER BY ... LIMIT 1` to avoid unindexed table scans.
-
-### We Need Your Tips! 
-
-Documenting these patterns as SOPs ensures our agent doesn't "rediscover" how to handle cross-DB joins in every session, providing the compounding leverage required for a high leaderboard score. However, we are still grinding to generalize these successes across all 54 queries.
-
-- **Our Question**: For those who have tackled the DAB or BIRD benchmarks, how are you handling "ill-formatted" join keys (e.g., bid_123 in one DB vs bref_123 in another) when the mapping isn't explicitly in the hints?
-- Have you found success using a semantic layer to pre-calculate these mappings, or are you letting the agent solve them at runtime using Python scripts?
-
-We’d love to hear your thoughts and any technical "traps" you've encountered!
-
-Follow our progress on GitHub: [https://github.com/Deregit2025/data-agent-forge](https://github.com/Deregit2025/data-agent-forge)
-
-#DataAgentBench #BIRD #AI #LLM #DatabaseEngineering #UCBerkeley #ClaudeCode #OracleForge
 
 ---
 
