@@ -327,11 +327,12 @@ def run_dataset(
 # ── benchmark runner ──────────────────────────────────────────────────────────
 
 def run_benchmark(
-    datasets:   list[str] | None = None,
-    query_ids:  list[int] | None = None,
-    n_trials:   int  = 5,
-    use_hints:  bool = True,
-    model:      str  = "claude-sonnet-4.6",
+    datasets:      list[str] | None = None,
+    query_ids:     list[int] | None = None,
+    n_trials:      int  = 5,
+    use_hints:     bool = True,
+    model:         str  = "claude-sonnet-4.6",
+    no_early_stop: bool = False,
 ) -> BenchmarkResult:
     """
     Run the full benchmark across all datasets and queries.
@@ -359,7 +360,7 @@ def run_benchmark(
 
     for ds_folder in datasets:
         try:
-            ds_result, qrs = run_dataset(ds_folder, query_ids, n_trials, use_hints)
+            ds_result, qrs = run_dataset(ds_folder, query_ids, n_trials, use_hints, no_early_stop)
         except RateLimitError as e:
             logger.error(f"\n{'='*60}")
             logger.error(f"RATE LIMIT HIT — stopping benchmark early.")
