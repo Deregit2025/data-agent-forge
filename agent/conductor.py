@@ -819,14 +819,14 @@ def _precompute_agnews_category(tool_results: list[dict], question: str) -> dict
     
         scitech = ['tech', 'software', 'computer', 'internet', 'science',
            'nasa', 'space exploration', 'robot', 'linux',
-           'wireless network', 'microchip', 'processor', 'microsoft',
-           'google', 'ibm', 'ebay', 'amazon', 'yahoo',
-           'broadband', 'telecom', 'satellite radio', 'genome', 'biotech',
-           'physics', 'chemistry', 'astronomy', 'climate change',
-           'scientists say', 'researchers say', 'laboratory',
-           'virus software', 'vaccine', 'cancer drug',
-           'stem cell', 'artificial intelligence', 'semiconductor',
-           'fiber optic', 'encryption', 'open source', 'bandwidth']
+           'processor', 'microsoft', 'google', 'ibm', 'ebay',
+           'amazon', 'yahoo', 'broadband', 'telecom', 'genome',
+           'biotech', 'physics', 'chemistry', 'astronomy',
+           'climate change', 'laboratory', 'vaccine', 'stem cell',
+           'artificial intelligence', 'semiconductor', 'fiber optic',
+           'encryption', 'open source', 'bandwidth', 'texas instruments',
+           'fcc approved', 'directv', 'wireless giant', 'mobile network',
+           'satellite radio', 'intel corp', 'cisco systems']
     
         business = ['stock', 'shares', 'investor', 'ceo', 'merger', 'acquisition',
                     'earnings', 'profit', 'revenue', 'quarterly', 'fiscal',
