@@ -284,6 +284,7 @@ def run_dataset(
     query_ids:      list[int] | None = None,
     n_trials:       int  = 5,
     use_hints:      bool = True,
+    no_early_stop:  bool = False,
 ) -> tuple[DatasetResult, list[QueryResult]]:
     """Run all queries for one dataset. Returns (DatasetResult, list[QueryResult])."""
     dataset_name = DATASET_REGISTRY.get(dataset_folder, dataset_folder)
