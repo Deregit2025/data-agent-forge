@@ -44,7 +44,7 @@
 | 2026-04-15 | X | Daily thread — sub-agent query syntax progress | https://x.com/GeminiTrp1/status/2043655547207999759?s=20 | 9 |
 | 2026-04-15 | X | Daily thread — domain KB manual vs automated debate, end-to-end next | https://x.com/GeminiTrp1/status/2043655573732733419?s=20 | 9|
 | 2026-04-15 | Discord — Hugging Face | Community wrap post | https://discord.com/channels/879548962464493619/897390720388825149/1494960835167125655 | 1 |
-| 2026-04-18 | LinkedIn | Wrap up post | [paste URL] | [update] |
+| 2026-04-18 | LinkedIn | Wrap up post | https://www.linkedin.com/posts/rafia-kedir_github-deregit2025data-agent-forge-context-layered-share-7451158850134732800-GPet?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug | 13 |
 | 2026-04-18 | Medium | Final retrospective article | https://medium.com/p/4a1869e8dff9?postPublishedType=initial | 1 |
 | 2026-04-18 | ReadyTensor | Final retrospective cross-post | https://app.readytensor.ai/publications/building-oracle-forge-what-it-actually-takes-to-make-an-ai-agent-work-on-real-enterprise-data-team-GctvZPl2Os2N | 2 |
 
