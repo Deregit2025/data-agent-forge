@@ -63,7 +63,14 @@ The AG News dataset consists of news articles stored across two databases: a Mon
 
 - **MongoDB `articles.article_id` (int) ↔ SQLite `article_metadata.article_id` (INTEGER):** Both are integers; no format mismatch. This is the primary cross-database join key.
 - **SQLite `article_metadata.author_id` (INTEGER) ↔ SQLite `authors.author_id` (INTEGER):** Both are integers within the same SQLite database; join directly in SQL.
-- **Cross-database join pattern:** Query SQLite to get a list of `article_id` values matching metadata criteria, then query MongoDB using those IDs (or vice versa), then merge results in application logic.
+- **Cross-database join pattern:** Query SQLite to get a list of `article_id` integers, then query MongoDB using `$match: {article_id: {$in: [id1, id2, ...]}}`. Always project only `article_id`, `title`, `description` — no `_id` needed.
+- **MongoDB $in pipeline pattern:**
+  ```json
+  [
+    {"$match": {"article_id": {"$in": [101, 202, 303]}}},
+    {"$project": {"article_id": 1, "title": 1, "description": 1, "_id": 0}}
+  ]
+  ```
 
 ---
 
@@ -82,9 +89,16 @@ The AG News dataset consists of news articles stored across two databases: a Mon
   - **Business:** Articles about companies, markets, finance, economy, stocks, trade, corporate news.
   - **World:** Articles about international politics, governments, wars, diplomacy, global events.
   - **Science/Technology:** Articles about scientific research, technology products, software, space, medicine, innovation.
-- **Region values:** Stored as TEXT in `article_metadata.region`. Exact values are not predefined in the schema — query distinct values if needed. "Europe" is expected to be a valid region value for query3 and query4.
-- **Publication year extraction:** Since `publication_date` is TEXT in `YYYY-MM-DD` format, extract year using `substr(publication_date, 1, 4)` in SQLite or `LIKE '20XX-%'` pattern matching.
-- **Character count:** Use `len(description)` in Python (or `LENGTH(description)` in SQL if applicable) to count characters in the description field. This is done on the MongoDB `description` field.
+- **Region values (exhaustive):** Exactly 5 values exist: `Africa`, `Asia`, `Europe`, `North America`, `South America`. Never query for distinct regions — use these directly.
+- **Publication year range:** 2004–2022. All queries that reference years (2010–2020, 2015) are within this range.
+- **Publication year extraction:** Since `publication_date` is TEXT in `YYYY-MM-DD` format, extract year using `substr(publication_date, 1, 4)` in SQLite.
+- **Character count in MongoDB:** Use `{"$addFields": {"desc_len": {"$strLenCP": "$description"}}}` then `{"$sort": {"desc_len": -1}}` to rank articles by description length inside the aggregation pipeline. Never fetch all documents to sort client-side.
+- **Category classification is done in Python pre-computation, not by the synthesis LLM.** The conductor classifies articles using keyword matching before synthesis. Do NOT ask the synthesis LLM to classify articles — just return the raw data and the pre-computation will handle it.
+- **Category keyword signals:**
+  - **Sports:** ESPN, NFL, NBA, MLB, NHL, NCAA, quarterback, tailback, rushing, yards per game, touchdown, pitcher, batting average, basketball, football, baseball, soccer, hockey, tennis, golf, cricket, rugby, olympic, playoff, overtime, halftime, head coach, stadium, referee, umpire, SEC west, ACC east, Big Ten
+  - **Business:** stock, shares, earnings, revenue, profit, merger, acquisition, IPO, CEO, CFO, quarterly, fiscal, Wall Street, NYSE, NASDAQ, bond, investor, dividend, bankruptcy, retail, commodity
+  - **Science/Technology:** software, hardware, technology, internet, computer, processor, chip, server, network, database, AI, algorithm, patent, research, scientist, laboratory, NASA, space, genome, physics, chemistry, clinical trial
+  - **World:** government, president, minister, parliament, military, troops, war, conflict, treaty, election, diplomat, United Nations, NATO, sanctions, referendum, constitution, protest, terrorism
 
 ---
 
@@ -93,12 +107,17 @@ The AG News dataset consists of news articles stored across two databases: a Mon
 ### Query 1: *What is the title of the sports article whose description has the greatest number of characters?*
 
 **Approach:**
-1. Call `query_mongo_agnews` to retrieve ALL articles (fields: `article_id`, `title`, `description`).
-2. In application logic, classify each article by reading its `title` and `description` — keep only those classified as **Sports**.
-3. Among Sports articles, find the one where `len(description)` is maximum.
-4. Return the `title` of that article.
+1. Call `query_mongo_agnews` with a single aggregation pipeline that:
+   - Uses `$addFields` to compute `{"desc_len": {"$strLenCP": "$description"}}`
+   - Sorts by `desc_len` descending
+   - Limits to the top **150** articles
+   - Projects `article_id`, `title`, `description`, `desc_len`
+2. In synthesis, read each returned article's `title` and `description` to classify it as Sports.
+3. Return the `title` of the Sports article with the highest `desc_len`.
 
-**No SQLite call required** unless filtering by metadata is needed (it is not for this query).
+**Critical:** Do NOT fetch all 127,600 articles. Compute length in the pipeline and limit to top 150. The answer is within the top 150 articles ranked by description length.
+
+**No SQLite call required** (this is a content-only query).
 
 **Expected answer format:** A single article title string.
 
@@ -107,11 +126,17 @@ The AG News dataset consists of news articles stored across two databases: a Mon
 ### Query 2: *What fraction of all articles authored by Amy Jones belong to the Science/Technology category?*
 
 **Approach:**
-1. Call `query_sqlite_agnews_metadata` to find `author_id` for `name = 'Amy Jones'` from the `authors` table.
-2. Call `query_sqlite_agnews_metadata` to get all `article_id` values from `article_metadata` where `author_id` matches Amy Jones's ID.
-3. Call `query_mongo_agnews` to retrieve `title` and `description` for all those `article_id` values.
-4. In application logic, classify each retrieved article into one of the four categories.
-5. Count articles classified as **Science/Technology** divided by total articles authored by Amy Jones.
+1. Call `query_sqlite_agnews_metadata` with a single JOIN query to get all `article_id` values authored by Amy Jones:
+   ```sql
+   SELECT am.article_id
+   FROM article_metadata am
+   JOIN authors a ON am.author_id = a.author_id
+   WHERE a.name = 'Amy Jones'
+   ```
+2. Call `query_mongo_agnews` with `$match: {article_id: {$in: [<id1>, <id2>, ...]}}` to retrieve `title` and `description` for those articles.
+3. Python pre-computation classifies each article and computes the fraction.
+
+**Do NOT make two separate SQLite calls** — combine the author lookup and article_id fetch into the single JOIN above.
 
 **Expected answer format:** A fraction or decimal (e.g., `0.25` or `1/4`). Report as a simplified fraction or decimal as appropriate.
 
@@ -120,24 +145,34 @@ The AG News dataset consists of news articles stored across two databases: a Mon
 ### Query 3: *What is the average number of business articles published per year in Europe from 2010 to 2020, inclusive?*
 
 **Approach:**
-1. Call `query_sqlite_agnews_metadata` to get all `article_id` values where `region = 'Europe'` AND `substr(publication_date, 1, 4) BETWEEN '2010' AND '2020'`. Also retrieve `publication_date` (or year) for each.
-2. Call `query_mongo_agnews` to retrieve `title` and `description` for all those `article_id` values.
-3. In application logic, classify each article — keep only those classified as **Business**.
-4. Group Business articles by year (extract year from `publication_date`).
-5. Count Business articles per year for each year in 2010–2020 inclusive (11 years total). Years with zero Business articles in Europe count as 0.
-6. Compute average = total Business articles in Europe (2010–2020) / 11.
+1. Call `query_sqlite_agnews_metadata` with a single query to get `article_id` and `year` for Europe articles in 2010–2020:
+   ```sql
+   SELECT article_id, substr(publication_date, 1, 4) AS year
+   FROM article_metadata
+   WHERE region = 'Europe'
+     AND substr(publication_date, 1, 4) BETWEEN '2010' AND '2020'
+   ```
+2. Call `query_mongo_agnews` with `$match: {article_id: {$in: [<id1>, <id2>, ...]}}` to retrieve `title` and `description`.
+3. Python pre-computation classifies articles as Business, counts per year (11 years, zero-filled), and computes the average.
 
-**Expected answer format:** A numeric value (float or fraction). The denominator is always 11 (years 2010 through 2020 inclusive).
+**Critical:** The denominator is always **11** (years 2010–2020 inclusive), even if some years have zero Business articles.
+
+**Expected answer format:** A numeric value (float or fraction). The denominator is always 11.
 
 ---
 
 ### Query 4: *In 2015, which region published the largest number of articles in the World category?*
 
 **Approach:**
-1. Call `query_sqlite_agnews_metadata` to get all `article_id` and `region` values where `substr(publication_date, 1, 4) = '2015'`.
-2. Call `query_mongo_agnews` to retrieve `title` and `description` for all those `article_id` values.
-3. In application logic, classify each article — keep only those classified as **World**.
-4. Group by `region`, count World articles per region.
-5. Return the region with the highest count.
+1. Call `query_sqlite_agnews_metadata` to get `article_id` and `region` for all 2015 articles:
+   ```sql
+   SELECT article_id, region
+   FROM article_metadata
+   WHERE substr(publication_date, 1, 4) = '2015'
+   ```
+2. Call `query_mongo_agnews` with `$match: {article_id: {$in: [<id1>, <id2>, ...]}}` to retrieve `title` and `description`.
+3. Python pre-computation classifies articles as World, counts per region, returns the region with the highest count.
+
+**Valid region values:** `Africa`, `Asia`, `Europe`, `North America`, `South America`.
 
 **Expected answer format:** A single region name string (e.g., `"Europe"`, `"North America"`).
