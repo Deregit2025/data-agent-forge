@@ -81,7 +81,7 @@ def llm_call(messages: list[dict], max_tokens: int = 2000) -> str:
         except Exception as e:
             error_str = str(e)
             last_error = e
-            if "402" in error_str or "429" in error_str or "payment" in error_str.lower():
+            if "402" in error_str or "403" in error_str or "429" in error_str or "payment" in error_str.lower() or "forbidden" in error_str.lower():
                 _key_index[0] += 1
                 if _key_index[0] >= len(_ALL_KEYS):
                     raise ValueError(f"All {len(_ALL_KEYS)} API keys exhausted.") from e
