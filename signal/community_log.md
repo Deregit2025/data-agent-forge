@@ -52,57 +52,101 @@
 
 ---
 
+### [Date: April 17, 2026]
+
+- **Shipped**: Datasets Yelp and Stock Market showing significant improvement with 4/7 and 3/5 queries passing respectively.
+- **Learned**:
+- **Blockers**: Patent and Book Review datasets still have 0 passing tests, indicating a need for focused attention on domain knowledge enrichment for these datasets.
+- **Next Steps**: Continue working on the Patent and Book Review datasets, aiming to make progress by midday; utilize all available API keys jointly to accelerate testing and iteration.
+
+---
+
 ## Community Participation
 
 - **Platform**: [Discord]
 - **Link**: https://discord.com/channels/879548962464493619/897390720388825149/1494960835167125655
 - **Technical Contribution**: Discovered that our data agent’s failures were not reasoning issues but infrastructure/tooling failures, where MCP tool connection loss fully invalidated otherwise correct multi-database execution plans.
 
-- **
+---
+
+- **Platform**: [Reddit r/learnmachinelearning and r/PromptQL]
+- **Link**: [https://www.reddit.com/r/learnmachinelearning/s/LaFdN2uIJ2](https://www.reddit.com/r/learnmachinelearning/s/LaFdN2uIJ2) and [https://www.reddit.com/r/PromptQL/s/remJ1Hpr8W](https://www.reddit.com/r/PromptQL/s/remJ1Hpr8W)
+- **Technical Contribution**: Shared our result on the Yelp dataset and our SOPs for handling DAB’s most notorious traps, and solicited advice on handling ill-formatted join keys across heterogeneous databases.
+- **Reach (r/learnmachinelearning)**: [Upvotes = 1, Shares = 10, Views = 595] recorded at end of week
+- **Reach (r/PromptQL)**: [Upvotes = 3, Shares = 5, Views = 300] recorded at end of week
+  
+---
+
+- **Platform**: [Reddit r/learnmachinelearning]
+- **Link**: [https://www.reddit.com/r/learnmachinelearning/s/c7CLHhp0yA](https://www.reddit.com/r/learnmachinelearning/s/c7CLHhp0yA)
+- **Technical Contribution**: Shared our breakthrough in the Music Brainz dataset, where we achieved a 66% pass rate by enriching the domain knowledge and orchestrating multi-database queries, and asked for advice on handling complex multi-step queries that require in-memory aggregation.
+- **Reach**: [Upvotes = 2, Shares = 8, Views = 257] recorded at end of week
 
 ---
 
 ## A few X (Twitter) Technical Threads
 
-*Engaging with Claude Code architecture or DataAgentBench (DAB).*
-
 - **Thread Link**: [https://x.com/GeminiTrp1/status/2042522406699360407](https://x.com/GeminiTrp1/status/2042522406699360407)
 - **Technical Observation**: Implementing a **three-layer context architecture** (Schema, Institutional KB, and Corrections Memory) is the primary engineering requirement to bridge the gap between "clean demos" and the **38% performance ceiling** observed in raw frontier models on the DataAgentBench.
-- **Reach Metrics**: [Impressions = 81, Engagements = 15, Profile Visits = 3, Detail expands = 4] recorded at end of week
+- **Reach Metrics**: [Impressions = 149, Engagements = 19, Profile Visits = 8, Detail expands = 3] recorded at end of week
 
 ---
 
 - **Thread Link**: [https://x.com/GeminiTrp1/status/2042557438755278919](https://x.com/GeminiTrp1/status/2042557438755278919)
+- **Technical Observation**: Dual approach to leveraging the Google MCP toolbox and custom tools for seamless integration across heterogeneous databases.
+- **Reach Metrics**: [Impressions = 29, Engagements = 7, Profile Visits = 0, Detail expands = 3] recorded at end of week
+
+---
+
+- **Thread Link**: [https://x.com/GeminiTrp1/status/2043026176432545821](https://x.com/GeminiTrp1/status/2043026176432545821)
 - **Technical Observation**: Our study of Layer 2 Institutional Knowledge revealed that **table enrichment** is a major bottleneck; schema metadata is insufficient for resolving queries without domain definitions, such as clarifying that an "active customer" must be filtered by purchases within a specific **90-day window**.
-- **Reach Metrics**: [Impressions = 12, Engagements = 3, Profile Visits = 0, Detail expands = 0] recorded at end of week
+- **Reach Metrics**: [Impressions = 56, Engagements = 12, Profile Visits = 1, Detail expands = 5] recorded at end of week
 
 ---
 
 - **Thread Link**: [https://x.com/GeminiTrp1/status/2043026176432545821](https://x.com/GeminiTrp1/status/2043026176432545821)
 - **Technical Observation**: The **Google MCP Toolbox v0.30.0** is insufficient for production data agents as it lacks **DuckDB support**, exits silently due to flag syntax changes, and restricts the **arbitrary SQL execution** required for complex multi-database joins [811, Team Slack Update].
-- **Reach Metrics**: [Impressions = 20, Engagements = 6, Profile Visits = 1, Detail expands = 0] recorded at end of week
+- **Reach Metrics**: [Impressions = 56, Engagements = 12, Profile Visits = 1, Detail expands = 5] recorded at end of week
 
 ---
 
 - **Thread Link**: [https://x.com/GeminiTrp1/status/2043655547207999759](https://x.com/GeminiTrp1/status/2043655547207999759)
 - **Technical Observation**: Robustness in data agents requires **typed failure routing** (e.g., `JoinKeyMismatch`, `ContractViolation`) rather than generic retries; this allows the **Conductor flow** to diagnose root causes and apply targeted recovery strategies across heterogeneous database dialects.
-- **Reach Metrics**: [Impressions = 8, Engagements = 4, Profile Visits = 0, Detail expands = 0] recorded at end of week
+- **Reach Metrics**: [Impressions = 42, Engagements = 13, Profile Visits = 2, Detail expands = 7] recorded at end of week
 
 ---
+
+- **Thread Link**: [https://x.com/GeminiTrp1/status/2044325115815473193](https://x.com/GeminiTrp1/status/2044325115815473193)
+- **Technical Observation**: Initial end-to-end system testing revealed beating Gemini 3 Pro's 38% DAB baseline is not a model capability issue but a **context bottleneck**; enriching the domain knowledge context layer (Layer 2) for datasets alone will improve pass@1 without any changes to the underlying architecture or prompts.
+- **Reach Metrics**: [Impressions = 43, Engagements = 4, Profile Visits = 0, Detail expands = 1] recorded at end of week
+
+---
+
 ### 2026-04-18
 
 - **Platform:** LinkedIn
-- **Type:** Final submission post and success decaling post
+- **Type:** Oracle Forge Post-Mortem Post
 - **URL:** https://www.linkedin.com/posts/rafia-kedir_github-deregit2025data-agent-forge-context-layered-share-7451158850134732800-GPet
-- **Summary:** Final Oracle Forge post — score progression 1.85% → 66.7% on yelp, 3-layer context architecture, typed failure routing, team credits and repo link. Getting international impressions.
+- **Summary:** Final LinkedIn post summarizing the key technical insights and project milestones from Team Gemini's participation in DataAgentBench, including the architecture of Oracle Forge, the importance of layered context for enterprise data agents, and the critical role of community feedback in shaping our approach.
 - **Reach:** 400
-- **Notable responses:** None yet
+
+---
 
 - **Platform:** X
 - **Type:** Final thread — final score, repo link, team credits
-- **URL:** https://x.com/GeminiTrp1/status/2045565250519355522?s=20
-- **Summary:** Final thread announcing final DAB score (66.7% on Yelp, 44.4% on MusicBrainz), sharing repo link, and crediting the team. Thread received engagement from other DAB participants and data agent researchers.
-- **Reach:** [13]
+- **URL:** [https://x.com/GeminiTrp1/status/2045565250519355522](https://x.com/GeminiTrp1/status/2045565250519355522)
+- **Summary:** Final X thread announcing our successful submission of Oracle Forge to the UC Berkeley DataAgentBench, sharing our final pass@1 score of 44.4%, and providing a link to our GitHub repository for the full code and documentation. The thread also credits the entire Team Gemini for their contributions and highlights the key architectural decisions that led to our success.
+- **Reach:** [Impressions = 15, Engagements = 6, Profile Visits = 0, Detail expands = 0] recorded at end of week
+
+---
+
+- **Platform:** X
+- **URL:** [https://x.com/GeminiTrp1/status/2045576532723368137](https://x.com/GeminiTrp1/status/2045576532723368137)
+- **Type:** PR Announcement
+- **Summary:** Follow-up X thread announcing the live PR for our DataAgentBench submission, providing a direct link to the PR on GitHub, and inviting the community to review our code, results, and documentation. The thread emphasizes the transparency of our process and encourages feedback from other researchers working on the benchmark.
+- **Reach:** [Impressions = 8, Engagements = 2, Profile Visits = 1, Detail expands = 0] recorded at end of week
+
+---
 
 - **Platform:** Reddit r/learnmachinelearning
 - **Type:** Final post — Music Brainz Dataset 66% Pass
@@ -114,14 +158,14 @@
 - **Type:** Article — What DAB taught me about enterprise data reality  
 - **URL:** https://www.linkedin.com/pulse/what-dataagentbench-taught-me-enterprise-data-reality-alemayehu-kxgte?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug
 - **Summary:** Article reflecting on the key lessons learned from participating in DataAgentBench, including the importance of layered context architecture, the challenges of domain knowledge enrichment, and the engineering realities of building data agents for enterprise use cases.
-- **Reach:** [27]
+- **Reach:** [Impressions = 407, Members Reached = 262, Article Views = 9, Social Engagement = 8] recorded at end of week
   
 - **Platform:** LinkedIn
-- **Type:** Article — From 185 to 444: A full story of how Team
+- **Type:** Article — From 1.85% to 44.4%: A full story of how Team
 Gemini built a data agent for real enterprise data
 - **URL:** https://www.linkedin.com/pulse/from-185-444-full-story-how-team-gemini-built-data-agent-alemayehu-ea5we?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug
 - **Summary:** Comprehensive article detailing the entire journey of Team Gemini in building Oracle Forge, from the initial architecture design inspired by Claude Code, through the technical challenges faced during development, to the final results achieved on the DAB benchmark. The article also highlights the importance of community engagement and iterative improvement in the data agent development process.
-- **Reach:** [63]
+- **Reach:** [Impressions = 156, Members Reached = 67, Article Views = 29, Social Engagement = 7] recorded at end of week
   
 - **Platform:** Medium
 - **Type:** Final retrospective article 
@@ -135,7 +179,6 @@ Gemini built a data agent for real enterprise data
 
 - **Source**: @dereje_d asked/raised question about mcp
 - **Insight**: new insight were gained upon answering him
-
 
 ---
 
