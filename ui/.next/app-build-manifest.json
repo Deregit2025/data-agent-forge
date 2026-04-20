@@ -16,10 +16,20 @@
       "static/chunks/main-app.js",
       "static/chunks/app/benchmark/page.js"
     ],
-    "/demo/page": [
+    "/corpus/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/demo/page.js"
+      "static/chunks/app/corpus/page.js"
+    ],
+    "/architecture/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/architecture/page.js"
+    ],
+    "/analysis/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/analysis/page.js"
     ],
     "/probes/page": [
       "static/chunks/webpack.js",
@@ -31,10 +41,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/corrections/page.js"
     ],
-    "/architecture/page": [
+    "/demo/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/architecture/page.js"
+      "static/chunks/app/demo/page.js"
     ]
   }
 }

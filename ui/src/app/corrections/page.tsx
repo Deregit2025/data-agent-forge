@@ -109,9 +109,10 @@ export default function CorrectionsPage() {
         <h2 className="text-lg font-bold text-white mb-4">Score Impact of the Corrections Loop</h2>
         <div className="space-y-3">
           {[
-            { phase: "Before corrections (Baseline)",   score: "1.85%",  n: "1/54",  note: "4 simultaneous root causes active", color: "text-red-400" },
-            { phase: "After yelp corrections (3 queries)", score: "66.7%", n: "2/3",   note: "All yelp mechanics fixed", color: "text-forge-amber" },
-            { phase: "Final benchmark (54 queries)",    score: "44.4%",  n: "24/54", note: "All 12 KB files enriched + bugs fixed", color: "text-forge-green" },
+            { phase: "Baseline — full 54-query run",         score: "1.85%",  n: "1/54",  note: "4 root causes active simultaneously", color: "text-red-400" },
+            { phase: "Post-corrections — 3 yelp queries only", score: "66.7%", n: "2/3",   note: "Not a full run — yelp mechanics confirmed fixed", color: "text-forge-amber" },
+            { phase: "Multi-dataset spot check — 3 queries",   score: "33.3%", n: "1/3",   note: "agnews/bookreview KB still incomplete, not a regression", color: "text-forge-amber" },
+            { phase: "Final benchmark — full 54-query run",    score: "44.4%",  n: "24/54", note: "All 12 KB files enriched + all bugs fixed", color: "text-forge-green" },
           ].map(r => (
             <div key={r.phase} className="flex items-center gap-4">
               <div className={`font-mono font-bold text-lg w-20 flex-shrink-0 ${r.color}`}>{r.score}</div>
@@ -122,7 +123,7 @@ export default function CorrectionsPage() {
               <div className="w-32 h-2 rounded-full bg-forge-border overflow-hidden flex-shrink-0">
                 <div
                   className="h-full rounded-full bg-forge-amber"
-                  style={{ width: `${parseFloat(r.score) / 70 * 100}%` }}
+                  style={{ width: `${Math.min(parseFloat(r.score) / 70 * 100, 100)}%` }}
                 />
               </div>
             </div>

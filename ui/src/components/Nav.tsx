@@ -6,10 +6,12 @@ import clsx from "clsx";
 const links = [
   { href: "/",            label: "Dashboard" },
   { href: "/benchmark",   label: "Benchmark" },
+  { href: "/architecture",label: "Architecture" },
   { href: "/demo",        label: "Live Demo" },
+  { href: "/analysis",    label: "Analysis" },
   { href: "/probes",      label: "Probes" },
   { href: "/corrections", label: "Corrections" },
-  { href: "/architecture",label: "Architecture" },
+  { href: "/corpus",      label: "Corpus" },
 ];
 
 export default function Nav() {

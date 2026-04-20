@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, ReferenceLine, BarChart, Bar, Cell,
+  ResponsiveContainer, ReferenceLine,
 } from "recharts";
 import { fetchScore, fetchDatasets } from "@/lib/api";
 
@@ -59,9 +59,13 @@ export default function BenchmarkPage() {
       {/* ── SCORE PROGRESSION CHART ── */}
       <div className="rounded-2xl border border-forge-border bg-forge-surface p-6">
         <h2 className="text-lg font-bold text-white mb-1">Score Progression</h2>
-        <p className="text-forge-muted text-sm mb-6">
-          Four development runs — each KB fix or agent correction is visible as a step change
+        <p className="text-forge-muted text-sm mb-1">
+          2 full benchmark runs (n=54) + 2 partial spot checks — partial runs test specific datasets only, not comparable to full runs
         </p>
+        <div className="flex items-center gap-4 mb-6">
+          <span className="flex items-center gap-1.5 text-xs text-forge-muted"><span className="w-3 h-3 rounded-full bg-forge-amber inline-block" />Full run (n=54)</span>
+          <span className="flex items-center gap-1.5 text-xs text-forge-muted"><span className="w-3 h-3 rounded-full bg-blue-400 inline-block" />Partial spot check</span>
+        </div>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
@@ -90,7 +94,12 @@ export default function BenchmarkPage() {
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
           {chartData?.map((d: any) => (
             <div key={d.label} className="rounded-lg bg-forge-card border border-forge-border p-3">
-              <div className="font-mono font-bold text-forge-amber text-sm">{d.rate}%</div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-mono font-bold text-forge-amber text-sm">{d.rate}%</span>
+                <span className={`text-xs font-mono px-1.5 py-0.5 rounded ${d.n === 54 ? "bg-forge-amber/10 text-forge-amber border border-forge-amber/30" : "bg-blue-900/30 text-blue-400 border border-blue-500/30"}`}>
+                  {d.n === 54 ? "full n=54" : `partial n=${d.n}`}
+                </span>
+              </div>
               <div className="text-forge-text text-xs font-medium">{d.label}</div>
               <div className="text-forge-muted text-xs mt-1 leading-tight">{d.note}</div>
             </div>

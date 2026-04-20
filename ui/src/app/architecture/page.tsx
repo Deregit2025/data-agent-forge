@@ -111,32 +111,6 @@ export default function ArchitecturePage() {
         </div>
       </div>
 
-      {/* failure taxonomy */}
-      <div className="rounded-2xl border border-forge-border bg-forge-surface p-8">
-        <h2 className="text-xl font-bold text-white mb-2">Failure Taxonomy — 10 Types</h2>
-        <p className="text-forge-muted text-sm mb-6">Classification is deterministic — no LLM call for classify()</p>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {[
-            { type: "QUERY_SYNTAX_ERROR",   conf: "High",   color: "text-red-400 bg-red-900/20 border-red-500/30" },
-            { type: "JOIN_KEY_MISMATCH",    conf: "High",   color: "text-orange-400 bg-orange-900/20 border-orange-500/30" },
-            { type: "SCHEMA_MISMATCH",      conf: "High",   color: "text-red-400 bg-red-900/20 border-red-500/30" },
-            { type: "DATABASE_TYPE_ERROR",  conf: "High",   color: "text-yellow-400 bg-yellow-900/20 border-yellow-500/30" },
-            { type: "PIPELINE_ERROR",       conf: "High",   color: "text-amber-400 bg-amber-900/20 border-amber-500/30" },
-            { type: "EMPTY_RESULT",         conf: "Medium", color: "text-blue-400 bg-blue-900/20 border-blue-500/30" },
-            { type: "DATA_TYPE_ERROR",      conf: "Medium", color: "text-blue-400 bg-blue-900/20 border-blue-500/30" },
-            { type: "TIMEOUT",              conf: "Low",    color: "text-purple-400 bg-purple-900/20 border-purple-500/30" },
-            { type: "CONTRACT_VIOLATION",   conf: "Low",    color: "text-purple-400 bg-purple-900/20 border-purple-500/30" },
-            { type: "UNKNOWN",              conf: "Low",    color: "text-forge-muted bg-forge-card border-forge-border" },
-          ].map(f => (
-            <div key={f.type} className={`rounded-xl border p-3 text-center ${f.color}`}>
-              <div className="font-mono font-semibold text-xs leading-tight">{f.type}</div>
-              <div className={`text-xs mt-1 font-mono ${f.conf === "High" ? "text-green-400" : f.conf === "Medium" ? "text-amber-400" : "text-forge-muted"}`}>
-                {f.conf} confidence
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

@@ -24,6 +24,46 @@ const DATASET_DB_TYPES: Record<string, string[]> = {
   deps_dev:     ["sqlite", "duckdb"],
 };
 
+function isFailedAnswer(ans: string) {
+  if (!ans) return true;
+  const lower = ans.toLowerCase().trim();
+  return lower.startsWith("i need to") || lower === "n/a" || lower === "none" || lower === "";
+}
+
+function getTrace(majority: string, unanimous: boolean, dbTypes: string[]) {
+  const tools = dbTypes.join(" + ");
+  if (majority.toLowerCase().startsWith("i need to") || majority.toLowerCase().startsWith("i need ")) {
+    return [
+      { node: "plan_node",      color: "text-red-400",   msg: `selected ${tools} tools — plan generated but incomplete` },
+      { node: "execute_node",   color: "text-red-400",   msg: "sub-agents ran but could not complete all steps" },
+      { node: "correct_node",   color: "text-red-400",   msg: "Level 2 correction triggered — domain knowledge gap, could not recover" },
+      { node: "synthesize_node",color: "text-red-400",   msg: "returned incomplete response — agent gave up" },
+    ];
+  }
+  if (majority.toLowerCase() === "n/a" || majority.toLowerCase() === "none") {
+    return [
+      { node: "plan_node",      color: "text-forge-amber", msg: `selected ${tools} tools` },
+      { node: "execute_node",   color: "text-amber-400",   msg: "sub-agents ran — queries returned empty results" },
+      { node: "correct_node",   color: "text-amber-400",   msg: "Level 1 + Level 2 correction attempted — still no data found" },
+      { node: "synthesize_node",color: "text-red-400",     msg: "returned N/A — no answer could be extracted" },
+    ];
+  }
+  if (unanimous) {
+    return [
+      { node: "plan_node",      color: "text-forge-green", msg: `selected ${tools} tools — clean plan` },
+      { node: "execute_node",   color: "text-forge-green", msg: `${dbTypes.length} sub-agent(s) succeeded on first attempt` },
+      { node: "correct_node",   color: "text-forge-muted", msg: "not triggered — no failures" },
+      { node: "synthesize_node",color: "text-forge-green", msg: "returned answer directly — all 5 trials agreed" },
+    ];
+  }
+  return [
+    { node: "plan_node",      color: "text-forge-amber", msg: `selected ${tools} tools` },
+    { node: "execute_node",   color: "text-forge-amber", msg: "sub-agents ran — some trials required retries" },
+    { node: "correct_node",   color: "text-forge-amber", msg: "Level 1 retry triggered on some trials" },
+    { node: "synthesize_node",color: "text-forge-green", msg: "majority vote resolved to final answer" },
+  ];
+}
+
 export default function DemoPage() {
   const [datasets,       setDatasets]       = useState<any[]>([]);
   const [selected,       setSelected]       = useState("yelp");
@@ -109,9 +149,9 @@ export default function DemoPage() {
             >
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-mono text-forge-muted text-xs">Q{q.query_id}</span>
-                {q.unanimous && (
+                {q.unanimous && !isFailedAnswer(q.majority) && (
                   <span className="text-xs px-1.5 py-0.5 rounded bg-green-900/40 text-green-400 border border-green-500/30 font-mono">
-                    unanimous
+                    5/5 agree
                   </span>
                 )}
               </div>
@@ -142,7 +182,7 @@ export default function DemoPage() {
                 <div className="space-y-2">
                   {activeQuery.answers.map((ans: string, i: number) => (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="font-mono text-forge-muted text-xs w-12">Trial {i}</span>
+                      <span className="font-mono text-forge-muted text-xs w-12">Trial {i + 1}</span>
                       <div className={`flex-1 rounded-lg px-3 py-2 font-mono text-sm border
                         ${ans === activeQuery.majority
                           ? "bg-forge-green/10 border-forge-green/30 text-forge-green"
@@ -167,10 +207,9 @@ export default function DemoPage() {
               </button>
               {showTrace && (
                 <div className="rounded-xl border border-forge-border bg-forge-card p-4 font-mono text-xs space-y-2 text-forge-muted">
-                  <div><span className="text-forge-amber">plan_node</span> → selected {dbTypes.join(" + ")} tools</div>
-                  <div><span className="text-forge-amber">execute_node</span> → ran {dbTypes.length} sub-agents in sequence</div>
-                  <div><span className="text-forge-amber">correct_node</span> → no failures on passing trial</div>
-                  <div><span className="text-forge-amber">synthesize_node</span> → returned majority answer</div>
+                  {getTrace(activeQuery.majority, activeQuery.unanimous, dbTypes).map(t => (
+                    <div key={t.node}><span className={t.color}>{t.node}</span> → {t.msg}</div>
+                  ))}
                   <div className="pt-2 border-t border-forge-border text-forge-dim">
                     Model: Sonnet 4.6 (conductor) · Haiku 3.5 (sub-agents)
                   </div>

@@ -23,6 +23,13 @@ app.add_middleware(
 
 # ── static data ───────────────────────────────────────────────────────────────
 
+# Mapping from display name → actual name used in dab_submission.json
+SUBMISSION_NAME = {
+    "deps_dev":    "deps_dev_v1",
+    "music_brainz": "music_brainz_20k",
+    "pancancer":   "pancancer_atlas",
+}
+
 DATASET_META = {
     "yelp":        {"queries": 7,  "db_types": ["mongodb", "duckdb"],    "domain": "Local Business"},
     "crmarenapro": {"queries": 13, "db_types": ["postgres", "sqlite", "duckdb"], "domain": "CRM / Support"},
@@ -40,9 +47,9 @@ DATASET_META = {
 
 # Final pass counts per dataset (24 total, verified against submission)
 FINAL_PASS = {
-    "yelp": 4, "crmarenapro": 3, "agnews": 2, "bookreview": 2,
-    "googlelocal": 2, "github_repos": 2, "stockmarket": 1, "stockindex": 2,
-    "music_brainz": 2, "pancancer": 2, "patents": 1, "deps_dev": 1,
+    "yelp": 3, "crmarenapro": 5, "agnews": 2, "bookreview": 0,
+    "googlelocal": 3, "github_repos": 2, "stockmarket": 3, "stockindex": 2,
+    "music_brainz": 2, "pancancer": 0, "patents": 0, "deps_dev": 2,
 }
 
 # Baseline pass counts (from eval/score_log.jsonl run 1)
@@ -50,7 +57,7 @@ BASELINE_PASS = {
     "yelp": 0, "crmarenapro": 1, "agnews": 0, "bookreview": 0,
     "googlelocal": 0, "github_repos": 0, "stockmarket": 0, "stockindex": 0,
     "music_brainz": 0, "pancancer": 0, "patents": 0, "deps_dev": 0,
-}
+}  # from score_log.jsonl run_id 20260411_150831
 
 # Representative DAB questions (one per dataset for the demo)
 SAMPLE_QUESTIONS = {
@@ -198,10 +205,10 @@ def get_score():
             "dab_pr": "https://github.com/ucbepic/DataAgentBench/pull/32",
         },
         "history": [
-            {"date": "2026-04-11", "label": "Baseline", "pass_rate": 0.0185, "n_queries": 54, "note": "Broken mechanics: invalid model ID, prefix mismatch, truncation"},
-            {"date": "2026-04-13", "label": "Post-corrections (yelp)", "pass_rate": 0.6667, "n_queries": 3, "note": "Fixed: model ID, prefix replacement, full ID extraction"},
-            {"date": "2026-04-13", "label": "Multi-dataset check", "pass_rate": 0.3333, "n_queries": 3, "note": "Non-yelp KB incomplete at time of run"},
-            {"date": "2026-04-18", "label": "Final Benchmark", "pass_rate": 0.444, "n_queries": 54, "note": "All 12 KB files complete, all agent bugs fixed"},
+            {"date": "2026-04-11", "label": "Baseline", "pass_rate": 0.0185, "n_queries": 54, "note": "Full 54-query run · 4 root causes active: invalid model ID, businessid_ prefix mismatch, result truncation, MongoDB city field missing"},
+            {"date": "2026-04-13", "label": "Post-corrections (yelp only)", "pass_rate": 0.6667, "n_queries": 3, "note": "3 yelp queries only · Fixed: model ID, prefix replacement, full ID extraction"},
+            {"date": "2026-04-13", "label": "Multi-dataset spot check", "pass_rate": 0.3333, "n_queries": 3, "note": "3 queries across yelp + agnews + bookreview · agnews/bookreview KB still incomplete, not a regression"},
+            {"date": "2026-04-18", "label": "Final Benchmark", "pass_rate": 0.444, "n_queries": 54, "note": "Full 54-query run · All 12 KB files enriched, all agent bugs fixed"},
         ],
     }
 
@@ -235,8 +242,9 @@ def get_queries(dataset: str):
     submission = load_submission()
     # group by query id
     by_query: dict[str, list[str]] = {}
+    submission_name = SUBMISSION_NAME.get(dataset, dataset)
     for entry in submission:
-        if entry["dataset"] == dataset:
+        if entry["dataset"] == submission_name:
             qid = entry["query"]
             by_query.setdefault(qid, []).append(entry["answer"])
     questions = SAMPLE_QUESTIONS.get(dataset, [])

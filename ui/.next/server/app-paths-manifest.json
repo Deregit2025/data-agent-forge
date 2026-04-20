@@ -1,8 +1,10 @@
 {
-  "/page": "app/page.js",
+  "/analysis/page": "app/analysis/page.js",
   "/demo/page": "app/demo/page.js",
+  "/architecture/page": "app/architecture/page.js",
   "/probes/page": "app/probes/page.js",
-  "/corrections/page": "app/corrections/page.js",
+  "/corpus/page": "app/corpus/page.js",
+  "/page": "app/page.js",
   "/benchmark/page": "app/benchmark/page.js",
-  "/architecture/page": "app/architecture/page.js"
+  "/corrections/page": "app/corrections/page.js"
 }

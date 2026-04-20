@@ -106,48 +106,6 @@ export default function Dashboard() {
         ))}
       </section>
 
-      {/* ── ARCHITECTURE OVERVIEW ── */}
-      <section className="rounded-2xl border border-forge-border bg-forge-surface p-8">
-        <h2 className="text-xl font-bold text-white mb-6">Architecture — LangGraph State Machine</h2>
-        <div className="flex flex-col md:flex-row items-stretch gap-3">
-          {[
-            { node: "plan_node",      model: "Sonnet 4.6", role: "Reads 3-layer KB → selects tools → orders steps",        color: "border-forge-amber/50 bg-forge-amber/5" },
-            { node: "execute_node",   model: "Haiku 3.5",  role: "4 sub-agents run in sequence → prior results chained",   color: "border-blue-500/50 bg-blue-500/5" },
-            { node: "correct_node",   model: "Sonnet 4.6", role: "Classifies failures → typed recovery → re-executes",     color: "border-red-500/50 bg-red-500/5" },
-            { node: "synthesize_node",model: "Sonnet 4.6", role: "Precompute joins → formats final answer",               color: "border-green-500/50 bg-green-500/5" },
-          ].map((n, i) => (
-            <div key={n.node} className="flex items-stretch gap-3">
-              <div className={`flex-1 rounded-xl border p-4 space-y-2 ${n.color}`}>
-                <div className="font-mono text-xs text-forge-muted">{`node ${i + 1}`}</div>
-                <div className="font-mono font-semibold text-forge-text text-sm">{n.node}</div>
-                <div className="text-xs px-2 py-0.5 rounded bg-forge-bg/50 text-forge-muted inline-block font-mono">
-                  {n.model}
-                </div>
-                <p className="text-forge-muted text-xs leading-relaxed">{n.role}</p>
-              </div>
-              {i < 3 && (
-                <div className="hidden md:flex items-center text-forge-dim text-lg self-center">→</div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* KB layers */}
-        <div className="mt-6 grid grid-cols-3 gap-3">
-          {[
-            { layer: "Layer 1", name: "AGENT.md",          desc: "29 tool descriptions, join key glossary, 4 dialect rules",  color: "text-forge-amber" },
-            { layer: "Layer 2", name: "dab_*.md (×12)",    desc: "Per-dataset schema, query patterns, critical domain facts",  color: "text-blue-400" },
-            { layer: "Layer 3", name: "corrections_log.md",desc: "6 self-learned failure patterns from benchmark runs",        color: "text-green-400" },
-          ].map(l => (
-            <div key={l.layer} className="rounded-xl border border-forge-border bg-forge-card p-4">
-              <div className="text-xs font-mono text-forge-muted mb-1">{l.layer}</div>
-              <div className={`font-mono font-semibold text-sm mb-1 ${l.color}`}>{l.name}</div>
-              <div className="text-xs text-forge-muted">{l.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── TWO COLUMNS: PROBES + TIMELINE ── */}
       <div className="grid md:grid-cols-2 gap-6">
 
