@@ -122,11 +122,11 @@
 
 ---
 
-### 2026-04-18
+## 2026-04-18 — Final Threads and Posts
 
 - **Platform:** LinkedIn
 - **Type:** Oracle Forge Post-Mortem Post
-- **URL:** https://www.linkedin.com/posts/rafia-kedir_github-deregit2025data-agent-forge-context-layered-share-7451158850134732800-GPet
+- **URL:** [https://www.linkedin.com/posts/rafia-kedir_github-deregit2025data-agent-forge-context-layered-share-7451158850134732800-GPet](https://www.linkedin.com/posts/rafia-kedir_github-deregit2025data-agent-forge-context-layered-share-7451158850134732800-GPet)
 - **Summary:** Final LinkedIn post summarizing the key technical insights and project milestones from Team Gemini's participation in DataAgentBench, including the architecture of Oracle Forge, the importance of layered context for enterprise data agents, and the critical role of community feedback in shaping our approach.
 - **Reach:** 400
 
@@ -150,28 +150,36 @@
 
 - **Platform:** Reddit r/learnmachinelearning
 - **Type:** Final post — Music Brainz Dataset 66% Pass
-- **URL:** https://www.reddit.com/r/learnmachinelearning/s/61WFPyvypj
+- **URL:** [https://www.reddit.com/r/learnmachinelearning/s/61WFPyvypj](https://www.reddit.com/r/learnmachinelearning/s/61WFPyvypj)
 - **Summary:** Final Reddit post sharing our results on the Music Brainz dataset, highlighting the challenges of domain knowledge enrichment and multi-database orchestration. Post received engagement from the ML community interested in data agents and benchmarks.
 - **Reach:** [12]
 
+---
+
 - **Platform:** LinkedIn
 - **Type:** Article — What DAB taught me about enterprise data reality  
-- **URL:** https://www.linkedin.com/pulse/what-dataagentbench-taught-me-enterprise-data-reality-alemayehu-kxgte?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug
+- **URL:** [https://www.linkedin.com/pulse/what-dataagentbench-taught-me-enterprise-data-reality-alemayehu-kxgte?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug](https://www.linkedin.com/pulse/what-dataagentbench-taught-me-enterprise-data-reality-alemayehu-kxgte?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug)
 - **Summary:** Article reflecting on the key lessons learned from participating in DataAgentBench, including the importance of layered context architecture, the challenges of domain knowledge enrichment, and the engineering realities of building data agents for enterprise use cases.
 - **Reach:** [Impressions = 407, Members Reached = 262, Article Views = 9, Social Engagement = 8] recorded at end of week
-  
+
+---
+
 - **Platform:** LinkedIn
 - **Type:** Article — From 1.85% to 44.4%: A full story of how Team
 Gemini built a data agent for real enterprise data
-- **URL:** https://www.linkedin.com/pulse/from-185-444-full-story-how-team-gemini-built-data-agent-alemayehu-ea5we?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug
+- **URL:** [https://www.linkedin.com/pulse/from-185-444-full-story-how-team-gemini-built-data-agent-alemayehu-ea5we?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug](https://www.linkedin.com/pulse/from-185-444-full-story-how-team-gemini-built-data-agent-alemayehu-ea5we?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEVqX6EBJbqiOmkIS5GVwaB5nusYQBFwdug)
 - **Summary:** Comprehensive article detailing the entire journey of Team Gemini in building Oracle Forge, from the initial architecture design inspired by Claude Code, through the technical challenges faced during development, to the final results achieved on the DAB benchmark. The article also highlights the importance of community engagement and iterative improvement in the data agent development process.
 - **Reach:** [Impressions = 156, Members Reached = 67, Article Views = 29, Social Engagement = 7] recorded at end of week
-  
+
+---
+
 - **Platform:** Medium
 - **Type:** Final retrospective article 
-- **URL:** https://medium.com/p/4a1869e8dff9?postPublishedType=initial
+- **URL:** [https://medium.com/p/4a1869e8dff9?postPublishedType=initial](https://medium.com/p/4a1869e8dff9?postPublishedType=initial)
 - **Summary:** Final article on Medium summarizing the key technical insights and project milestones from Team Gemini's participation in DataAgentBench, including the architecture of Oracle Forge, the importance of layered context for enterprise data agents, and the critical role of community feedback in shaping our approach.
 - **Reach:** [1]
+
+---
 
 ## Community Intelligence
 
